@@ -14,32 +14,32 @@ const features = [
   {
     icon: <Server className="w-10 h-10 text-discord-blurple" />,
     title: "Server Configuration",
-    description: "Easily set up which channels receive game notifications, with a simple interface for Discord admins."
+    description: "Easily set up which channels receive speedrun notifications, with a simple interface for Discord admins."
   },
   {
     icon: <Gamepad className="w-10 h-10 text-discord-green" />,
     title: "Game Selection",
-    description: "Choose which games to track and receive notifications for, with support for all major gaming platforms."
+    description: "Choose which speedrun.com games to track and receive notifications for, with support for all games on the platform."
   },
   {
     icon: <BellRing className="w-10 h-10 text-discord-yellow" />,
     title: "Custom Notifications",
-    description: "Configure which events trigger notifications - from achievements to tournament announcements."
+    description: "Configure which events trigger notifications - from new runs to world records and personal bests."
   },
   {
     icon: <UserCircle className="w-10 h-10 text-discord-fuchsia" />,
-    title: "Player Identity",
-    description: "Connect your Discord account to display your Discord tag in notifications, rather than your in-game name."
+    title: "Runner Identity",
+    description: "Connect your Discord account with speedrun.com to display your Discord tag in notifications, rather than your speedrun.com username."
   },
   {
     icon: <Settings className="w-10 h-10 text-discord-secondary" />,
     title: "Advanced Settings",
-    description: "Fine-tune notification preferences with advanced filtering options for each game and channel."
+    description: "Fine-tune notification preferences with advanced filtering options for each game and Discord channel."
   },
   {
     icon: <Users className="w-10 h-10 text-discord-red" />,
     title: "Community Integration",
-    description: "Engage your community by keeping everyone updated on the latest gaming achievements and events."
+    description: "Engage your speedrunning community by keeping everyone updated on the latest records and achievements."
   }
 ];
 
@@ -57,7 +57,7 @@ const Features = () => {
             Powerful Features
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Everything you need to keep your Discord server up-to-date with the latest gaming events and achievements.
+            Everything you need to keep your Discord server up-to-date with the latest speedrunning events and achievements.
           </p>
         </div>
         

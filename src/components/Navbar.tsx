@@ -37,7 +37,7 @@ const Navbar = () => {
           <Link to="/" className="flex items-center space-x-2">
             <Bell className="w-6 h-6 text-discord-blurple animate-pulse-light" />
             <span className="text-xl font-bold bg-gradient-to-r from-discord-blurple to-discord-fuchsia bg-clip-text text-transparent">
-              GameNotify
+              speedrun.bot
             </span>
           </Link>
 
@@ -70,6 +70,12 @@ const Navbar = () => {
                 Login with Discord
               </Button>
             </Link>
+            <Button 
+              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+            >
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Add bot to Discord
+            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -119,6 +125,13 @@ const Navbar = () => {
                   Login with Discord
                 </Button>
               </Link>
+              <Button 
+                className="w-full bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <MessageSquare className="mr-2 h-4 w-4" />
+                Add bot to Discord
+              </Button>
             </div>
           </div>
         )}

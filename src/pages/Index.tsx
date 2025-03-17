@@ -30,6 +30,9 @@ const Index = () => {
 
     const observer = animateOnScroll();
 
+    // Update document title to reflect speedrun.bot
+    document.title = "speedrun.bot - Speedrun Notifications for Discord";
+
     return () => {
       if (observer) {
         observer.disconnect();

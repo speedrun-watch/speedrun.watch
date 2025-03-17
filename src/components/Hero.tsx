@@ -29,7 +29,7 @@ const Hero = () => {
           <div className="inline-block animate-float">
             <div className="flex items-center space-x-2 bg-discord-dark/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
               <Bell className="w-5 h-5 text-discord-green" />
-              <span className="text-gray-200 font-medium text-sm">Game Notifications for Discord</span>
+              <span className="text-gray-200 font-medium text-sm">speedrun.com Notifications for Discord</span>
             </div>
           </div>
           
@@ -41,14 +41,14 @@ const Hero = () => {
           </h1>
           
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Notify your Discord community about game events in real-time. Customizable, 
-            easy to set up, and designed for gamers by gamers.
+            Notify your Discord community about new speedruns in real-time. Keep your server updated 
+            when speedrunners publish new records for your favorite games.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
             <Button className="bg-discord-blurple hover:bg-discord-blurple/90 text-white w-full sm:w-auto px-8 py-6 text-lg" size="lg">
               <MessageSquare className="mr-2 h-5 w-5" />
-              Add to Discord
+              Add bot to Discord
             </Button>
             <Button 
               variant="outline" 
@@ -68,7 +68,7 @@ const Hero = () => {
             <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <div className="ml-4 text-gray-300 text-sm">Discord - GameNotify Bot</div>
+            <div className="ml-4 text-gray-300 text-sm">Discord - speedrun.bot</div>
           </div>
           <div className="p-4 bg-discord-darker text-white">
             <div className="flex items-start mb-6">
@@ -76,14 +76,14 @@ const Hero = () => {
                 <Bell className="w-5 h-5 text-white" />
               </div>
               <div className="bg-discord-dark p-3 rounded-lg">
-                <div className="text-discord-green font-medium">GameNotify Bot</div>
+                <div className="text-discord-green font-medium">speedrun.bot</div>
                 <div className="text-gray-300 mt-1">
-                  🎮 <span className="text-discord-blurple font-medium">@CoolGamer123</span> just achieved a new high score in <span className="text-discord-yellow font-medium">Rocket League</span>!
+                  🏆 <span className="text-discord-blurple font-medium">@SpeedyRunner</span> just submitted a new <span className="text-discord-yellow font-medium">Half-Life 2</span> speedrun!
                 </div>
                 <div className="mt-3 bg-discord-dark/50 p-3 rounded border-l-4 border-discord-yellow">
                   <div className="flex items-center">
                     <Gamepad className="w-4 h-4 text-discord-yellow mr-2" />
-                    <span className="text-sm text-gray-200">Score: 1,250 | Rank: Diamond III</span>
+                    <span className="text-sm text-gray-200">Time: 47:13 | Category: Any%</span>
                   </div>
                 </div>
               </div>
@@ -93,9 +93,9 @@ const Hero = () => {
                 <Bell className="w-5 h-5 text-white" />
               </div>
               <div className="bg-discord-dark p-3 rounded-lg">
-                <div className="text-discord-green font-medium">GameNotify Bot</div>
+                <div className="text-discord-green font-medium">speedrun.bot</div>
                 <div className="text-gray-300 mt-1">
-                  🏆 Tournament starting in <span className="text-discord-fuchsia font-medium">Valorant</span> - <span className="text-discord-yellow font-medium">15 minutes</span> until registration closes!
+                  🎮 New world record in <span className="text-discord-fuchsia font-medium">Super Mario 64</span> by <span className="text-discord-yellow font-medium">SpeedKing</span>!
                 </div>
               </div>
             </div>

@@ -17,7 +17,7 @@ const CtaSection = () => {
             Ready to Level Up Your Discord Server?
           </h2>
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            Join thousands of gaming communities using GameNotify to keep their members engaged and informed.
+            Join speedrunning communities using speedrun.bot to keep their members informed about the latest records and achievements.
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -26,7 +26,7 @@ const CtaSection = () => {
               className="bg-discord-blurple hover:bg-discord-blurple/90 text-white py-6 px-8 text-lg"
             >
               <MessageSquare className="mr-2 h-5 w-5" />
-              Add to Discord
+              Add bot to Discord
             </Button>
             <Button 
               variant="outline" 
