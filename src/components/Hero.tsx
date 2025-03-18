@@ -4,7 +4,6 @@ import {
   Bell, 
   Gamepad, 
   MessageSquare, 
-  ChevronDown,
   Timer,
   Trophy,
   Flag
@@ -19,119 +18,86 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative pt-24 md:pt-32 pb-20 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 -z-10 bg-[#23272A]">
-        <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSgzMCkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiM1ODY1RjIiIG9wYWNpdHk9IjAuMDUiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=')] opacity-60"></div>
-        <div className="absolute -bottom-48 -right-48 w-96 h-96 bg-discord-blurple/30 rounded-full blur-3xl"></div>
-        <div className="absolute -top-24 -left-24 w-72 h-72 bg-discord-fuchsia/20 rounded-full blur-3xl"></div>
+    <section className="relative pt-24 md:pt-32 pb-16 overflow-hidden">
+      {/* Background Elements - Simplified */}
+      <div className="absolute inset-0 -z-10 bg-discord-darker">
+        <div className="absolute -top-24 -left-24 w-64 h-64 bg-discord-blurple/10 rounded-full blur-3xl"></div>
       </div>
 
       <div className="container mx-auto px-4 md:px-6">
-        <div className="flex flex-col items-center text-center space-y-8 mb-12">
-          <div className="inline-block animate-float">
-            <div className="flex items-center space-x-2 bg-discord-dark/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg">
-              <div className="relative flex items-center justify-center">
-                <Bell className="w-5 h-5 text-discord-blurple absolute animate-ping opacity-75" />
-                <Bell className="w-5 h-5 text-discord-blurple relative" />
-              </div>
-              <span className="text-gray-200 font-medium text-sm">speedrun.com Notifications for Discord</span>
+        <div className="flex flex-col items-center text-center space-y-6 mb-10">
+          <div className="inline-block">
+            <div className="flex items-center space-x-2 bg-discord-dark/80 px-3 py-1.5 rounded-full">
+              <Bell className="w-4 h-4 text-discord-blurple" />
+              <span className="text-gray-200 text-sm">speedrun.com Notifications</span>
             </div>
           </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-discord-blurple to-discord-fuchsia bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+            <span className="text-discord-blurple">
               Speedrun Alerts
             </span>{" "}
-            for Discord Servers
+            for Discord
           </h1>
           
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Notify your Discord community about new speedruns in real-time. Keep your server updated 
-            when speedrunners publish new records for your favorite games on speedrun.com.
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
+            Notify your Discord community about new speedruns in real-time from speedrun.com
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-            <Button className="bg-discord-blurple hover:bg-discord-blurple/90 text-white w-full sm:w-auto px-8 py-6 text-lg" size="lg">
-              <MessageSquare className="mr-2 h-5 w-5" />
+          <div className="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 pt-2">
+            <Button className="bg-discord-blurple hover:bg-discord-blurple/90 text-white w-full sm:w-auto" size="default">
+              <MessageSquare className="mr-2 h-4 w-4" />
               Add bot to Discord
             </Button>
             <Button 
               variant="outline" 
-              className="bg-transparent border-white/20 text-white hover:bg-white/10 w-full sm:w-auto px-8 py-6 text-lg" 
-              size="lg"
+              className="bg-transparent border-white/20 text-white hover:bg-white/5 w-full sm:w-auto" 
+              size="default"
               onClick={scrollToFeatures}
             >
-              <Gamepad className="mr-2 h-5 w-5" />
+              <Gamepad className="mr-2 h-4 w-4" />
               See Features
             </Button>
           </div>
         </div>
         
-        {/* Bot Preview */}
-        <div className="mt-16 max-w-4xl mx-auto glass rounded-lg overflow-hidden animate-scale-in">
-          <div className="bg-discord-dark p-3 flex items-center">
-            <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-            <div className="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
-            <div className="w-3 h-3 rounded-full bg-green-500"></div>
-            <div className="ml-4 text-gray-300 text-sm">Discord - speedrun.bot</div>
+        {/* Bot Preview - Simplified */}
+        <div className="mt-12 max-w-3xl mx-auto bg-discord-dark/80 rounded-lg overflow-hidden border border-white/10">
+          <div className="bg-discord-darker/80 p-2 flex items-center">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-500 mr-1.5"></div>
+            <div className="w-2.5 h-2.5 rounded-full bg-green-500"></div>
+            <div className="ml-3 text-gray-400 text-xs">Discord - speedrun.bot</div>
           </div>
-          <div className="p-4 bg-discord-darker text-white">
-            <div className="flex items-start mb-6">
-              <div className="w-10 h-10 rounded-full bg-discord-blurple flex items-center justify-center mr-3 flex-shrink-0">
-                <Trophy className="w-5 h-5 text-white" />
+          <div className="p-4 text-white">
+            <div className="flex items-start mb-4">
+              <div className="w-8 h-8 rounded-full bg-discord-blurple flex items-center justify-center mr-3 flex-shrink-0">
+                <Trophy className="w-4 h-4 text-white" />
               </div>
-              <div className="bg-discord-dark p-3 rounded-lg">
-                <div className="text-discord-green font-medium">speedrun.bot</div>
-                <div className="text-gray-300 mt-1">
-                  🏆 <span className="text-discord-blurple font-medium">@SpeedyRunner</span> just set a new <span className="text-discord-yellow font-medium">World Record</span> in <span className="text-discord-fuchsia font-medium">Portal</span>!
+              <div className="bg-discord-darker p-3 rounded-md">
+                <div className="text-discord-green text-sm font-medium">speedrun.bot</div>
+                <div className="text-gray-300 mt-1 text-sm">
+                  🏆 <span className="text-discord-blurple">@SpeedyRunner</span> just set a new <span className="text-discord-yellow">World Record</span> in <span className="text-discord-fuchsia">Portal</span>!
                 </div>
-                <div className="mt-3 bg-discord-dark/50 p-3 rounded border-l-4 border-discord-yellow">
-                  <div className="flex flex-col space-y-2">
+                <div className="mt-2 bg-discord-dark/50 p-2 rounded border-l-2 border-discord-yellow text-xs">
+                  <div className="flex flex-col space-y-1.5">
                     <div className="flex items-center">
-                      <Trophy className="w-4 h-4 text-discord-yellow mr-2" />
-                      <span className="text-sm text-gray-200">Category: Out of Bounds</span>
+                      <Trophy className="w-3.5 h-3.5 text-discord-yellow mr-1.5" />
+                      <span className="text-gray-200">Category: Out of Bounds</span>
                     </div>
                     <div className="flex items-center">
-                      <Timer className="w-4 h-4 text-discord-green mr-2" />
-                      <span className="text-sm text-gray-200">Time: 7:13.52 (Previous: 7:28.19)</span>
+                      <Timer className="w-3.5 h-3.5 text-discord-green mr-1.5" />
+                      <span className="text-gray-200">Time: 7:13.52 (Previous: 7:28.19)</span>
                     </div>
                     <div className="flex items-center">
-                      <Flag className="w-4 h-4 text-discord-blurple mr-2" />
-                      <span className="text-sm text-gray-200">Verified on speedrun.com</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <div className="w-10 h-10 rounded-full bg-discord-blurple flex items-center justify-center mr-3 flex-shrink-0">
-                <Trophy className="w-5 h-5 text-white" />
-              </div>
-              <div className="bg-discord-dark p-3 rounded-lg">
-                <div className="text-discord-green font-medium">speedrun.bot</div>
-                <div className="text-gray-300 mt-1">
-                  🎮 <span className="text-discord-yellow font-medium">SpeedKing</span> just submitted a new <span className="text-discord-fuchsia font-medium">Super Mario 64</span> run!
-                </div>
-                <div className="mt-3 bg-discord-dark/50 p-3 rounded border-l-4 border-discord-blurple">
-                  <div className="flex flex-col space-y-2">
-                    <div className="flex items-center">
-                      <Gamepad className="w-4 h-4 text-discord-blurple mr-2" />
-                      <span className="text-sm text-gray-200">Category: 70 Star</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Timer className="w-4 h-4 text-discord-green mr-2" />
-                      <span className="text-sm text-gray-200">Time: 47:32.98 (PB by 12.4s)</span>
+                      <Flag className="w-3.5 h-3.5 text-discord-blurple mr-1.5" />
+                      <span className="text-gray-200">Verified on speedrun.com</span>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 animate-bounce opacity-70">
-          <ChevronDown className="w-6 h-6 text-white" />
         </div>
       </div>
     </section>
