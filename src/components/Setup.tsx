@@ -66,21 +66,21 @@ const Setup = () => {
           {steps.map((step, index) => (
             <Card 
               key={index} 
-              className="glass border-0 overflow-hidden"
+              className="glass border-0 overflow-hidden bg-discord-dark/50 shadow-xl"
             >
               <div className="relative p-6">
-                <div className="absolute top-0 right-0 bg-discord-dark/40 px-3 py-1 rounded-bl-lg text-discord-blurple font-mono font-bold">
+                <div className="absolute top-0 right-0 bg-discord-blurple/80 px-3 py-1 rounded-bl-lg text-white font-mono font-bold">
                   {step.number}
                 </div>
                 
                 <div className="flex items-center mb-4">
-                  <div className="bg-discord-dark/50 w-12 h-12 rounded-lg flex items-center justify-center mr-4">
+                  <div className="bg-discord-darker/80 w-12 h-12 rounded-lg flex items-center justify-center mr-4 border border-discord-blurple/20">
                     {step.icon}
                   </div>
                   <h3 className="text-xl font-semibold text-white">{step.title}</h3>
                 </div>
                 
-                <p className="text-gray-300 mb-6 min-h-[80px]">{step.description}</p>
+                <p className="text-gray-200 mb-6 min-h-[80px]">{step.description}</p>
                 
                 <Button
                   variant={index === 0 ? "default" : "outline"} 
@@ -97,12 +97,12 @@ const Setup = () => {
           ))}
         </div>
 
-        <div className="mt-16 glass p-6 rounded-lg max-w-3xl mx-auto">
+        <div className="mt-16 glass p-6 rounded-lg max-w-3xl mx-auto bg-discord-dark/50 shadow-lg">
           <h3 className="text-2xl font-semibold text-white mb-4 flex items-center">
             <CheckCircle className="w-6 h-6 text-discord-green mr-2" />
             Already using our bot?
           </h3>
-          <p className="text-gray-300 mb-6">
+          <p className="text-gray-200 mb-6">
             Login with your Discord account to manage your settings, view game statistics, and customize your notification preferences.
           </p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">

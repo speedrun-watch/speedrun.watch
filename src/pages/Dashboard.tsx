@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { 
   Bell, 
   Gamepad, 
@@ -10,9 +11,14 @@ import {
   User,
   Server,
   Home,
-  Search,
   Shield,
-  Users
+  Users,
+  X,
+  Plus,
+  Clock,
+  Link as LinkIcon,
+  MessageSquare,
+  ArrowLeft
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -32,10 +38,132 @@ const mockGuilds = {
   ]
 };
 
+// Mock data for channels
+const mockChannels = {
+  "1": [
+    { id: "101", name: "half-life", linkedGames: [
+      { id: "g1", name: "Half-Life", lastNotification: "2023-10-12T14:30:00Z" },
+      { id: "g2", name: "Half-Life 2", lastNotification: "2023-10-15T09:45:00Z" }
+    ]},
+    { id: "102", name: "half-life-alyx", linkedGames: [
+      { id: "g3", name: "Half-Life: Alyx", lastNotification: "2023-10-14T18:20:00Z" }
+    ]},
+    { id: "103", name: "black-mesa", linkedGames: [] }
+  ],
+  "2": [
+    { id: "201", name: "sm64-16star", linkedGames: [
+      { id: "g4", name: "Super Mario 64", lastNotification: "2023-10-16T11:10:00Z" }
+    ]},
+    { id: "202", name: "sm64-70star", linkedGames: [
+      { id: "g4", name: "Super Mario 64", lastNotification: "2023-10-13T16:40:00Z" }
+    ]},
+    { id: "203", name: "sm64-120star", linkedGames: [
+      { id: "g4", name: "Super Mario 64", lastNotification: "2023-10-10T20:15:00Z" }
+    ]}
+  ],
+  "3": [
+    { id: "301", name: "gta-san-andreas", linkedGames: [
+      { id: "g5", name: "Grand Theft Auto: San Andreas", lastNotification: "2023-10-11T13:25:00Z" }
+    ]},
+    { id: "302", name: "gta-vice-city", linkedGames: [
+      { id: "g6", name: "Grand Theft Auto: Vice City", lastNotification: "2023-10-09T15:50:00Z" }
+    ]}
+  ],
+  "4": [
+    { id: "401", name: "worms-armageddon-strategies", linkedGames: [] },
+    { id: "402", name: "worms-speedruns", linkedGames: [
+      { id: "g7", name: "Worms Armageddon", lastNotification: "2023-10-08T10:30:00Z" }
+    ]}
+  ],
+  "5": [
+    { id: "501", name: "minecraft-any-percent", linkedGames: [
+      { id: "g8", name: "Minecraft", lastNotification: "2023-10-17T12:00:00Z" }
+    ]}
+  ],
+  "6": [
+    { id: "601", name: "portal-inbounds", linkedGames: [
+      { id: "g9", name: "Portal", lastNotification: "2023-10-14T09:20:00Z" }
+    ]},
+    { id: "602", name: "portal-oob", linkedGames: [
+      { id: "g9", name: "Portal", lastNotification: "2023-10-16T17:45:00Z" }
+    ]}
+  ]
+};
+
+// Mock data for games that can be linked
+const mockAvailableGames = [
+  { id: "g1", name: "Half-Life" },
+  { id: "g2", name: "Half-Life 2" },
+  { id: "g3", name: "Half-Life: Alyx" },
+  { id: "g4", name: "Super Mario 64" },
+  { id: "g5", name: "Grand Theft Auto: San Andreas" },
+  { id: "g6", name: "Grand Theft Auto: Vice City" },
+  { id: "g7", name: "Worms Armageddon" },
+  { id: "g8", name: "Minecraft" },
+  { id: "g9", name: "Portal" },
+  { id: "g10", name: "Portal 2" },
+  { id: "g11", name: "Doom" },
+  { id: "g12", name: "Doom Eternal" },
+  { id: "g13", name: "The Legend of Zelda: Ocarina of Time" },
+  { id: "g14", name: "The Legend of Zelda: Breath of the Wild" }
+];
+
 // This is a placeholder Dashboard, you'll expand this with actual functionality later
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("guilds");
-  const [activeGuildCategory, setActiveGuildCategory] = useState("owner");
+  const [activeGuildCategory, setActiveGuildCategory] = useState("all");
+  const [selectedGuildId, setSelectedGuildId] = useState<string | null>(null);
+  const [gameSearchTerm, setGameSearchTerm] = useState("");
+  const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
+
+  // Combine all guilds for the "all" category
+  const allGuilds = [
+    ...mockGuilds.owner,
+    ...mockGuilds.admin,
+    ...mockGuilds.member
+  ];
+
+  // Filter games based on search term
+  const filteredGames = mockAvailableGames.filter(game => 
+    game.name.toLowerCase().includes(gameSearchTerm.toLowerCase())
+  );
+
+  // Format the date to be more readable
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffInDays === 0) {
+      return "Today at " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInDays === 1) {
+      return "Yesterday at " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInDays < 7) {
+      return diffInDays + " days ago";
+    } else {
+      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  };
+
+  // Back to guild selection
+  const handleBackToGuilds = () => {
+    setSelectedGuildId(null);
+    setActiveChannelId(null);
+  };
+
+  // Link a game to a channel
+  const handleLinkGame = (channelId: string, gameId: string) => {
+    console.log(`Linking game ${gameId} to channel ${channelId}`);
+    // In a real app, you would update the database here
+    setGameSearchTerm("");
+    setActiveChannelId(null);
+  };
+
+  // Unlink a game from a channel
+  const handleUnlinkGame = (channelId: string, gameId: string) => {
+    console.log(`Unlinking game ${gameId} from channel ${channelId}`);
+    // In a real app, you would update the database here
+  };
 
   return (
     <div className="min-h-screen bg-discord-darker text-white">
@@ -144,81 +272,242 @@ const Dashboard = () => {
               </div>
             )}
             
-            {activeTab === "guilds" && (
+            {activeTab === "guilds" && !selectedGuildId && (
               <div>
                 <h1 className="text-2xl font-bold mb-6">Discord Guilds</h1>
                 
-                <div className="flex space-x-4 mb-6">
-                  <Button 
-                    variant={activeGuildCategory === "owner" ? "default" : "outline"}
-                    className={activeGuildCategory === "owner" 
-                      ? "bg-discord-blurple hover:bg-discord-blurple/90 text-white" 
-                      : "bg-transparent text-gray-300 hover:text-white"}
-                    onClick={() => setActiveGuildCategory("owner")}
-                  >
-                    <Shield className="mr-2 h-4 w-4" />
-                    Owner ({mockGuilds.owner.length})
-                  </Button>
-                  <Button 
-                    variant={activeGuildCategory === "admin" ? "default" : "outline"}
-                    className={activeGuildCategory === "admin" 
-                      ? "bg-discord-blurple hover:bg-discord-blurple/90 text-white" 
-                      : "bg-transparent text-gray-300 hover:text-white"}
-                    onClick={() => setActiveGuildCategory("admin")}
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Admin ({mockGuilds.admin.length})
-                  </Button>
-                  <Button 
-                    variant={activeGuildCategory === "member" ? "default" : "outline"}
-                    className={activeGuildCategory === "member" 
-                      ? "bg-discord-blurple hover:bg-discord-blurple/90 text-white" 
-                      : "bg-transparent text-gray-300 hover:text-white"}
-                    onClick={() => setActiveGuildCategory("member")}
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Member ({mockGuilds.member.length})
-                  </Button>
-                </div>
+                <Tabs defaultValue={activeGuildCategory} onValueChange={setActiveGuildCategory} className="mb-6">
+                  <TabsList className="bg-discord-dark">
+                    <TabsTrigger value="all" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
+                      All Guilds ({allGuilds.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="owner" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
+                      <Shield className="mr-2 h-4 w-4" />
+                      Owner ({mockGuilds.owner.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="admin" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
+                      <Settings className="mr-2 h-4 w-4" />
+                      Admin ({mockGuilds.admin.length})
+                    </TabsTrigger>
+                    <TabsTrigger value="member" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
+                      <Users className="mr-2 h-4 w-4" />
+                      Member ({mockGuilds.member.length})
+                    </TabsTrigger>
+                  </TabsList>
                 
-                <div className="mb-6">
-                  <div className="relative">
-                    <input 
-                      type="text" 
-                      placeholder="Search guilds..." 
-                      className="bg-discord-dark w-full py-2 px-4 pl-10 rounded-md text-white border border-gray-700 focus:border-discord-blurple focus:outline-none"
-                    />
-                    <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {mockGuilds[activeGuildCategory as keyof typeof mockGuilds].map(guild => (
-                    <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
-                      <div className="flex items-center space-x-3">
-                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center text-2xl">
-                          {guild.icon}
+                  <TabsContent value="all" className="mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {allGuilds.map(guild => (
+                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center text-2xl">
+                              {guild.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                              <p className="text-gray-400 text-sm">{guild.memberCount} members</p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                              onClick={() => setSelectedGuildId(guild.id)}
+                            >
+                              Manage
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-white font-medium truncate">{guild.name}</h3>
-                          <p className="text-gray-400 text-sm">{guild.memberCount} members</p>
-                        </div>
-                        <Button size="sm" className="bg-discord-blurple hover:bg-discord-blurple/90 text-white">
-                          Manage
-                        </Button>
-                      </div>
+                      ))}
                     </div>
-                  ))}
+                  </TabsContent>
+                
+                  <TabsContent value="owner" className="mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {mockGuilds.owner.map(guild => (
+                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center text-2xl">
+                              {guild.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                              <p className="text-gray-400 text-sm">{guild.memberCount} members</p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                              onClick={() => setSelectedGuildId(guild.id)}
+                            >
+                              Manage
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                
+                  <TabsContent value="admin" className="mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {mockGuilds.admin.map(guild => (
+                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center text-2xl">
+                              {guild.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                              <p className="text-gray-400 text-sm">{guild.memberCount} members</p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                              onClick={() => setSelectedGuildId(guild.id)}
+                            >
+                              Manage
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                
+                  <TabsContent value="member" className="mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {mockGuilds.member.map(guild => (
+                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center text-2xl">
+                              {guild.icon}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                              <p className="text-gray-400 text-sm">{guild.memberCount} members</p>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                              onClick={() => setSelectedGuildId(guild.id)}
+                            >
+                              Manage
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            )}
+            
+            {activeTab === "guilds" && selectedGuildId && (
+              <div>
+                <div className="flex items-center mb-6">
+                  <Button 
+                    variant="ghost" 
+                    className="mr-4 hover:bg-discord-dark/50"
+                    onClick={handleBackToGuilds}
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </Button>
+                  
+                  <h1 className="text-2xl font-bold">
+                    {allGuilds.find(g => g.id === selectedGuildId)?.name}
+                  </h1>
                 </div>
                 
-                {/* Empty state if no guilds */}
-                {mockGuilds[activeGuildCategory as keyof typeof mockGuilds].length === 0 && (
-                  <div className="text-center p-12">
-                    <Server className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-                    <h3 className="text-xl font-medium mb-2">No guilds found</h3>
-                    <p className="text-gray-400 mb-6">You don't have any Discord guilds in this category.</p>
+                <div className="bg-discord-dark rounded-lg p-4 mb-6">
+                  <h2 className="text-xl font-semibold mb-4">Channels</h2>
+                  <div className="space-y-4">
+                    {mockChannels[selectedGuildId as keyof typeof mockChannels]?.map(channel => (
+                      <div key={channel.id} className="bg-discord-darker rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="text-lg font-medium flex items-center">
+                            <MessageSquare className="w-5 h-5 mr-2 text-discord-blurple" />
+                            #{channel.name}
+                          </h3>
+                          {activeChannelId !== channel.id && (
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="border-discord-blurple text-discord-blurple hover:bg-discord-blurple hover:text-white"
+                              onClick={() => setActiveChannelId(channel.id)}
+                            >
+                              <Plus className="w-4 h-4 mr-1" />
+                              Link Game
+                            </Button>
+                          )}
+                        </div>
+                        
+                        {activeChannelId === channel.id && (
+                          <div className="mb-4 bg-discord-dark/50 p-3 rounded-md">
+                            <div className="flex items-center mb-2">
+                              <input 
+                                type="text" 
+                                placeholder="Search speedrun.com games..." 
+                                className="bg-discord-darker flex-1 border border-gray-700 rounded-md py-1 px-3 text-white focus:border-discord-blurple focus:outline-none"
+                                value={gameSearchTerm}
+                                onChange={(e) => setGameSearchTerm(e.target.value)}
+                              />
+                              <Button 
+                                size="sm" 
+                                variant="ghost" 
+                                className="ml-2 text-gray-400 hover:text-white"
+                                onClick={() => setActiveChannelId(null)}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                            {gameSearchTerm && (
+                              <div className="max-h-40 overflow-y-auto bg-discord-darker rounded-md mt-2">
+                                {filteredGames.length > 0 ? (
+                                  filteredGames.map(game => (
+                                    <div 
+                                      key={game.id} 
+                                      className="p-2 hover:bg-discord-dark/70 cursor-pointer text-gray-300 hover:text-white"
+                                      onClick={() => handleLinkGame(channel.id, game.id)}
+                                    >
+                                      {game.name}
+                                    </div>
+                                  ))
+                                ) : (
+                                  <div className="p-2 text-gray-400">No games found</div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                        
+                        {channel.linkedGames.length === 0 ? (
+                          <p className="text-gray-400 text-sm italic">No games linked to this channel</p>
+                        ) : (
+                          <div className="space-y-2">
+                            {channel.linkedGames.map(game => (
+                              <div key={game.id} className="flex items-center justify-between p-2 bg-discord-dark/30 rounded-md">
+                                <div className="flex items-center">
+                                  <Gamepad className="w-4 h-4 text-discord-green mr-2" />
+                                  <span>{game.name}</span>
+                                </div>
+                                <div className="flex items-center space-x-3">
+                                  <div className="flex items-center text-xs text-gray-400">
+                                    <Clock className="w-3 h-3 mr-1" />
+                                    <span>Last: {formatDate(game.lastNotification)}</span>
+                                  </div>
+                                  <Button 
+                                    size="sm" 
+                                    variant="ghost" 
+                                    className="text-gray-400 hover:text-red-500 h-8 w-8 p-0" 
+                                    onClick={() => handleUnlinkGame(channel.id, game.id)}
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                )}
+                </div>
               </div>
             )}
             
