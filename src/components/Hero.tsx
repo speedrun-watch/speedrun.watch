@@ -39,7 +39,7 @@ const Hero = () => {
             </div>
           </div>
           
-          <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+          <h1 className="text-2xl md:text-4xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-discord-blurple to-discord-fuchsia bg-clip-text text-transparent">
               Speedrun Alerts
             </span>{" "}
@@ -120,8 +120,22 @@ const Hero = () => {
                     <div className="text-yellow-300">Eliminate Devastators</div>
                   </div>
                 </div>
-                <div className="mb-3">
-                  <img src="/lovable-uploads/fb6c132b-00d8-40db-abff-a0cdc829ab7e.png" alt="Speedrun screenshot" className="w-full rounded" />
+                <div className="mb-3 relative rounded overflow-hidden">
+                  {/* YouTube thumbnail with play button overlay */}
+                  <div className="relative">
+                    <div className="aspect-video bg-black">
+                      <img 
+                        src="https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" 
+                        alt="Speedrun video thumbnail" 
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center opacity-90">
+                        <div className="w-0 h-0 border-t-8 border-b-8 border-l-14 border-t-transparent border-b-transparent border-l-white ml-1"></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex items-center mt-2">
                   <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center mr-2 flex-shrink-0">

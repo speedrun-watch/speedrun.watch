@@ -8,40 +8,42 @@ import {
   Gamepad, 
   BellRing, 
   MessageSquare,
-  CheckCircle
+  CheckCircle,
+  User,
+  Users
 } from "lucide-react";
 
 const steps = [
   {
-    number: "01",
+    number: "1",
     title: "Add Bot to Server",
-    description: "Invite GameNotify Bot to your Discord server with just a few clicks, no coding required.",
+    description: "Invite speedrun.bot to your Discord server with just a few clicks, no coding required.",
     icon: <PlusCircle className="w-6 h-6 text-discord-blurple" />,
     buttonText: "Add to Discord",
     buttonIcon: <MessageSquare className="w-4 h-4" />
   },
   {
-    number: "02",
-    title: "Configure Settings",
-    description: "Set up which channels should receive notifications and configure basic preferences.",
-    icon: <Settings className="w-6 h-6 text-discord-green" />,
-    buttonText: "View Setup Guide",
+    number: "2",
+    title: "Sign in as Admin",
+    description: "Login with your Discord account to link speedrun.com games to specific channels in your server.",
+    icon: <User className="w-6 h-6 text-discord-green" />,
+    buttonText: "Login with Discord",
     buttonIcon: <ArrowRight className="w-4 h-4" />
   },
   {
-    number: "03",
-    title: "Select Games",
-    description: "Choose which games you want to track from our extensive library of supported games.",
-    icon: <Gamepad className="w-6 h-6 text-discord-yellow" />,
-    buttonText: "Browse Games",
-    buttonIcon: <ArrowRight className="w-4 h-4" />
-  },
-  {
-    number: "04",
-    title: "Customize Notifications",
-    description: "Fine-tune which events trigger notifications for each game and channel.",
-    icon: <BellRing className="w-6 h-6 text-discord-fuchsia" />,
+    number: "3",
+    title: "Configure Notifications",
+    description: "Set which events trigger notifications and how they appear in your Discord channels.",
+    icon: <BellRing className="w-6 h-6 text-discord-yellow" />,
     buttonText: "Notification Settings",
+    buttonIcon: <ArrowRight className="w-4 h-4" />
+  },
+  {
+    number: "4",
+    title: "Manage Permissions",
+    description: "Define other owners or moderator groups who can manage games and notification settings.",
+    icon: <Users className="w-6 h-6 text-discord-fuchsia" />,
+    buttonText: "Manage Roles",
     buttonIcon: <ArrowRight className="w-4 h-4" />
   }
 ];
@@ -53,7 +55,7 @@ const Setup = () => {
       <div className="absolute inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiM1ODY1RjIiIG9wYWNpdHk9IjAuMDMiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=')] opacity-40"></div>
 
       <div className="container mx-auto px-4 md:px-6">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="inline-block text-3xl md:text-4xl font-bold bg-gradient-to-r from-discord-blurple to-discord-fuchsia bg-clip-text text-transparent mb-4">
             Easy Setup in Minutes
           </h2>
@@ -62,39 +64,40 @@ const Setup = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          {steps.map((step, index) => (
-            <Card 
-              key={index} 
-              className="glass border-0 overflow-hidden bg-discord-dark/50 shadow-xl"
-            >
-              <div className="relative p-6">
-                <div className="absolute top-0 right-0 bg-discord-blurple/80 px-3 py-1 rounded-bl-lg text-white font-mono font-bold">
+        <div className="max-w-5xl mx-auto">
+          <ol className="relative border-l-2 border-discord-blurple/50 ml-4 md:ml-8 space-y-10">
+            {steps.map((step, index) => (
+              <li key={index} className="ml-8 md:ml-12">
+                <div className="absolute -left-4 flex items-center justify-center w-8 h-8 rounded-full bg-discord-blurple text-white font-bold">
                   {step.number}
                 </div>
                 
-                <div className="flex items-center mb-4">
-                  <div className="bg-discord-darker/80 w-12 h-12 rounded-lg flex items-center justify-center mr-4 border border-discord-blurple/20">
-                    {step.icon}
+                <Card className="glass border-0 overflow-hidden bg-discord-dark/50 shadow-xl">
+                  <div className="p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="bg-discord-darker/80 w-12 h-12 rounded-lg flex items-center justify-center mr-4 border border-discord-blurple/20">
+                        {step.icon}
+                      </div>
+                      <h3 className="text-xl font-semibold text-white">{step.title}</h3>
+                    </div>
+                    
+                    <p className="text-gray-200 mb-6">{step.description}</p>
+                    
+                    <Button
+                      variant={index === 0 ? "default" : "outline"} 
+                      className={index === 0 
+                        ? "w-full sm:w-auto bg-discord-blurple hover:bg-discord-blurple/90 text-white" 
+                        : "w-full sm:w-auto bg-transparent border-discord-blurple/30 text-discord-blurple hover:bg-discord-blurple/10"
+                      }
+                    >
+                      {step.buttonIcon && <span className="mr-2">{step.buttonIcon}</span>}
+                      {step.buttonText}
+                    </Button>
                   </div>
-                  <h3 className="text-xl font-semibold text-white">{step.title}</h3>
-                </div>
-                
-                <p className="text-gray-200 mb-6 min-h-[80px]">{step.description}</p>
-                
-                <Button
-                  variant={index === 0 ? "default" : "outline"} 
-                  className={index === 0 
-                    ? "w-full bg-discord-blurple hover:bg-discord-blurple/90 text-white" 
-                    : "w-full bg-transparent border-discord-blurple/30 text-discord-blurple hover:bg-discord-blurple/10"
-                  }
-                >
-                  {step.buttonIcon && <span className="mr-2">{step.buttonIcon}</span>}
-                  {step.buttonText}
-                </Button>
-              </div>
-            </Card>
-          ))}
+                </Card>
+              </li>
+            ))}
+          </ol>
         </div>
 
         <div className="mt-16 glass p-6 rounded-lg max-w-3xl mx-auto bg-discord-dark/50 shadow-lg">
