@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Guild {
   id: string;
@@ -197,10 +198,16 @@ const DashboardSidebar = () => {
                           <div className="flex items-center">
                             <span className="truncate">{guild.name}</span>
                             {guild.isOfficial && (
-                              <Globe 
-                                className="ml-1.5 h-3.5 w-3.5 text-primary/80" 
-                                title="Official Guild"
-                              />
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Globe className="ml-1.5 h-3.5 w-3.5 text-primary/80" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Official Guild
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
                           </div>
                           <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -242,10 +249,16 @@ const DashboardSidebar = () => {
                           <div className="flex items-center">
                             <span className="truncate">{guild.name}</span>
                             {guild.isOfficial && (
-                              <Globe 
-                                className="ml-1.5 h-3.5 w-3.5 text-primary/80" 
-                                title="Official Guild"
-                              />
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Globe className="ml-1.5 h-3.5 w-3.5 text-primary/80" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Official Guild
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
                           </div>
                           <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -287,10 +300,16 @@ const DashboardSidebar = () => {
                           <div className="flex items-center">
                             <span className="truncate">{guild.name}</span>
                             {guild.isOfficial && (
-                              <Globe 
-                                className="ml-1.5 h-3.5 w-3.5 text-primary/80" 
-                                title="Official Guild"
-                              />
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Globe className="ml-1.5 h-3.5 w-3.5 text-primary/80" />
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Official Guild
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             )}
                           </div>
                           <div className="text-xs text-muted-foreground flex items-center gap-1">

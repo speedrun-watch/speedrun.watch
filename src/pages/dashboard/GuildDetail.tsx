@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { AlertCircle, Plus, Search, Shield, Trash2, Globe, Users } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // Mock data for guilds and related information
 const mockGuilds = [
@@ -123,7 +124,16 @@ const GuildDetail = () => {
             <div className="flex items-center">
               <h1 className="text-3xl font-bold tracking-tight">{guild.name}</h1>
               {guild.isOfficial && (
-                <Globe className="ml-2 h-5 w-5 text-primary" title="Official Guild" />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Globe className="ml-2 h-5 w-5 text-primary" />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Official Guild
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
             </div>
             <div className="text-muted-foreground flex items-center gap-1">
@@ -383,31 +393,33 @@ const GuildDetail = () => {
                             <SelectItem value="role">Role</SelectItem>
                           </SelectContent>
                         </Select>
-                        <Select className="flex-1">
-                          <SelectTrigger>
-                            <SelectValue placeholder={`Select a ${moderatorType}`} />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {moderatorType === "user" ? (
-                              <>
-                                <SelectItem value="u3">Alex Johnson</SelectItem>
-                                <SelectItem value="u4">Michael Williams</SelectItem>
-                              </>
-                            ) : (
-                              guild.roles.map(role => (
-                                <SelectItem key={role.id} value={role.id}>
-                                  <div className="flex items-center gap-2">
-                                    <div 
-                                      className="h-3 w-3 rounded-full" 
-                                      style={{ backgroundColor: role.color }}
-                                    ></div>
-                                    <span>{role.name}</span>
-                                  </div>
-                                </SelectItem>
-                              ))
-                            )}
-                          </SelectContent>
-                        </Select>
+                        <div className="flex-1">
+                          <Select>
+                            <SelectTrigger>
+                              <SelectValue placeholder={`Select a ${moderatorType}`} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {moderatorType === "user" ? (
+                                <>
+                                  <SelectItem value="u3">Alex Johnson</SelectItem>
+                                  <SelectItem value="u4">Michael Williams</SelectItem>
+                                </>
+                              ) : (
+                                guild.roles.map(role => (
+                                  <SelectItem key={role.id} value={role.id}>
+                                    <div className="flex items-center gap-2">
+                                      <div 
+                                        className="h-3 w-3 rounded-full" 
+                                        style={{ backgroundColor: role.color }}
+                                      ></div>
+                                      <span>{role.name}</span>
+                                    </div>
+                                  </SelectItem>
+                                ))
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </div>
                         <Button>
                           <Plus className="h-4 w-4 mr-1" />
                           Add
