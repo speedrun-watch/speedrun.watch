@@ -14,7 +14,7 @@ const Login = () => {
         <div className="p-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold bg-gradient-to-r from-discord-blurple to-discord-fuchsia bg-clip-text text-transparent mb-2">
-              Login to GameNotify
+              Login to speedrun.bot
             </h2>
             <p className="text-gray-300">
               Manage your servers, games, and notification preferences

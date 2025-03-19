@@ -7,8 +7,12 @@ import {
   ChevronDown,
   Timer,
   Trophy,
-  Flag
+  Flag,
+  ThumbsUp,
+  MessageCircle,
+  Heart
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   const scrollToFeatures = () => {
@@ -68,7 +72,7 @@ const Hero = () => {
           </div>
         </div>
         
-        {/* Bot Preview - Updated to match uploaded image */}
+        {/* Bot Preview - Half-Life 2 WR Notification */}
         <div className="mt-12 max-w-3xl mx-auto glass rounded-lg overflow-hidden animate-scale-in border border-white/5 shadow-md">
           <div className="bg-discord-dark/80 p-2 flex items-center">
             <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
@@ -83,41 +87,39 @@ const Hero = () => {
                   <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zm6.93 6h-2.95c-.32-1.25-.78-2.45-1.38-3.56 1.84.63 3.37 1.91 4.33 3.56zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82c.43-1.43 1.08-2.76 1.91-3.96zM4.26 14C4.1 13.36 4 12.69 4 12s.1-1.36.26-2h3.38c-.08.66-.14 1.32-.14 2 0 .68.06 1.34.14 2H4.26zm.82 2h2.95c.32 1.25.78 2.45 1.38 3.56-1.84-.63-3.37-1.9-4.33-3.56zm2.95-8H5.08c.96-1.66 2.49-2.93 4.33-3.56C8.81 5.55 8.35 6.75 8.03 8zM12 19.96c-.83-1.2-1.48-2.53-1.91-3.96h3.82c-.43 1.43-1.08 2.76-1.91 3.96zM14.34 14H9.66c-.09-.66-.16-1.32-.16-2 0-.68.07-1.35.16-2h4.68c.09.65.16 1.32.16 2 0 .68-.07 1.34-.16 2zm.25 5.56c.6-1.11 1.06-2.31 1.38-3.56h2.95c-.96 1.65-2.49 2.93-4.33 3.56zM16.36 14c.08-.66.14-1.32.14-2 0-.68-.06-1.34-.14-2h3.38c.16.64.26 1.31.26 2s-.1 1.36-.26 2h-3.38z" />
                 </svg>
               </div>
-              <div className="w-full border-l-4 border-green-500/70 pl-3">
+              <div className="w-full border-l-4 border-yellow-500/70 pl-3">
                 <div className="flex items-center mb-1">
                   <span className="font-medium text-white mr-2">SRC</span>
-                  <span className="bg-blue-600/90 text-xs font-medium px-2 py-0.5 rounded text-white">APP</span>
-                  <span className="text-gray-400 text-xs ml-2">Today at 21:43</span>
+                  <span className="bg-blue-600/90 text-xs font-medium px-2 py-0.5 rounded text-white">WORLD RECORD</span>
+                  <span className="text-gray-400 text-xs ml-2">Today at 18:22</span>
                 </div>
                 <div className="mb-2">
                   <span className="flex items-center">
-                    <span className="mr-2">
-                      <svg viewBox="0 0 24 24" width="16" height="16" fill="#FFD700">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
-                        <path d="M15 8H9v2h6V8zm0 3H9v2h6v-2zm0 3H9v2h6v-2z" />
-                      </svg>
-                    </span>
-                    <span className="font-medium">canis_xo, BlueSpaceSquid and captwaloper</span> submitted a new run!
+                    <Trophy className="w-4 h-4 text-yellow-500 mr-2" />
+                    <span className="font-medium">SourceRuns</span> has achieved a new world record!
                   </span>
                 </div>
-                <div className="mb-2 font-bold text-blue-400">
-                  Eliminate Devastators - 100% - 2m 4s 0ms
-                </div>
+                <a href="https://www.speedrun.com/hl2/runs/ylpx8grm" target="_blank" rel="noopener noreferrer" className="mb-2 font-bold text-blue-400 hover:underline flex items-center">
+                  Half-Life 2 - Any% - 27m 57s
+                  <Trophy className="w-4 h-4 text-yellow-500 ml-2" />
+                </a>
                 <div className="font-medium text-white mb-2">
-                  HELLDIVERS 2
+                  <a href="https://www.speedrun.com/hl2" target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    Half-Life 2
+                  </a>
                 </div>
                 <div className="grid grid-cols-3 gap-2 mb-4 text-sm">
                   <div>
-                    <div className="text-gray-400">Type</div>
-                    <div>Individual Level</div>
+                    <div className="text-gray-400">Platform</div>
+                    <div>PC</div>
                   </div>
                   <div>
                     <div className="text-gray-400">Category</div>
-                    <div>100%</div>
+                    <div>Any%</div>
                   </div>
                   <div>
-                    <div className="text-gray-400">Level</div>
-                    <div className="text-yellow-300/90">Eliminate Devastators</div>
+                    <div className="text-gray-400">Date</div>
+                    <div className="text-yellow-300/90">August 23, 2023</div>
                   </div>
                 </div>
                 <div className="mb-3 relative rounded overflow-hidden">
@@ -125,8 +127,8 @@ const Hero = () => {
                   <div className="relative">
                     <div className="aspect-video bg-black">
                       <img 
-                        src="https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" 
-                        alt="Speedrun video thumbnail" 
+                        src="https://img.youtube.com/vi/iGOAQNTp4Gs/maxresdefault.jpg" 
+                        alt="Half-Life 2 speedrun world record thumbnail" 
                         className="w-full h-full object-cover opacity-90"
                       />
                     </div>
@@ -137,13 +139,51 @@ const Hero = () => {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center mt-2">
-                  <div className="w-6 h-6 rounded-full bg-yellow-500/80 flex items-center justify-center mr-2 flex-shrink-0">
-                    <span className="text-xs text-white">S</span>
+                
+                {/* Reactions */}
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
+                    <Heart className="w-3.5 h-3.5 text-red-400 mr-1.5" />
+                    <span className="text-xs">42</span>
                   </div>
-                  <div className="text-sm">
-                    <span className="text-discord-green/90">speedrun.bot</span>
-                    <span className="text-gray-400 text-xs ml-2">Today at 21:25</span>
+                  <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
+                    <ThumbsUp className="w-3.5 h-3.5 text-blue-400 mr-1.5" />
+                    <span className="text-xs">21</span>
+                  </div>
+                  <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
+                    <Trophy className="w-3.5 h-3.5 text-yellow-400 mr-1.5" />
+                    <span className="text-xs">15</span>
+                  </div>
+                </div>
+                
+                {/* Comments */}
+                <div className="bg-discord-dark/30 rounded-md p-2 mb-2">
+                  <div className="flex">
+                    <div className="w-6 h-6 rounded-full bg-blue-500/80 flex items-center justify-center mr-2 flex-shrink-0">
+                      <span className="text-xs text-white">G</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center">
+                        <span className="text-blue-400 text-sm font-medium">gocnak</span>
+                        <span className="text-gray-400 text-xs ml-2">Just now</span>
+                      </div>
+                      <p className="text-sm text-gray-300">Incredible improvement on the last segment! That's an amazing achievement!</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-discord-dark/30 rounded-md p-2">
+                  <div className="flex">
+                    <div className="w-6 h-6 rounded-full bg-purple-500/80 flex items-center justify-center mr-2 flex-shrink-0">
+                      <span className="text-xs text-white">W</span>
+                    </div>
+                    <div>
+                      <div className="flex items-center">
+                        <span className="text-purple-400 text-sm font-medium">waezone</span>
+                        <span className="text-gray-400 text-xs ml-2">Just now</span>
+                      </div>
+                      <p className="text-sm text-gray-300">That skip at 15:42 was clean!</p>
+                    </div>
                   </div>
                 </div>
               </div>
