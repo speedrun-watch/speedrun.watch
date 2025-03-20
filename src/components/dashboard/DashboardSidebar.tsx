@@ -10,7 +10,7 @@ import {
   Bot,
   ChevronDown,
   Globe,
-  GameController
+  Gamepad
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -220,7 +220,7 @@ const DashboardSidebar = () => {
                             {guild.games.length > 0 && (
                               <>
                                 <span className="mx-1">•</span>
-                                <GameController className="h-3 w-3" />
+                                <Gamepad className="h-3 w-3" />
                                 <span>{guild.games.length}</span>
                               </>
                             )}
@@ -279,7 +279,7 @@ const DashboardSidebar = () => {
                             {guild.games.length > 0 && (
                               <>
                                 <span className="mx-1">•</span>
-                                <GameController className="h-3 w-3" />
+                                <Gamepad className="h-3 w-3" />
                                 <span>{guild.games.length}</span>
                               </>
                             )}
@@ -338,7 +338,7 @@ const DashboardSidebar = () => {
                             {guild.games.length > 0 && (
                               <>
                                 <span className="mx-1">•</span>
-                                <GameController className="h-3 w-3" />
+                                <Gamepad className="h-3 w-3" />
                                 <span>{guild.games.length}</span>
                               </>
                             )}

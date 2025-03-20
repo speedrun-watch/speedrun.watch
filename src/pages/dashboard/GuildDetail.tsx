@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -17,7 +16,7 @@ import {
   Trash2, 
   Globe, 
   Users, 
-  GameController,
+  Gamepad,
   AlertTriangle 
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -47,6 +46,20 @@ const gamesList = [
   { id: "17", name: "Hades", icon: "https://i.imgur.com/J1AxD5S.png" },
 ];
 
+// Define the channel type properly to include games and settings
+interface Channel {
+  id: string;
+  name: string;
+  type: string;
+  games?: string[];
+  settings?: {
+    worldRecords: boolean;
+    top3: boolean;
+    verified: boolean;
+    submitted: boolean;
+  };
+}
+
 // Mock data for guilds and related information
 const mockGuilds = [
   { 
@@ -62,7 +75,7 @@ const mockGuilds = [
       { id: "ch2", name: "announcements", type: "text", games: ["Half-Life 2: Episode One"], settings: { worldRecords: true, top3: false, verified: true, submitted: false } },
       { id: "ch3", name: "speedruns", type: "text", games: ["Half-Life 2: Episode Two"], settings: { worldRecords: true, top3: true, verified: true, submitted: true } },
       { id: "ch4", name: "voice-chat", type: "voice" }
-    ],
+    ] as Channel[],
     globalSettings: {
       worldRecords: true,
       top3: true,
@@ -135,7 +148,7 @@ const GuildDetail = () => {
   const [openCommandMenu, setOpenCommandMenu] = useState(false);
   const [selectedChannelId, setSelectedChannelId] = useState<string | null>(null);
   
-  const textChannels = guild?.channels.filter(ch => ch.type === "text") || [];
+  const textChannels = guild?.channels.filter(ch => ch.type === "text") as Channel[] || [];
 
   if (!guild) {
     return (
@@ -368,7 +381,6 @@ const GuildDetail = () => {
                                         key={game.id}
                                         className="hover:bg-discord-blurple/20 aria-selected:bg-discord-blurple/30"
                                         onSelect={() => {
-                                          // Add game logic would go here
                                           setOpenCommandMenu(false);
                                         }}
                                       >
@@ -376,7 +388,7 @@ const GuildDetail = () => {
                                           <Avatar className="h-6 w-6">
                                             <AvatarImage src={game.icon} alt={game.name} />
                                             <AvatarFallback>
-                                              <GameController className="h-4 w-4" />
+                                              <Gamepad className="h-4 w-4" />
                                             </AvatarFallback>
                                           </Avatar>
                                           <span className="text-gray-200">{game.name}</span>
@@ -402,7 +414,7 @@ const GuildDetail = () => {
                                     <Avatar className="h-8 w-8">
                                       <AvatarImage src={game?.icon} alt={gameName} />
                                       <AvatarFallback>
-                                        <GameController className="h-5 w-5" />
+                                        <Gamepad className="h-5 w-5" />
                                       </AvatarFallback>
                                     </Avatar>
                                     <span className="font-medium text-gray-200">{gameName}</span>
@@ -621,3 +633,4 @@ const GuildDetail = () => {
 };
 
 export default GuildDetail;
+
