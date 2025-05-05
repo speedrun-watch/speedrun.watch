@@ -123,12 +123,12 @@ const Hero = () => {
                   </div>
                 </div>
                 <div className="mb-3 relative rounded overflow-hidden">
-                  {/* YouTube thumbnail with play button overlay */}
+                  {/* Real speedrun thumbnail instead of YouTube placeholder */}
                   <div className="relative">
                     <div className="aspect-video bg-black">
                       <img 
-                        src="https://img.youtube.com/vi/iGOAQNTp4Gs/maxresdefault.jpg" 
-                        alt="Half-Life 2 speedrun world record thumbnail" 
+                        src="https://www.speedrun.com/themes/default/cover-256.png" 
+                        alt="Speedrun.com gaming thumbnail" 
                         className="w-full h-full object-cover opacity-90"
                       />
                     </div>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -262,8 +261,8 @@ const Dashboard = () => {
           
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src="/placeholder.svg" alt="User avatar" />
+              <Avatar className="w-8 h-8 border-2 border-discord-blurple">
+                <AvatarImage src="https://github.com/shadcn.png" alt="User avatar" />
                 <AvatarFallback className="bg-discord-blurple">
                   <User className="w-4 h-4 text-white" />
                 </AvatarFallback>
@@ -332,52 +331,6 @@ const Dashboard = () => {
                 Settings
               </Button>
             </nav>
-
-            {/* Resources Section */}
-            <div className="mt-8 pt-6 border-t border-gray-800">
-              <h3 className="text-sm font-medium text-gray-400 mb-3">Resources</h3>
-              <div className="space-y-2">
-                <a href="https://speedrun.com" target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <ExternalLink className="mr-2 h-4 w-4 text-gray-400" />
-                  speedrun.com
-                </a>
-                <a href="#" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <MessageSquare className="mr-2 h-4 w-4 text-gray-400" />
-                  Support Server
-                </a>
-                <a href="https://github.com/speedrunbot/docs" target="_blank" rel="noopener noreferrer" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <Github className="mr-2 h-4 w-4 text-gray-400" />
-                  Documentation
-                </a>
-                <a href="#" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <BookOpen className="mr-2 h-4 w-4 text-gray-400" />
-                  Guides
-                </a>
-              </div>
-            </div>
-
-            {/* Ideas & Suggestions */}
-            <div className="mt-6 pt-6 border-t border-gray-800">
-              <h3 className="text-sm font-medium text-gray-400 mb-3">Ideas & Suggestions</h3>
-              <div className="space-y-2">
-                <a href="#" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <Lightbulb className="mr-2 h-4 w-4 text-yellow-400" />
-                  Feature Requests
-                </a>
-                <a href="#" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <BarChart className="mr-2 h-4 w-4 text-blue-400" />
-                  Upcoming Features
-                </a>
-                <a href="#" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <GitPullRequest className="mr-2 h-4 w-4 text-purple-400" />
-                  Contribute
-                </a>
-                <a href="#" className="flex items-center text-sm text-gray-300 hover:text-white">
-                  <Heart className="mr-2 h-4 w-4 text-red-400" />
-                  Support Development
-                </a>
-              </div>
-            </div>
           </div>
           
           {/* Main Content Area */}
@@ -635,7 +588,7 @@ const Dashboard = () => {
                           )}
                         </div>
                         <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-400 hover:text-red-500">
-                          <X className="h-4 w-4" />
+                          <X className="w-4 h-4" />
                         </Button>
                       </div>
                     ))}
