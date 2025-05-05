@@ -27,14 +27,7 @@ import {
   FileCheck,
   ExternalLink,
   UserCheck,
-  Copy,
-  BookOpen,
-  Heart,
-  Lightbulb,
-  BarChart,
-  GitPullRequest,
-  Github,
-  FileText
+  Copy
 } from "lucide-react";
 import Footer from "@/components/Footer";
 
@@ -42,15 +35,15 @@ import Footer from "@/components/Footer";
 const mockGuilds = {
   owner: [
     { id: "1", name: "Half-Life Speedrunners", icon: "🔧", memberCount: 350, isOfficial: true },
-    { id: "2", name: "Super Mario 64 Masters", icon: "🍄", memberCount: 1240 }
+    { id: "2", name: "Super Mario 64 Masters", icon: "🍄", memberCount: 1240, isOfficial: false }
   ],
   admin: [
     { id: "3", name: "GTA Speedrun Community", icon: "🚗", memberCount: 870, isOfficial: true },
-    { id: "4", name: "Worms Armageddon Runners", icon: "🐛", memberCount: 230 }
+    { id: "4", name: "Worms Armageddon Runners", icon: "🐛", memberCount: 230, isOfficial: false }
   ],
   member: [
-    { id: "5", name: "Minecraft Any% Guild", icon: "⛏️", memberCount: 1850 },
-    { id: "6", name: "Portal Speedrun Hub", icon: "🔵", memberCount: 420 }
+    { id: "5", name: "Minecraft Any% Guild", icon: "⛏️", memberCount: 1850, isOfficial: false },
+    { id: "6", name: "Portal Speedrun Hub", icon: "🔵", memberCount: 420, isOfficial: false }
   ]
 };
 
@@ -175,6 +168,7 @@ const Dashboard = () => {
   const [editingGameSettings, setEditingGameSettings] = useState<{channelId: string, gameId: string} | null>(null);
   const [showAddModerator, setShowAddModerator] = useState(false);
   const [notificationCopied, setNotificationCopied] = useState(false);
+  const [guildsSubmenuOpen, setGuildsSubmenuOpen] = useState(false);
 
   // Combine all guilds for the "all" category
   const allGuilds = [
@@ -283,41 +277,72 @@ const Dashboard = () => {
           <div className="w-full md:w-64 glass rounded-lg p-4">
             <nav className="space-y-2">
               <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  activeTab === "home" 
-                    ? "bg-discord-blurple text-white" 
-                    : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                }`}
-                onClick={() => setActiveTab("home")}
+                variant="outline"
+                className="w-full justify-start bg-discord-blurple text-white border-discord-blurple hover:bg-discord-blurple/90 hover:text-white"
               >
-                <Home className="mr-2 h-5 w-5" />
-                Dashboard
+                <Plus className="mr-2 h-5 w-5" />
+                Add Bot to Discord
               </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  activeTab === "guilds" 
-                    ? "bg-discord-blurple text-white" 
-                    : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                }`}
-                onClick={() => setActiveTab("guilds")}
-              >
-                <Server className="mr-2 h-5 w-5" />
-                Discord Guilds
-              </Button>
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  activeTab === "games" 
-                    ? "bg-discord-blurple text-white" 
-                    : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                }`}
-                onClick={() => setActiveTab("games")}
-              >
-                <Gamepad className="mr-2 h-5 w-5" />
-                Games
-              </Button>
+              
+              <div className="relative">
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start ${
+                    activeTab === "guilds" 
+                      ? "bg-discord-blurple text-white" 
+                      : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
+                  }`}
+                  onClick={() => {
+                    setActiveTab("guilds");
+                    setGuildsSubmenuOpen(!guildsSubmenuOpen);
+                  }}
+                >
+                  <Server className="mr-2 h-5 w-5" />
+                  Discord Guilds
+                </Button>
+                
+                {guildsSubmenuOpen && (
+                  <div className="ml-4 mt-1 space-y-1 border-l-2 border-discord-blurple/30 pl-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-gray-400 hover:text-white hover:bg-discord-dark/50"
+                      onClick={() => {
+                        setActiveTab("guilds");
+                        setActiveGuildCategory("owner");
+                      }}
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      Owner ({mockGuilds.owner.length})
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-gray-400 hover:text-white hover:bg-discord-dark/50"
+                      onClick={() => {
+                        setActiveTab("guilds");
+                        setActiveGuildCategory("admin");
+                      }}
+                    >
+                      <Settings className="mr-2 h-4 w-4" />
+                      Admin ({mockGuilds.admin.length})
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-gray-400 hover:text-white hover:bg-discord-dark/50"
+                      onClick={() => {
+                        setActiveTab("guilds");
+                        setActiveGuildCategory("member");
+                      }}
+                    >
+                      <Users className="mr-2 h-4 w-4" />
+                      Member ({mockGuilds.member.length})
+                    </Button>
+                  </div>
+                )}
+              </div>
+              
               <Button
                 variant="ghost"
                 className={`w-full justify-start ${

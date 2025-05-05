@@ -1,23 +1,16 @@
 
 import { 
   Bell, 
-  Gamepad, 
-  Trophy,
-  Medal,
-  Flag,
-  Zap,
-  FileCheck,
-  Search,
   AtSign,
-  Tag,
-  MessageSquare,
+  Link,
+  Zap
 } from "lucide-react";
 
 const features = [
   {
-    icon: <Search className="w-10 h-10 text-discord-blurple/80" />,
-    title: "Game Selection",
-    description: "Search and follow any of the thousands of games available on speedrun.com directly from your Discord server."
+    icon: <Link className="w-10 h-10 text-discord-blurple/80" />,
+    title: "Link Games to Channels",
+    description: "Connect any game from speedrun.com to your Discord channels to keep your community updated on the latest achievements."
   },
   {
     icon: <Bell className="w-10 h-10 text-discord-green/80" />,
@@ -25,24 +18,14 @@ const features = [
     description: "Configure which events you care about - from new and approved runs to world records and personal bests."
   },
   {
-    icon: <Trophy className="w-10 h-10 text-yellow-400/90" />,
-    title: "World Records",
-    description: "Get notified when a new world record is set for your favorite games and categories."
-  },
-  {
-    icon: <Medal className="w-10 h-10 text-blue-400/90" />,
-    title: "Top Performers",
-    description: "Track top 2nd, 3rd, and 4th place rankings to see who's climbing the leaderboards."
-  },
-  {
-    icon: <FileCheck className="w-10 h-10 text-green-500/80" />,
-    title: "Run Approvals",
-    description: "Stay updated when speedruns are submitted and when they get approved by moderators."
-  },
-  {
     icon: <AtSign className="w-10 h-10 text-discord-fuchsia/70" />,
     title: "Runner Identity",
     description: "Link your speedrun.com profile to your Discord account to get tagged when your runs are mentioned."
+  },
+  {
+    icon: <Zap className="w-10 h-10 text-yellow-400/90" />,
+    title: "Instant Notifications",
+    description: "Stay up to date with real-time alerts as soon as new records are set or runs are submitted and approved."
   }
 ];
 
@@ -64,7 +47,7 @@ const Features = () => {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {features.map((feature, index) => (
             <div 
               key={index} 
