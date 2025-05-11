@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import AuthStatus from "../Components/AuthStatus";
+import DashboardMenu from "@/components/DashboardMenu";
 import axios from "axios";
 
 const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
@@ -155,7 +156,7 @@ const popularGames = [
 
 // This is a placeholder Dashboard, you'll expand this with actual functionality later
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("home");
+  const [activeTab, setActiveTab] = useState("guilds");
   const [activeGuildCategory, setActiveGuildCategory] = useState("all");
   const [selectedGuildId, setSelectedGuildId] = useState<string | null>(null);
   const [gameSearchTerm, setGameSearchTerm] = useState("");
@@ -169,6 +170,9 @@ const Dashboard = () => {
     member: []
   });
   const [channels, setChannels] = useState<DiscordChannel[]>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string, name: string }[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const fetchGuilds = async () => {
@@ -261,17 +265,102 @@ const Dashboard = () => {
   };
 
   // Link a game to a channel
-  const handleLinkGame = (channelId: string, gameId: string) => {
-    console.log(`Linking game ${gameId} to channel ${channelId}`);
-    // In a real app, you would update the database here
-    setGameSearchTerm("");
-    setActiveChannelId(null);
+  const handleLinkGame = async (channelId: string, gameId: string) => {
+    try {
+      const selectedGame = searchResults.find(g => g.id === gameId);
+      if (!selectedGame) return;
+
+      await axios.post(
+        `${API_ENDPOINT}/api/guilds/${selectedGuildId}/channels/${channelId}/games/${selectedGame.name}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
+
+      // Update the channels state with the new game
+      setChannels(prevChannels =>
+        prevChannels.map(channel => {
+          if (channel.id === channelId) {
+            const newGame: Game = {
+              id: gameId,
+              gameName: selectedGame.name,
+              srcGameId: gameId,
+              abbreviation: "",
+              weblink: "",
+              discord: "",
+              released: 0,
+              releaseDate: new Date().toISOString(),
+              ruleset: {
+                showMilliseconds: false,
+                requireVerification: false,
+                requireVideo: false,
+                runTimes: [],
+                emulatorsAllowed: false,
+                defaultTime: ""
+              },
+              assets: {
+                coverSmall: { uri: "" },
+                coverMedium: { uri: "" },
+                coverLarge: { uri: "" },
+                coverTiny: { uri: "" },
+                icon: { uri: "" },
+                logo: { uri: null },
+                background: { uri: null },
+                foreground: { uri: null },
+                trophy1st: { uri: null },
+                trophy2nd: { uri: null },
+                trophy3rd: { uri: null },
+                trophy4th: { uri: null }
+              }
+            };
+            return {
+              ...channel,
+              games: [...(channel.games || []), newGame]
+            };
+          }
+          return channel;
+        })
+      );
+
+      // Clear the search and close the search box
+      setGameSearchTerm("");
+      setActiveChannelId(null);
+      setSearchResults([]);
+    } catch (error) {
+      console.error("Error linking game:", error);
+    }
   };
 
   // Unlink a game from a channel
-  const handleUnlinkGame = (channelId: string, gameId: string) => {
-    console.log(`Unlinking game ${gameId} from channel ${channelId}`);
-    // In a real app, you would update the database here
+  const handleUnlinkGame = async (channelId: string, gameName: string) => {
+    try {
+      await axios.delete(
+        `${API_ENDPOINT}/api/guilds/${selectedGuildId}/channels/${channelId}/games/${gameName}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        }
+      );
+
+      // Update the channels state to remove the unlinked game
+      setChannels(prevChannels =>
+        prevChannels.map(channel => {
+          if (channel.id === channelId) {
+            return {
+              ...channel,
+              games: channel.games?.filter(game => game.gameName !== gameName) || []
+            };
+          }
+          return channel;
+        })
+      );
+    } catch (error) {
+      console.error("Error unlinking game:", error);
+    }
   };
 
   // Update game notification settings
@@ -292,6 +381,46 @@ const Dashboard = () => {
         console.error('Failed to copy text: ', err);
       });
   };
+
+  // Handle game search with debounce
+  useEffect(() => {
+    if (!gameSearchTerm) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const response = await axios.get(`${API_ENDPOINT}/api/search/games/${gameSearchTerm}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+        });
+
+        setSearchResults(response.data.games.data.map((game: any) => ({
+          id: game.id,
+          name: game.names.international
+        })));
+      } catch (error) {
+        console.error("Error searching games:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 500);
+
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [gameSearchTerm]);
 
   return (
     <div className="min-h-screen bg-discord-darker text-white">
@@ -317,127 +446,16 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 md:px-6 py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Sidebar */}
-          <div className="w-full md:w-64 glass rounded-lg p-4">
-            <nav className="space-y-2">
-              <Button
-                variant="ghost"
-                className={`w-full justify-start text-gray-400 hover:text-white hover:bg-discord-dark/50 ${
-                  activeTab === "add-bot" ? "bg-discord-blurple text-white" : ""
-                }`}
-                onClick={() => setActiveTab("add-bot")}
-              >
-                <Plus className="mr-2 h-5 w-5" />
-                Add Bot to Discord
-              </Button>
-              
-              <div>
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start ${
-                    activeTab === "guilds" 
-                      ? "bg-discord-blurple text-white" 
-                      : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                  }`}
-                  onClick={() => {
-                    setActiveTab("guilds");
-                  }}
-                >
-                  <Server className="mr-2 h-5 w-5" />
-                  Discord Guilds
-                </Button>
-                
-                <div className="ml-4 mt-1 space-y-1 border-l-2 border-discord-blurple/30 pl-3">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`w-full justify-start ${
-                      activeTab === "guilds" && activeGuildCategory === "owner"
-                        ? "bg-discord-blurple/20 text-white"
-                        : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                    }`}
-                    onClick={() => {
-                      setActiveTab("guilds");
-                      setActiveGuildCategory("owner");
-                    }}
-                  >
-                    <Shield className="mr-2 h-4 w-4" />
-                    Owner ({guilds.owner.length})
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`w-full justify-start ${
-                      activeTab === "guilds" && activeGuildCategory === "admin"
-                        ? "bg-discord-blurple/20 text-white"
-                        : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                    }`}
-                    onClick={() => {
-                      setActiveTab("guilds");
-                      setActiveGuildCategory("admin");
-                    }}
-                  >
-                    <Settings className="mr-2 h-4 w-4" />
-                    Admin ({guilds.admin.length})
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className={`w-full justify-start ${
-                      activeTab === "guilds" && activeGuildCategory === "member"
-                        ? "bg-discord-blurple/20 text-white"
-                        : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                    }`}
-                    onClick={() => {
-                      setActiveTab("guilds");
-                      setActiveGuildCategory("member");
-                    }}
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    Member ({guilds.member.length})
-                  </Button>
-                </div>
-              </div>
-              
-              <Button
-                variant="ghost"
-                className={`w-full justify-start ${
-                  activeTab === "settings" 
-                    ? "bg-discord-blurple text-white" 
-                    : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                }`}
-                onClick={() => setActiveTab("settings")}
-              >
-                <Settings className="mr-2 h-5 w-5" />
-                Settings
-              </Button>
-            </nav>
-          </div>
+          <DashboardMenu
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+            activeGuildCategory={activeGuildCategory}
+            setActiveGuildCategory={setActiveGuildCategory}
+            guilds={guilds}
+          />
           
           {/* Main Content Area */}
           <div className="flex-1 glass rounded-lg p-6">
-            {activeTab === "home" && (
-              <div>
-                <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
-                <div className="glass border-0 p-12 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <Gamepad className="w-16 h-16 text-discord-blurple mx-auto mb-4 opacity-40" />
-                    <h3 className="text-xl font-semibold mb-2">Welcome to speedrun.bot</h3>
-                    <p className="text-gray-400 mb-6 max-w-md mx-auto">
-                      Manage your Discord guilds and configure speedrun notifications here.
-                    </p>
-                    <Button 
-                      className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
-                      onClick={() => setActiveTab("guilds")}
-                    >
-                      <Server className="mr-2 h-4 w-4" />
-                      Manage Guilds
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {/* Add Bot to Discord Tab */}
             {activeTab === "add-bot" && (
               <div>
                 <h1 className="text-2xl font-bold mb-6">Add speedrun.bot to Discord</h1>
@@ -535,7 +553,10 @@ const Dashboard = () => {
               <div>
                 <h1 className="text-2xl font-bold mb-6">Discord Guilds</h1>
                 
-                <Tabs defaultValue={activeGuildCategory} onValueChange={setActiveGuildCategory} className="mb-6">
+                <Tabs value={activeGuildCategory} onValueChange={(value) => {
+                  setActiveGuildCategory(value);
+                  setActiveTab("guilds");
+                }} className="mb-6">
                   <TabsList className="bg-discord-dark">
                     <TabsTrigger value="all" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
                       All Guilds ({allGuilds.length})
@@ -845,12 +866,16 @@ const Dashboard = () => {
                               </div>
                               {gameSearchTerm && (
                                 <div className="max-h-40 overflow-y-auto bg-discord-darker rounded-md mt-2">
-                                  {filteredGames.length > 0 ? (
-                                    filteredGames.map(game => (
+                                  {isSearching ? (
+                                    <div className="p-2 text-gray-400">Searching...</div>
+                                  ) : searchResults.length > 0 ? (
+                                    searchResults.map(game => (
                                       <div
                                         key={game.id}
                                         className="p-2 hover:bg-discord-dark/70 cursor-pointer text-gray-300 hover:text-white"
-                                        onClick={() => handleLinkGame(channel.id, game.id)}
+                                        onClick={() => {
+                                          handleLinkGame(channel.id, game.id);
+                                        }}
                                       >
                                         {game.name}
                                       </div>
@@ -904,7 +929,7 @@ const Dashboard = () => {
                                           size="sm"
                                           variant="ghost"
                                           className="text-gray-400 hover:text-red-500 h-8 p-0 w-8"
-                                          onClick={() => handleUnlinkGame(channel.id, game.id)}
+                                          onClick={() => handleUnlinkGame(channel.id, game.gameName)}
                                         >
                                           <X className="w-4 h-4" />
                                         </Button>

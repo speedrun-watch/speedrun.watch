@@ -96,11 +96,11 @@ const Hero = () => {
                 <div className="mb-2">
                   <span className="flex items-center">
                     <Trophy className="w-4 h-4 text-yellow-500 mr-2" />
-                    <span className="font-medium">SourceRuns</span> has achieved a new world record!
+                    <span className="font-medium">Buster12</span> has achieved a new world record!
                   </span>
                 </div>
                 <a href="https://www.speedrun.com/hl2/runs/ylpx8grm" target="_blank" rel="noopener noreferrer" className="mb-2 font-bold text-blue-400 hover:underline flex items-center">
-                  Half-Life 2 - Any% - 27m 57s
+                  Any% No Voidclip - 37m 20s 055ms
                   <Trophy className="w-4 h-4 text-yellow-500 ml-2" />
                 </a>
                 <div className="font-medium text-white mb-2">
@@ -127,15 +127,10 @@ const Hero = () => {
                   <div className="relative">
                     <div className="aspect-video bg-black">
                       <img 
-                        src="https://www.speedrun.com/themes/default/cover-256.png" 
+                        src="https://img.youtube.com/vi/CBgo4WVG_3I/0.jpg" 
                         alt="Speedrun.com gaming thumbnail" 
                         className="w-full h-full object-cover opacity-90"
                       />
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="w-14 h-14 bg-red-600/90 rounded-full flex items-center justify-center">
-                        <div className="w-0 h-0 border-t-8 border-b-8 border-l-14 border-t-transparent border-b-transparent border-l-white ml-1"></div>
-                      </div>
                     </div>
                   </div>
                 </div>

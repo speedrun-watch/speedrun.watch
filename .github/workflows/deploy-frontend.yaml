@@ -1,0 +1,56 @@
+name: Deploy frontend function to S3
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: |
+          npm install
+
+      - name: Create .env.production file
+        run: |
+          cat >> .env.production << 'END'
+          VITE_API_ENDPOINT=${{ secrets.API_ENDPOINT }}
+          VITE_FRONTEND_URL=${{ secrets.FRONTEND_URL }}
+          VITE_CALLBACK_PATH=${{ secrets.CALLBACK_PATH }}
+          VITE_DISCORD_CLIENT_ID="${{ secrets.DISCORD_CLIENT_ID }}"
+          VITE_DISCORD_SCOPES="${{ secrets.DISCORD_SCOPES }}"
+          END
+
+      - name: Build the React app
+        run: |
+          npm run build
+
+      - name: Upload to S3
+        uses: jakejarvis/s3-sync-action@v0.5.1
+        with:
+          args: --delete
+        env:
+          AWS_S3_BUCKET: ${{ secrets.S3_BUCKET }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          SOURCE_DIR: build
+
+      - name: Invalidate CloudFront cache
+        uses: chetan/invalidate-cloudfront-action@v2
+        env:
+          DISTRIBUTION: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          PATHS: "/*"
