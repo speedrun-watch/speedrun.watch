@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  MessageSquare, 
-  Menu, 
-  X, 
-  Bell, 
+import {
+  MessageSquare,
+  Menu,
+  X,
+  Bell,
   Settings
 } from "lucide-react";
 import AuthStatus from "./AuthStatus";
@@ -24,44 +24,43 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? "bg-discord-dark/80 backdrop-blur-sm py-2 shadow-md" 
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
+          ? "bg-discord-dark/80 backdrop-blur-sm py-2 shadow-md"
           : "bg-transparent py-4"
-      }`}
+        }`}
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <Bell className="w-6 h-6 text-discord-blurple/90 animate-pulse-light" />
             <span className="text-xl font-bold bg-gradient-to-r from-discord-blurple/90 to-discord-fuchsia/80 bg-clip-text text-transparent">
-              speedrun.bot
+              speedrun.watch
             </span>
           </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex md:items-center md:space-x-6">
-            <a 
-              href="#features" 
+            <a
+              href="#features"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Features
             </a>
-            <a 
-              href="#setup" 
+            <a
+              href="#setup"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Setup
             </a>
             <Link
-              to="/dashboard" 
+              to="/dashboard"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Dashboard
             </Link>
             <AuthStatus />
-            <Button 
+            <Button
               className="bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white"
             >
               <MessageSquare className="mr-2 h-4 w-4" />
@@ -70,7 +69,7 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button 
+          <button
             className="md:hidden text-gray-300 hover:text-white"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
@@ -86,15 +85,15 @@ const Navbar = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 p-4 bg-discord-darker/80 backdrop-blur-sm rounded-lg animate-fade-in">
             <div className="flex flex-col space-y-4">
-              <a 
-                href="#features" 
+              <a
+                href="#features"
                 className="text-gray-300 hover:text-white transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Features
               </a>
-              <a 
-                href="#setup" 
+              <a
+                href="#setup"
                 className="text-gray-300 hover:text-white transition-colors py-2"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -108,7 +107,7 @@ const Navbar = () => {
                 Dashboard
               </Link>
               <AuthStatus />
-              <Button 
+              <Button
                 className="w-full bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

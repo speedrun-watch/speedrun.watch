@@ -1,12 +1,12 @@
 
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  ArrowRight, 
-  PlusCircle, 
-  Settings, 
-  Gamepad, 
-  BellRing, 
+import {
+  ArrowRight,
+  PlusCircle,
+  Settings,
+  Gamepad,
+  BellRing,
   MessageSquare,
   CheckCircle,
   User,
@@ -17,7 +17,7 @@ const steps = [
   {
     number: "1",
     title: "Add Bot to Server",
-    description: "Invite speedrun.bot to your Discord server with just a few clicks.",
+    description: "Invite speedrun.watch to your Discord server with just a few clicks.",
     icon: <PlusCircle className="w-6 h-6 text-discord-blurple/80" />,
     buttonText: "Add to Discord",
     buttonIcon: <MessageSquare className="w-4 h-4" />
@@ -71,7 +71,7 @@ const Setup = () => {
                 <div className="absolute -left-4 flex items-center justify-center w-8 h-8 rounded-full bg-discord-blurple/80 text-white font-medium">
                   {step.number}
                 </div>
-                
+
                 <Card className="border-0 overflow-hidden bg-discord-dark/30 backdrop-blur-sm shadow-md">
                   <div className="p-6">
                     <div className="flex items-center mb-4">
@@ -80,13 +80,13 @@ const Setup = () => {
                       </div>
                       <h3 className="text-xl font-medium text-white">{step.title}</h3>
                     </div>
-                    
+
                     <p className="text-gray-300 mb-6">{step.description}</p>
-                    
+
                     <Button
-                      variant={index === 0 ? "default" : "outline"} 
-                      className={index === 0 
-                        ? "w-full sm:w-auto bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white" 
+                      variant={index === 0 ? "default" : "outline"}
+                      className={index === 0
+                        ? "w-full sm:w-auto bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white"
                         : "w-full sm:w-auto bg-transparent border-discord-blurple/20 text-discord-blurple/90 hover:bg-discord-blurple/5"
                       }
                     >
@@ -112,8 +112,8 @@ const Setup = () => {
             <Button className="bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white">
               Login with Discord
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="bg-transparent border-white/10 text-white hover:bg-white/5"
             >
               View Dashboard

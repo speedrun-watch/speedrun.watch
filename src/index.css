@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -70,9 +69,33 @@
     @apply border-border;
   }
 
+  html {
+    /* Set a solid background color that matches header */
+    background-color: #2C2F33 !important;
+    /* discord-dark */
+    /* Prevent any white from showing during overscroll */
+    min-height: 100%;
+    height: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    /* Ensure the body takes full height */
+    min-height: 100vh;
+    /* Set main background for the content area */
+    background-color: #23272A;
+    /* discord-darker */
+    /* Remove any margins that might cause white space */
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Target the root div as well */
+  #root {
+    min-height: 100vh;
+    background-color: #23272A;
+    /* discord-darker */
   }
 
   /* Custom scrollbar that resembles Discord */
@@ -99,11 +122,11 @@
   .glass {
     @apply bg-white/10 backdrop-blur-lg border border-white/20 shadow-xl;
   }
-  
+
   .btn-discord {
     @apply bg-discord-blurple hover:bg-discord-blurple/90 text-white py-2 px-4 rounded-md transition-all shadow-md hover:shadow-lg;
   }
-  
+
   .highlight-item {
     @apply transition-all duration-300 cursor-pointer hover:scale-105;
   }

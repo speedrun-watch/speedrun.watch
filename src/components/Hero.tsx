@@ -1,9 +1,9 @@
 
 import { Button } from "@/components/ui/button";
-import { 
-  Bell, 
-  Gamepad, 
-  MessageSquare, 
+import {
+  Bell,
+  Gamepad,
+  MessageSquare,
   ChevronDown,
   Timer,
   Trophy,
@@ -42,27 +42,27 @@ const Hero = () => {
               <span className="text-gray-300 font-medium text-sm">speedrun.com Notifications for Discord</span>
             </div>
           </div>
-          
+
           <h1 className="text-2xl md:text-3xl font-bold leading-tight">
             <span className="bg-gradient-to-r from-discord-blurple/90 to-discord-fuchsia/80 bg-clip-text text-transparent">
               Speedrun Alerts
             </span>{" "}
             for Discord Servers
           </h1>
-          
+
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Keep your Discord community updated about new speedruns as they happen. 
+            Keep your Discord community updated about new speedruns as they happen.
             Get notifications when runners share their achievements on speedrun.com.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
             <Button className="bg-discord-blurple/90 hover:bg-discord-blurple/80 text-white w-full sm:w-auto px-6 py-5" size="lg">
               <MessageSquare className="mr-2 h-5 w-5" />
               Add to Discord
             </Button>
-            <Button 
-              variant="outline" 
-              className="bg-transparent border-white/10 text-white hover:bg-white/5 w-full sm:w-auto px-6 py-5" 
+            <Button
+              variant="outline"
+              className="bg-transparent border-white/10 text-white hover:bg-white/5 w-full sm:w-auto px-6 py-5"
               size="lg"
               onClick={scrollToFeatures}
             >
@@ -71,14 +71,14 @@ const Hero = () => {
             </Button>
           </div>
         </div>
-        
+
         {/* Bot Preview - Half-Life 2 WR Notification */}
         <div className="mt-12 max-w-3xl mx-auto glass rounded-lg overflow-hidden animate-scale-in border border-white/5 shadow-md">
           <div className="bg-discord-dark/80 p-2 flex items-center">
             <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-green-400"></div>
-            <div className="ml-4 text-gray-400 text-xs">Discord - speedrun.bot</div>
+            <div className="ml-4 text-gray-400 text-xs">Discord - speedrun.watch</div>
           </div>
           <div className="p-4 bg-discord-darker/90 text-white">
             <div className="flex items-start mb-6">
@@ -126,15 +126,15 @@ const Hero = () => {
                   {/* Real speedrun thumbnail instead of YouTube placeholder */}
                   <div className="relative">
                     <div className="aspect-video bg-black">
-                      <img 
-                        src="https://img.youtube.com/vi/CBgo4WVG_3I/0.jpg" 
-                        alt="Speedrun.com gaming thumbnail" 
+                      <img
+                        src="https://img.youtube.com/vi/CBgo4WVG_3I/0.jpg"
+                        alt="Speedrun.com gaming thumbnail"
                         className="w-full h-full object-cover opacity-90"
                       />
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Reactions */}
                 <div className="flex items-center space-x-3 mb-3">
                   <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
@@ -150,7 +150,7 @@ const Hero = () => {
                     <span className="text-xs">15</span>
                   </div>
                 </div>
-                
+
                 {/* Comments */}
                 <div className="bg-discord-dark/30 rounded-md p-2 mb-2">
                   <div className="flex">
@@ -166,7 +166,7 @@ const Hero = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="bg-discord-dark/30 rounded-md p-2">
                   <div className="flex">
                     <div className="w-6 h-6 rounded-full bg-purple-500/80 flex items-center justify-center mr-2 flex-shrink-0">

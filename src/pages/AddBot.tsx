@@ -14,10 +14,10 @@ const AddBot = () => {
           <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <Bell className="w-6 h-6 text-discord-blurple" />
             <span className="text-xl font-bold bg-gradient-to-r from-discord-blurple to-discord-fuchsia bg-clip-text text-transparent">
-              speedrun.bot
+              speedrun.watch
             </span>
           </Link>
-          
+
           <div className="flex items-center space-x-4">
             <Button asChild size="sm" className="bg-discord-blurple hover:bg-discord-blurple/90">
               <Link to="/dashboard">
@@ -27,7 +27,7 @@ const AddBot = () => {
           </div>
         </div>
       </header>
-      
+
       {/* Main Content */}
       <main className="container mx-auto px-4 md:px-6 py-12">
         <div className="max-w-4xl mx-auto">
@@ -35,19 +35,19 @@ const AddBot = () => {
             <div className="inline-block p-4 bg-discord-dark/50 rounded-full mb-6">
               <Bot className="w-16 h-16 text-discord-blurple" />
             </div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-4">Add speedrun.bot to Discord</h1>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4">Add speedrun.watch to Discord</h1>
             <p className="text-gray-300 text-lg max-w-2xl mx-auto">
               Follow these simple steps to bring real-time speedrunning notifications to your Discord server.
             </p>
           </div>
-          
+
           <div className="space-y-10">
             {/* Step 1 */}
             <div className="glass rounded-lg p-6 relative">
               <div className="absolute -left-3 -top-3 bg-discord-blurple text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">1</div>
               <h2 className="text-2xl font-bold mb-4">Authorize the Bot</h2>
               <p className="mb-5 text-gray-300">
-                Click the button below to authorize speedrun.bot with your Discord account. You'll be redirected to Discord's authorization page.
+                Click the button below to authorize speedrun.watch with your Discord account. You'll be redirected to Discord's authorization page.
               </p>
               <div className="flex justify-center">
                 <Button size="lg" className="bg-discord-blurple hover:bg-discord-blurple/90">
@@ -57,7 +57,7 @@ const AddBot = () => {
                 </Button>
               </div>
             </div>
-            
+
             {/* Step 2 */}
             <div className="glass rounded-lg p-6 relative">
               <div className="absolute -left-3 -top-3 bg-discord-blurple text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">2</div>
@@ -90,7 +90,7 @@ const AddBot = () => {
                 </div>
               </div>
             </div>
-            
+
             {/* Step 3 */}
             <div className="glass rounded-lg p-6 relative">
               <div className="absolute -left-3 -top-3 bg-discord-blurple text-white w-8 h-8 rounded-full flex items-center justify-center font-bold">3</div>
@@ -119,7 +119,7 @@ const AddBot = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-12 text-center">
             <p className="text-gray-400">
               Need help? Join our <a href="#" className="text-discord-blurple hover:underline">support server</a> or check the <a href="#" className="text-discord-blurple hover:underline">documentation</a>.
@@ -127,7 +127,7 @@ const AddBot = () => {
           </div>
         </div>
       </main>
-      
+
       <Footer />
     </div>
   );
