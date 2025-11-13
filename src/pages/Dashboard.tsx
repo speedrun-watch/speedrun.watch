@@ -868,7 +868,7 @@ const Dashboard = () => {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="border-discord-blurple text-discord-blurple hover:bg-discord-blurple hover:text-white"
+                                    className="bg-transparent border-white/10 text-white hover:bg-white/5"
                                     onClick={() => setActiveChannelId(channel.id)}
                                   >
                                     <Plus className="w-4 h-4 mr-1" />
