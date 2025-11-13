@@ -71,7 +71,7 @@ const AuthStatus = () => {
             className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
           >
             <LayoutDashboard className="w-4 h-4" />
-            <span>Dashboard</span>
+            <span className="hidden md:block">Dashboard</span>
           </Link>
           <div className="flex items-center space-x-2">
             <Avatar className="w-8 h-8 border-2 border-discord-blurple">
@@ -90,10 +90,11 @@ const AuthStatus = () => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-gray-400 hover:text-white"
+            className="text-gray-400 hover:text-white flex items-center space-x-1"
             onClick={handleLogout}
           >
             <LogOut className="w-4 h-4" />
+            <span className="hidden sm:inline-block">Sign Out</span>
           </Button>
         </div>
       ) : (
