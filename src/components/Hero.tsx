@@ -98,7 +98,7 @@ const Hero = () => {
                 <div className="mb-2">
                   <span className="flex items-center">
                     <Trophy className="w-4 h-4 text-yellow-500 mr-2" />
-                    <span className="font-medium">Buster12</span> has achieved a new world record!
+                    <span className="font-medium">Buster12</span>&nbsp;has achieved a new world record!
                   </span>
                 </div>
                 <a href="https://www.speedrun.com/hl2/runs/ylpx8grm" target="_blank" rel="noopener noreferrer" className="mb-2 font-bold text-blue-400 hover:underline flex items-center">
