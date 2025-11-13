@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -451,13 +450,13 @@ const Dashboard = () => {
     // Find the game in the channels data
     const channel = channels.find(c => c.id === channelId);
     const game = channel?.games?.find(g => g.id === gameId);
-    
+
     // Return the notification type from the game data, or default to 'world-records'
     const setting = game?.notificationType || 'world-records';
-    
+
     console.log(`Getting notification setting for channel ${channelId}, game ${gameId}:`, setting);
     console.log("Game data:", game);
-    
+
     return setting;
   };
 
@@ -644,229 +643,81 @@ const Dashboard = () => {
             {/* Original guilds tab content */}
             {activeTab === "guilds" && !selectedGuildId && (
               <div>
-                <h1 className="text-2xl font-bold mb-6">Discord Guilds</h1>
+                <h1 className="text-2xl font-bold mb-6">
+                  {activeGuildCategory === "all" && "All Discord Guilds"}
+                  {activeGuildCategory === "owner" && "Owned Discord Guilds"}
+                  {activeGuildCategory === "admin" && "Admin Discord Guilds"}
+                  {activeGuildCategory === "member" && "Member Discord Guilds"}
+                </h1>
 
-                <Tabs value={activeGuildCategory} onValueChange={(value) => {
-                  setActiveGuildCategory(value);
-                  setActiveTab("guilds");
-                }} className="mb-6">
-                  <TabsList className="bg-discord-dark">
-                    <TabsTrigger value="all" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
-                      {isFetchingGuilds ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Loading...
-                        </>
-                      ) : (
-                        `All Guilds (${allGuilds.length})`
-                      )}
-                    </TabsTrigger>
-                    <TabsTrigger value="owner" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
-                      <Shield className="mr-2 h-4 w-4" />
-                      Owner ({guilds.owner.length})
-                    </TabsTrigger>
-                    <TabsTrigger value="admin" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
-                      <Settings className="mr-2 h-4 w-4" />
-                      Admin ({guilds.admin.length})
-                    </TabsTrigger>
-                    <TabsTrigger value="member" className="data-[state=active]:bg-discord-blurple data-[state=active]:text-white">
-                      <Users className="mr-2 h-4 w-4" />
-                      Member ({guilds.member.length})
-                    </TabsTrigger>
-                  </TabsList>
-
-                  <TabsContent value="all" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {allGuilds.map(guild => (
-                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
-                          <div className="flex items-center space-x-3">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center">
-                              {guild.icon ? (
-                                <img
-                                  src={getGuildIconUrl(guild)}
-                                  alt={guild.name}
-                                  className="w-full h-full rounded-full"
-                                />
-                              ) : (
-                                <span className="text-2xl">{guild.name.charAt(0)}</span>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center">
-                                <h3 className="text-white font-medium truncate">{guild.name}</h3>
-                                {guild.owner ? (
-                                  <Badge className="ml-2 bg-green-600 hover:bg-green-700">
-                                    <Shield className="w-3 h-3 mr-1" />
-                                    Owner
-                                  </Badge>
-                                ) : (
-                                  <Badge className="ml-2 bg-blue-600 hover:bg-blue-700">
-                                    <Settings className="w-3 h-3 mr-1" />
-                                    Admin
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
-                              onClick={() => setSelectedGuildId(guild.id)}
-                              disabled={isFetchingChannels && selectedGuildId === guild.id}
-                            >
-                              {isFetchingChannels && selectedGuildId === guild.id ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Loading...
-                                </>
-                              ) : (
-                                "Manage"
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
+                {isFetchingGuilds ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="text-center">
+                      <Loader2 className="w-8 h-8 text-discord-blurple mx-auto mb-3 animate-spin" />
+                      <p className="text-gray-400">Loading guilds...</p>
                     </div>
-                  </TabsContent>
-
-                  <TabsContent value="owner" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {guilds.owner.map(guild => (
-                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
-                          <div className="flex items-center space-x-3">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center">
-                              {guild.icon ? (
-                                <img
-                                  src={getGuildIconUrl(guild)}
-                                  alt={guild.name}
-                                  className="w-full h-full rounded-full"
-                                />
-                              ) : (
-                                <span className="text-2xl">{guild.name.charAt(0)}</span>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center">
-                                <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {(activeGuildCategory === "all" ? allGuilds :
+                      activeGuildCategory === "owner" ? guilds.owner :
+                        activeGuildCategory === "admin" ? guilds.admin :
+                          guilds.member
+                    ).map(guild => (
+                      <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center">
+                            {guild.icon ? (
+                              <img
+                                src={getGuildIconUrl(guild)}
+                                alt={guild.name}
+                                className="w-full h-full rounded-full"
+                              />
+                            ) : (
+                              <span className="text-2xl">{guild.name.charAt(0)}</span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center">
+                              <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                              {guild.owner ? (
                                 <Badge className="ml-2 bg-green-600 hover:bg-green-700">
                                   <Shield className="w-3 h-3 mr-1" />
                                   Owner
                                 </Badge>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
-                              onClick={() => setSelectedGuildId(guild.id)}
-                              disabled={isFetchingChannels && selectedGuildId === guild.id}
-                            >
-                              {isFetchingChannels && selectedGuildId === guild.id ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Loading...
-                                </>
-                              ) : (
-                                "Manage"
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </TabsContent>
-
-                  {/* Admin and Member tabs - same pattern as the other tabs but with different data */}
-                  <TabsContent value="admin" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {guilds.admin.map(guild => (
-                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
-                          <div className="flex items-center space-x-3">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center">
-                              {guild.icon ? (
-                                <img
-                                  src={getGuildIconUrl(guild)}
-                                  alt={guild.name}
-                                  className="w-full h-full rounded-full"
-                                />
-                              ) : (
-                                <span className="text-2xl">{guild.name.charAt(0)}</span>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center">
-                                <h3 className="text-white font-medium truncate">{guild.name}</h3>
+                              ) : (guild.permissions & 0x8) === 0x8 ? (
                                 <Badge className="ml-2 bg-blue-600 hover:bg-blue-700">
                                   <Settings className="w-3 h-3 mr-1" />
                                   Admin
                                 </Badge>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
-                              onClick={() => setSelectedGuildId(guild.id)}
-                              disabled={isFetchingChannels && selectedGuildId === guild.id}
-                            >
-                              {isFetchingChannels && selectedGuildId === guild.id ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Loading...
-                                </>
                               ) : (
-                                "Manage"
-                              )}
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </TabsContent>
-
-                  <TabsContent value="member" className="mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {guilds.member.map(guild => (
-                        <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
-                          <div className="flex items-center space-x-3">
-                            <div className="flex-shrink-0 w-12 h-12 rounded-full bg-discord-blurple/20 flex items-center justify-center">
-                              {guild.icon ? (
-                                <img
-                                  src={getGuildIconUrl(guild)}
-                                  alt={guild.name}
-                                  className="w-full h-full rounded-full"
-                                />
-                              ) : (
-                                <span className="text-2xl">{guild.name.charAt(0)}</span>
-                              )}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center">
-                                <h3 className="text-white font-medium truncate">{guild.name}</h3>
                                 <Badge className="ml-2 bg-gray-600 hover:bg-gray-700">
                                   <Users className="w-3 h-3 mr-1" />
                                   Member
                                 </Badge>
-                              </div>
-                            </div>
-                            <Button
-                              size="sm"
-                              className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
-                              onClick={() => setSelectedGuildId(guild.id)}
-                              disabled={isFetchingChannels && selectedGuildId === guild.id}
-                            >
-                              {isFetchingChannels && selectedGuildId === guild.id ? (
-                                <>
-                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                  Loading...
-                                </>
-                              ) : (
-                                "Manage"
                               )}
-                            </Button>
+                            </div>
                           </div>
+                          <Button
+                            size="sm"
+                            className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                            onClick={() => setSelectedGuildId(guild.id)}
+                            disabled={isFetchingChannels && selectedGuildId === guild.id}
+                          >
+                            {isFetchingChannels && selectedGuildId === guild.id ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Loading...
+                              </>
+                            ) : (
+                              "Manage"
+                            )}
+                          </Button>
                         </div>
-                      ))}
-                    </div>
-                  </TabsContent>
-                </Tabs>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
 
@@ -1199,79 +1050,23 @@ const Dashboard = () => {
 
             {activeTab === "settings" && (
               <div>
-                <h1 className="text-2xl font-bold mb-6">Settings</h1>
-                <div className="space-y-6">
-                  <div className="glass p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3">User Settings</h2>
-                    <p className="text-gray-300 mb-4">
-                      Connect your speedrun.com account to allow the bot to mention you on Discord when your runs are detected.
+                <h1 className="text-2xl font-bold mb-6">Share speedrun.watch</h1>
+                <div className="glass p-6 rounded-lg">
+                  <p className="text-gray-300 mb-4">
+                    Here's a quick way for you to share the bot on Discord!
+                  </p>
+
+                  <div className="bg-discord-dark/50 p-4 rounded-md mb-4">
+                    <p className="text-sm text-gray-300 mb-3">
+                      Check out speedrun.watch - get Discord notifications when new speedruns are submitted or WRs are set on speedrun.com. Add it to your server: https://speedrun.watch
                     </p>
-
-                    <div className="bg-discord-dark/50 p-4 rounded-md border border-discord-blurple/30 mb-4">
-                      <div className="flex items-start">
-                        <div className="flex-shrink-0 bg-yellow-500/20 rounded p-2">
-                          <Bell className="h-5 w-5 text-yellow-400" />
-                        </div>
-                        <div className="ml-3">
-                          <p className="text-gray-300 text-sm">
-                            <strong>Privacy Note:</strong> Temporarily pasting your speedrun.com API key will allow the bot to verify your identity and @-mention you on Discord when your runs are detected. Your API key is only used for verification and is not stored on our servers.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          speedrun.com Username
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full bg-discord-dark border border-gray-700 rounded-md py-2 px-3 text-white focus:border-discord-blurple focus:outline-none"
-                          placeholder="Your speedrun.com username"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">
-                          speedrun.com API Key (temporary verification only)
-                        </label>
-                        <input
-                          type="password"
-                          className="w-full bg-discord-dark border border-gray-700 rounded-md py-2 px-3 text-white focus:border-discord-blurple focus:outline-none"
-                          placeholder="Paste your API key for verification"
-                        />
-                        <p className="mt-1 text-sm text-gray-400">
-                          Find your API key in your speedrun.com account settings.
-                        </p>
-                      </div>
-
-                      <Button className="bg-discord-blurple hover:bg-discord-blurple/90 text-white">
-                        <UserCheck className="mr-2 w-4 h-4" />
-                        Verify Identity
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Share Section */}
-                  <div className="glass p-6 rounded-lg">
-                    <h2 className="text-xl font-semibold mb-3">Share speedrun.watch</h2>
-                    <p className="text-gray-300 mb-4">
-                      Share speedrun.watch with your friends and communities to help spread the word about this free Discord bot.
-                    </p>
-
-                    <div className="bg-discord-dark/50 p-4 rounded-md mb-4">
-                      <p className="text-sm text-gray-300 mb-3">
-                        Check out speedrun.watch! It's a great Discord bot for tracking speedruns from speedrun.com. Add it to your server: https://speedrun.watch/invite
-                      </p>
-                      <Button
-                        onClick={handleCopyShareText}
-                        className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
-                      >
-                        <Copy className="mr-2 w-4 h-4" />
-                        {notificationCopied ? "Copied!" : "Copy to Clipboard"}
-                      </Button>
-                    </div>
+                    <Button
+                      onClick={handleCopyShareText}
+                      className="bg-discord-blurple hover:bg-discord-blurple/90 text-white"
+                    >
+                      <Copy className="mr-2 w-4 h-4" />
+                      {notificationCopied ? "Copied!" : "Copy to Clipboard"}
+                    </Button>
                   </div>
                 </div>
               </div>

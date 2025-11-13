@@ -12,9 +12,9 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-discord-darker text-gray-300 pt-12 pb-6">
+    <footer className="bg-discord-darker text-gray-300 pt-12 pb-6 ">
       <div className="container mx-auto px-4 md:px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div className="md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
               <Bell className="w-5 h-5 text-discord-blurple/80" />
@@ -82,7 +82,7 @@ const Footer = () => {
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
 
         <div className="border-t border-gray-800/50 pt-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-xs text-gray-500">

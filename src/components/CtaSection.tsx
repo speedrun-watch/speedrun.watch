@@ -23,9 +23,9 @@ const CtaSection = () => {
       <div className="absolute top-1/4 right-0 w-72 h-72 bg-discord-blurple/10 rounded-full blur-3xl -z-10"></div>
       <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-discord-fuchsia/10 rounded-full blur-3xl -z-10"></div>
 
-      <div className="container mx-auto px-4 md:px-6">
-        {/* Popular Games Section */}
-        <div className="max-w-3xl mx-auto text-center mb-12">
+      {/* <div className="container mx-auto px-4 md:px-6"> */}
+      {/* Popular Games Section */}
+      {/* <div className="max-w-3xl mx-auto text-center mb-12">
           <h2 className="text-xl md:text-2xl font-medium text-white mb-5">
             Popular Games Using speedrun.watch
           </h2>
@@ -40,9 +40,9 @@ const CtaSection = () => {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
 
-        <div className="max-w-2xl mx-auto text-center">
+      {/* <div className="max-w-2xl mx-auto text-center">
           <h2 className="text-xl md:text-2xl font-medium text-white mb-5">
             Get Started
           </h2>
@@ -67,8 +67,8 @@ const CtaSection = () => {
               See Features
             </Button>
           </div>
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </section>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Link } from "react-router-dom";
 
 const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
@@ -62,6 +63,13 @@ const AuthStatus = () => {
     <div>
       {authStatus.user ? (
         <div className="flex items-center space-x-4">
+          <Link
+            to="/dashboard"
+            className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
+          >
+            <LayoutDashboard className="w-4 h-4" />
+            <span>Dashboard</span>
+          </Link>
           <div className="flex items-center space-x-2">
             <Avatar className="w-8 h-8 border-2 border-discord-blurple">
               <AvatarImage

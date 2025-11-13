@@ -39,16 +39,14 @@ const Hero = () => {
                 <Bell className="w-5 h-5 text-discord-blurple/80 absolute animate-ping opacity-60" />
                 <Bell className="w-5 h-5 text-discord-blurple/80 relative" />
               </div>
-              <span className="text-gray-300 font-medium text-sm">speedrun.com Notifications for Discord</span>
+              <h1 className="text-2xl md:text-3xl font-bold leading-tight">
+                <span className="bg-gradient-to-r from-discord-blurple/90 to-discord-fuchsia/80 bg-clip-text text-transparent">
+                  Speedrun Alerts
+                </span>{" "}
+                for Discord Servers
+              </h1>
             </div>
           </div>
-
-          <h1 className="text-2xl md:text-3xl font-bold leading-tight">
-            <span className="bg-gradient-to-r from-discord-blurple/90 to-discord-fuchsia/80 bg-clip-text text-transparent">
-              Speedrun Alerts
-            </span>{" "}
-            for Discord Servers
-          </h1>
 
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Keep your Discord community updated about new speedruns as they happen.
@@ -60,7 +58,7 @@ const Hero = () => {
               <MessageSquare className="mr-2 h-5 w-5" />
               Add to Discord
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               className="bg-transparent border-white/10 text-white hover:bg-white/5 w-full sm:w-auto px-6 py-5"
               size="lg"
@@ -68,7 +66,7 @@ const Hero = () => {
             >
               <Gamepad className="mr-2 h-5 w-5" />
               See Features
-            </Button>
+            </Button> */}
           </div>
         </div>
 

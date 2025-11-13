@@ -1,6 +1,8 @@
 
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   PlusCircle,
@@ -13,42 +15,82 @@ import {
   Users
 } from "lucide-react";
 
-const steps = [
-  {
-    number: "1",
-    title: "Add Bot to Server",
-    description: "Invite speedrun.watch to your Discord server with just a few clicks.",
-    icon: <PlusCircle className="w-6 h-6 text-discord-blurple/80" />,
-    buttonText: "Add to Discord",
-    buttonIcon: <MessageSquare className="w-4 h-4" />
-  },
-  {
-    number: "2",
-    title: "Sign in as Admin",
-    description: "Login with Discord to link speedrun.com games to specific channels.",
-    icon: <User className="w-6 h-6 text-discord-green/80" />,
-    buttonText: "Login with Discord",
-    buttonIcon: <ArrowRight className="w-4 h-4" />
-  },
-  {
-    number: "3",
-    title: "Configure Notifications",
-    description: "Choose which events trigger notifications in your Discord channels.",
-    icon: <BellRing className="w-6 h-6 text-discord-yellow/80" />,
-    buttonText: "Notification Settings",
-    buttonIcon: <ArrowRight className="w-4 h-4" />
-  },
-  {
-    number: "4",
-    title: "Manage Permissions",
-    description: "Define who else can manage games and notification settings.",
-    icon: <Users className="w-6 h-6 text-discord-fuchsia/70" />,
-    buttonText: "Manage Roles",
-    buttonIcon: <ArrowRight className="w-4 h-4" />
-  }
-];
-
 const Setup = () => {
+  const [authStatus, setAuthStatus] = useState({ user: null });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAuthStatus = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setAuthStatus({ user });
+      } catch (error) {
+        console.error("Error fetching auth status:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAuthStatus();
+  }, []);
+
+  const getSteps = () => [
+    {
+      number: "1",
+      title: "Add Bot to Server",
+      description: "Invite speedrun.watch to your Discord server with just a few clicks.",
+      icon: <PlusCircle className="w-6 h-6 text-discord-blurple/80" />,
+      buttonText: "Add to Discord",
+      buttonIcon: <MessageSquare className="w-4 h-4" />,
+      action: () => window.open('https://discord.com/oauth2/authorize?client_id=1311698143733354537&permissions=2214751313&integration_type=0&scope=bot', '_blank')
+    },
+    {
+      number: "2",
+      title: authStatus.user ? "✓ Signed in as Admin" : "Sign in as Admin",
+      description: authStatus.user
+        ? `You're signed in as ${authStatus.user.username}. You can now configure games and notifications.`
+        : "Sign in to configure which games and channels to track.",
+      icon: authStatus.user
+        ? <CheckCircle className="w-6 h-6 text-discord-green/80" />
+        : <User className="w-6 h-6 text-discord-green/80" />,
+      buttonText: authStatus.user ? undefined : "Login with Discord",
+      buttonIcon: authStatus.user ? undefined : <ArrowRight className="w-4 h-4" />,
+      action: authStatus.user
+        ? undefined
+        : () => {
+          const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
+          const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
+          const DISCORD_SCOPES = import.meta.env.VITE_DISCORD_SCOPES;
+          const REDIRECT_URI = encodeURIComponent(FRONTEND_URL + "/login/callback");
+          const SCOPES = encodeURIComponent(DISCORD_SCOPES);
+          const signInUrl = `https://discord.com/oauth2/authorize?response_type=code&client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}`;
+          window.location.href = signInUrl;
+        }
+    },
+    {
+      number: "3",
+      title: "Configure Notifications",
+      description: "Sign in to your dashboard to link games to channels and choose notification settings.",
+      icon: <BellRing className="w-6 h-6 text-discord-yellow/80" />,
+      buttonText: authStatus.user ? "Go to Dashboard" : undefined,
+      buttonIcon: authStatus.user ? <ArrowRight className="w-4 h-4" /> : undefined,
+      action: authStatus.user ? () => window.location.href = "/dashboard" : undefined
+    },
+  ];
+
+  if (loading) {
+    return (
+      <section id="setup" className="py-20 bg-discord-darker relative">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="text-center">
+            <div className="w-8 h-8 bg-discord-dark/50 rounded-full animate-pulse mx-auto" />
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const steps = getSteps();
   return (
     <section id="setup" className="py-20 bg-discord-darker relative">
       {/* Background Elements */}
@@ -83,16 +125,19 @@ const Setup = () => {
 
                     <p className="text-gray-300 mb-6">{step.description}</p>
 
-                    <Button
-                      variant={index === 0 ? "default" : "outline"}
-                      className={index === 0
-                        ? "w-full sm:w-auto bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white"
-                        : "w-full sm:w-auto bg-transparent border-discord-blurple/20 text-discord-blurple/90 hover:bg-discord-blurple/5"
-                      }
-                    >
-                      {step.buttonIcon && <span className="mr-2">{step.buttonIcon}</span>}
-                      {step.buttonText}
-                    </Button>
+                    {step.buttonText && (
+                      <Button
+                        variant={index === 0 ? "default" : "outline"}
+                        className={index === 0
+                          ? "w-full sm:w-auto bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white"
+                          : "w-full sm:w-auto bg-transparent border-discord-blurple/20 text-discord-blurple/90 hover:bg-discord-blurple/5"
+                        }
+                        onClick={step.action}
+                      >
+                        {step.buttonIcon && <span className="mr-2">{step.buttonIcon}</span>}
+                        {step.buttonText}
+                      </Button>
+                    )}
                   </div>
                 </Card>
               </li>
@@ -100,7 +145,7 @@ const Setup = () => {
           </ol>
         </div>
 
-        <div className="mt-16 p-6 rounded-lg max-w-3xl mx-auto bg-discord-dark/30 backdrop-blur-sm shadow-md border border-white/5">
+        {/* <div className="mt-16 p-6 rounded-lg max-w-3xl mx-auto bg-discord-dark/30 backdrop-blur-sm shadow-md border border-white/5">
           <h3 className="text-xl font-medium text-white mb-4 flex items-center">
             <CheckCircle className="w-5 h-5 text-discord-green/80 mr-2" />
             Already using our bot?
@@ -119,7 +164,7 @@ const Setup = () => {
               View Dashboard
             </Button>
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   );

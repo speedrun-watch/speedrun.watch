@@ -44,9 +44,9 @@ const Index = () => {
     <div className="min-h-screen bg-discord-darker text-white overflow-hidden">
       <Navbar />
       <Hero />
-      <Features />
+      {/* <Features /> */}
       <Setup />
-      <CtaSection />
+      {/* <CtaSection /> */}
       <Footer />
     </div>
   );

@@ -26,8 +26,8 @@ const Navbar = () => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled
-          ? "bg-discord-dark/80 backdrop-blur-sm py-2 shadow-md"
-          : "bg-transparent py-4"
+        ? "bg-discord-dark/80 backdrop-blur-sm py-2 shadow-md"
+        : "bg-transparent py-4"
         }`}
     >
       <div className="container mx-auto px-4 md:px-6">
@@ -41,31 +41,19 @@ const Navbar = () => {
 
           {/* Desktop Menu */}
           <div className="hidden md:flex md:items-center md:space-x-6">
-            <a
+            {/* <a
               href="#features"
               className="text-gray-300 hover:text-white transition-colors"
             >
               Features
-            </a>
-            <a
-              href="#setup"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Setup
-            </a>
-            <Link
-              to="/dashboard"
-              className="text-gray-300 hover:text-white transition-colors"
-            >
-              Dashboard
-            </Link>
+            </a> */}
             <AuthStatus />
-            <Button
+            {/* <Button
               className="bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white"
             >
               <MessageSquare className="mr-2 h-4 w-4" />
               Add to Discord
-            </Button>
+            </Button> */}
           </div>
 
           {/* Mobile Menu Button */}
