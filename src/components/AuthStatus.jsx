@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
 const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
@@ -11,6 +11,7 @@ const DISCORD_SCOPES = import.meta.env.VITE_DISCORD_SCOPES;
 const AuthStatus = () => {
   const [authStatus, setAuthStatus] = useState({ user: null });
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   const SignInButton = () => {
     const REDIRECT_URI = encodeURIComponent(FRONTEND_URL + "/login/callback");
@@ -37,7 +38,9 @@ const AuthStatus = () => {
   const handleLogout = () => {
     localStorage.removeItem("jwt");
     localStorage.removeItem("user");
+    localStorage.removeItem("exp");
     setAuthStatus({ user: null });
+    navigate("/");
   };
 
   useEffect(() => {
