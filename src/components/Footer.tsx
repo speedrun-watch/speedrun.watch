@@ -13,7 +13,7 @@ const Footer = () => {
 
   return (
     <footer className="bg-discord-darker text-gray-300 pt-1 pb-6 ">
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto">
         <div className="border-t border-gray-800/50 pt-6 flex flex-col md:flex-row justify-between items-center">
           <div className="flex space-x-4">
             <a

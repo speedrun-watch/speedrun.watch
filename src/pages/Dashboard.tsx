@@ -534,10 +534,10 @@ const Dashboard = () => {
   }, [gameSearchTerm]);
 
   return (
-    <div className="min-h-screen bg-discord-darker text-white flex flex-col">
+    <div className="min-h-screen bg-discord-darker text-white flex flex-col overflow-x-hidden max-w-full">
       {/* Header */}
-      <header className="bg-discord-dark py-4 border-b border-gray-800">
-        <div className="container mx-auto px-4 md:px-6 flex justify-between items-center">
+      <header className="bg-discord-dark py-4 border-b border-gray-800 w-full">
+        <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
               <Bell className="w-6 h-6 text-discord-blurple" />
@@ -554,9 +554,9 @@ const Dashboard = () => {
       </header>
 
       {/* Main Content */}
-      <div className="flex-1">
-        <div className="container mx-auto px-4 md:px-6 py-8">
-          <div className="flex flex-col md:flex-row gap-8">
+      <div className="flex-1 w-full">
+        <div className="container mx-auto py-8 w-full">
+          <div className="flex flex-col md:flex-row gap-8 w-full">
             {/* Sidebar */}
             <DashboardMenu
               activeTab={activeTab}

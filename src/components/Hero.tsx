@@ -31,7 +31,7 @@ const Hero = () => {
         <div className="absolute -top-24 -left-24 w-72 h-72 bg-discord-fuchsia/10 rounded-full blur-3xl"></div>
       </div>
 
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto">
         <div className="flex flex-col items-center text-center space-y-8 mb-12">
           <div className="inline-block animate-float">
             <div className="flex items-center space-x-2 bg-discord-dark/60 backdrop-blur-sm px-4 py-2 rounded-full shadow-md">

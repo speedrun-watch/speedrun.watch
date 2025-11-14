@@ -2,6 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
 
 const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
@@ -70,32 +78,40 @@ const AuthStatus = () => {
             to="/dashboard"
             className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
           >
-            <LayoutDashboard className="w-4 h-4" />
+            <LayoutDashboard className="w-5 h-5" />
             <span className="hidden md:block">Dashboard</span>
           </Link>
-          <div className="flex items-center space-x-2">
-            <Avatar className="w-8 h-8 border-2 border-discord-blurple">
-              <AvatarImage
-                src={`https://cdn.discordapp.com/avatars/${authStatus.user.id}/${authStatus.user.avatar}.png`}
-                alt={`${authStatus.user.username}'s avatar`}
-              />
-              <AvatarFallback className="bg-discord-blurple">
-                <User className="w-4 h-4 text-white" />
-              </AvatarFallback>
-            </Avatar>
-            <span className="text-gray-300 text-sm hidden md:inline-block">
-              {authStatus.user.username}
-            </span>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400 hover:text-white flex items-center space-x-1"
-            onClick={handleLogout}
-          >
-            <LogOut className="w-4 h-4" />
-            <span className="hidden sm:inline-block">Sign Out</span>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center space-x-2 focus:outline-none">
+                <Avatar className="w-8 h-8 border-2 border-discord-blurple cursor-pointer hover:border-discord-blurple/80 transition-colors">
+                  <AvatarImage
+                    src={`https://cdn.discordapp.com/avatars/${authStatus.user.id}/${authStatus.user.avatar}.png`}
+                    alt={`${authStatus.user.username}'s avatar`}
+                  />
+                  <AvatarFallback className="bg-discord-blurple">
+                    <User className="w-4 h-4 text-white" />
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-gray-300 text-sm hidden md:inline-block">
+                  {authStatus.user.username}
+                </span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48 bg-discord-dark border-gray-700">
+              <DropdownMenuLabel className="text-gray-300">
+                {authStatus.user.username}#{authStatus.user.discriminator}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-gray-700" />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="text-gray-300 focus:bg-discord-darker focus:text-white cursor-pointer"
+              >
+                <LogOut className="w-4 h-4 mr-2" />
+                Sign Out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       ) : (
         <SignInButton />

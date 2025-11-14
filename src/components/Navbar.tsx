@@ -27,7 +27,7 @@ const Navbar = () => {
         : "bg-transparent py-4"
         }`}
     >
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <Bell className="w-6 h-6 text-discord-blurple/90 animate-pulse-light" />
@@ -41,8 +41,6 @@ const Navbar = () => {
             <AuthStatus />
           </div>
         </div>
-
-
       </div>
     </nav>
   );

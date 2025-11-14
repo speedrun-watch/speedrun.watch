@@ -41,7 +41,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-discord-darker text-white overflow-hidden flex flex-col">
+    <div className="min-h-screen bg-discord-darker text-white overflow-x-hidden flex flex-col">
       <Navbar />
       <div className="flex-1">
         <Hero />

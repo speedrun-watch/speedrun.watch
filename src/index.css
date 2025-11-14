@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
   :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -71,11 +77,13 @@
 
   html {
     /* Set a solid background color that matches header */
-    background-color: #2C2F33 !important;
-    /* discord-dark */
+    background-color: #23272A !important;
+    /* discord-darker - match body */
     /* Prevent any white from showing during overscroll */
     min-height: 100%;
     height: 100%;
+    overflow-x: hidden;
+    width: 100%;
   }
 
   body {
@@ -84,11 +92,13 @@
     /* Ensure the body takes full height */
     min-height: 100vh;
     /* Set main background for the content area */
-    background-color: #23272A;
+    background-color: #23272A !important;
     /* discord-darker */
     /* Remove any margins that might cause white space */
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
+    width: 100%;
   }
 
   /* Target the root div as well */
@@ -96,25 +106,18 @@
     min-height: 100vh;
     background-color: #23272A;
     /* discord-darker */
+    overflow-x: hidden;
+    width: 100%;
   }
 
-  /* Custom scrollbar that resembles Discord */
+  /* Hide scrollbar completely */
   ::-webkit-scrollbar {
-    width: 8px;
+    display: none;
   }
-
-  ::-webkit-scrollbar-track {
-    background: rgba(32, 34, 37, 0.1);
-    border-radius: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: rgba(32, 34, 37, 0.3);
-    border-radius: 10px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(32, 34, 37, 0.5);
+  
+  /* For Firefox */
+  * {
+    scrollbar-width: none;
   }
 }
 

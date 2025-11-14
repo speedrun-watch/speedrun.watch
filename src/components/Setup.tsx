@@ -81,7 +81,7 @@ const Setup = () => {
   if (loading) {
     return (
       <section id="setup" className="py-20 bg-discord-darker relative">
-        <div className="container mx-auto px-4 md:px-6">
+        <div className="container mx-auto">
           <div className="text-center">
             <div className="w-8 h-8 bg-discord-dark/50 rounded-full animate-pulse mx-auto" />
           </div>
@@ -96,7 +96,7 @@ const Setup = () => {
       {/* Background Elements */}
       <div className="absolute inset-0 -z-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiIHBhdHRlcm5UcmFuc2Zvcm09InJvdGF0ZSg0NSkiPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiM1ODY1RjIiIG9wYWNpdHk9IjAuMDMiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjcGF0dGVybikiLz48L3N2Zz4=')] opacity-30"></div>
 
-      <div className="container mx-auto px-4 md:px-6">
+      <div className="container mx-auto">
         <div className="text-center mb-12">
           <h2 className="inline-block text-2xl md:text-3xl font-bold bg-gradient-to-r from-discord-blurple/90 to-discord-fuchsia/80 bg-clip-text text-transparent mb-4">
             Setup in Minutes
