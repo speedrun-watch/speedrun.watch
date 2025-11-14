@@ -80,7 +80,7 @@ const Hero = () => {
             <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-green-400"></div>
-            <div className="ml-4 text-gray-400 text-xs">Discord - speedrun.watch</div>
+            <div className="ml-4 text-gray-400 text-xs">Discord - SourceRuns Team</div>
           </div>
           <div className="p-4 bg-discord-darker/90 text-white">
             <div className="flex items-start mb-6">
