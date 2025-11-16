@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -155,6 +156,7 @@ const popularGames = [
 
 // This is a placeholder Dashboard, you'll expand this with actual functionality later
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("guilds");
   const [activeGuildCategory, setActiveGuildCategory] = useState("all");
   const [selectedGuildId, setSelectedGuildId] = useState<string | null>(null);
@@ -177,6 +179,11 @@ const Dashboard = () => {
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
+    // Redirect to login if not signed in
+    if (!localStorage.getItem("jwt")) {
+      navigate("/login", { replace: true });
+      return;
+    }
     const fetchGuilds = async () => {
       setIsFetchingGuilds(true);
       try {
