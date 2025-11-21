@@ -172,7 +172,7 @@ const Dashboard = () => {
   const [channels, setChannels] = useState<DiscordChannel[]>([]);
   const [searchResults, setSearchResults] = useState<{ id: string, name: string }[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isLinkingGame, setIsLinkingGame] = useState(false);
+  const [isLinkingGame, setIsLinkingGame] = useState<string | null>(null);
   const [isUnlinkingGame, setIsUnlinkingGame] = useState<string | null>(null);
   const [isFetchingGuilds, setIsFetchingGuilds] = useState(false);
   const [isFetchingChannels, setIsFetchingChannels] = useState(false);
@@ -281,7 +281,7 @@ const Dashboard = () => {
 
   // Link a game to a channel
   const handleLinkGame = async (channelId: string, gameId: string) => {
-    setIsLinkingGame(true);
+    setIsLinkingGame(gameId);
     try {
       const selectedGame = searchResults.find(g => g.id === gameId);
       if (!selectedGame) return;
@@ -348,7 +348,7 @@ const Dashboard = () => {
     } catch (error) {
       console.error("Error linking game:", error);
     } finally {
-      setIsLinkingGame(false);
+      setIsLinkingGame(null);
     }
   };
 
@@ -837,7 +837,7 @@ const Dashboard = () => {
                                           }}
                                         >
                                           <span>{game.name}</span>
-                                          {isLinkingGame && (
+                                          {isLinkingGame === game.id && (
                                             <Loader2 className="h-4 w-4 animate-spin text-discord-blurple" />
                                           )}
                                         </div>
