@@ -50,7 +50,7 @@ const Hero = () => {
 
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Keep your Discord community updated about new speedruns as they happen.
-            Get notifications when runners share their achievements on speedrun.com.
+            Get notifications when runners share their achievements on <a href="https://speedrun.com" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">speedrun.com</a>.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
@@ -84,7 +84,7 @@ const Hero = () => {
               </div>
               <div className="w-full border-l-4 border-green-500/70 pl-3">
                 <div className="flex items-center mb-1">
-                  <span className="font-medium text-white mr-2">speedrun.watch</span>
+                  <a href="https://discord.com/discovery/applications/1311698143733354537" target="_blank" rel="noopener noreferrer" className="font-medium text-white mr-2 hover:underline">speedrun.watch</a>
                   <span className="bg-blue-600/90 text-xs font-medium px-2 py-0.5 rounded text-white inline-flex items-center">
                     <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 mr-1 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
@@ -118,7 +118,7 @@ const Hero = () => {
                     <div>Any%</div>
                   </div>
                   <div>
-                    <div className="text-gray-400">Place</div>
+                    <div className="text-gray-400">Rank</div>
                     <div>1st</div>
                   </div>
                 </div>

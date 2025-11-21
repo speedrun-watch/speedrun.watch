@@ -858,7 +858,15 @@ const Dashboard = () => {
                                   <div key={game.id} className="p-3 bg-discord-dark/30 rounded-md">
                                     <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                                       <div className="flex items-center space-x-3">
-                                        <Gamepad className="w-4 h-4 text-discord-green flex-shrink-0" />
+                                        {game.assets && game.assets.icon && game.assets.icon.uri ? (
+                                          <img
+                                            src={game.assets.icon.uri}
+                                            alt={game.gameName + ' icon'}
+                                            className="w-5 h-5 rounded object-contain flex-shrink-0 bg-gray-800"
+                                          />
+                                        ) : (
+                                          <Gamepad className="w-4 h-4 text-discord-green flex-shrink-0" />
+                                        )}
                                         <span className="text-gray-200">{game.gameName}</span>
                                       </div>
 
