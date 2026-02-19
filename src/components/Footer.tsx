@@ -1,6 +1,6 @@
 
 import { Heart } from "lucide-react";
-import { siGithub, siDiscord } from "simple-icons/icons";
+import { siGithub, siDiscord, siTopdotgg } from "simple-icons/icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -85,6 +85,25 @@ const Footer = () => {
                     <path d={siGithub.path} />
                   </svg>
               </a>
+              {/* top.gg link hidden until listing is approved
+              <a
+                href="https://top.gg/bot/1311698143733354537"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-discord-blurple/80 transition-colors"
+                aria-label="top.gg"
+              >
+                  <svg
+                    className="w-6 h-6"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    role="img"
+                  >
+                    <path d={siTopdotgg.path} />
+                  </svg>
+              </a>
+              */}
             </div>
             <div className="flex gap-4 text-sm">
               <Link
