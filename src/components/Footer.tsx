@@ -85,7 +85,6 @@ const Footer = () => {
                     <path d={siGithub.path} />
                   </svg>
               </a>
-              {/* top.gg link hidden until listing is approved
               <a
                 href="https://top.gg/bot/1311698143733354537"
                 target="_blank"
@@ -103,7 +102,6 @@ const Footer = () => {
                     <path d={siTopdotgg.path} />
                   </svg>
               </a>
-              */}
             </div>
             <div className="flex gap-4 text-sm">
               <Link
