@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -194,6 +195,71 @@ const Dashboard = () => {
   const [isFetchingCategories, setIsFetchingCategories] = useState<string | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Debounced save infrastructure for game settings (notification type + category filter)
+  const saveTimersRef = useRef<Record<string, NodeJS.Timeout>>({});
+  const pendingValuesRef = useRef<Record<string, { notificationType: string; categoryIds: string[] }>>({});
+  const lastConfirmedRef = useRef<Record<string, { notificationType: string; categoryIds: string[] }>>({});
+  const selectedGuildIdRef = useRef(selectedGuildId);
+  selectedGuildIdRef.current = selectedGuildId;
+
+  // Cleanup pending timers on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(saveTimersRef.current).forEach(clearTimeout);
+    };
+  }, []);
+
+  const scheduleGameSettingsSave = useCallback((channelId: string, gameId: string) => {
+    const key = `${channelId}-${gameId}`;
+
+    if (saveTimersRef.current[key]) {
+      clearTimeout(saveTimersRef.current[key]);
+    }
+
+    saveTimersRef.current[key] = setTimeout(async () => {
+      const values = pendingValuesRef.current[key];
+      if (!values) return;
+
+      try {
+        await api.patch(
+          `/api/guilds/${selectedGuildIdRef.current}/channels/${channelId}/games/${gameId}/notifications`,
+          values
+        );
+        // Update confirmed state on success
+        lastConfirmedRef.current[key] = { ...values };
+      } catch (error) {
+        console.error("Error saving game settings:", error);
+        // Revert to last confirmed state
+        const confirmed = lastConfirmedRef.current[key];
+        if (confirmed) {
+          setChannels(prev =>
+            prev.map(ch => {
+              if (ch.id === channelId && ch.games) {
+                return {
+                  ...ch,
+                  games: ch.games.map(g =>
+                    g.id === gameId
+                      ? { ...g, notificationType: confirmed.notificationType, categoryIds: confirmed.categoryIds }
+                      : g
+                  )
+                };
+              }
+              return ch;
+            })
+          );
+        }
+        toast({
+          title: "Failed to save settings",
+          description: "Your changes couldn't be saved. They have been reverted.",
+          variant: "destructive",
+        });
+      } finally {
+        delete saveTimersRef.current[key];
+        delete pendingValuesRef.current[key];
+      }
+    }, 600);
+  }, []);
+
   useEffect(() => {
     // Redirect to login if not signed in or token expired
     if (!isTokenValid()) {
@@ -352,9 +418,21 @@ const Dashboard = () => {
     }
   };
 
-  // Update game notification settings
-  const handleUpdateNotificationSettings = async (channelId: string, gameId: string, setting: string) => {
-    // Update local state immediately for responsive UI
+  // Update game notification settings (debounced)
+  const handleUpdateNotificationSettings = (channelId: string, gameId: string, setting: string) => {
+    const key = `${channelId}-${gameId}`;
+
+    // Initialize confirmed state on first change
+    if (!lastConfirmedRef.current[key]) {
+      const channel = channels.find(c => c.id === channelId);
+      const game = channel?.games?.find(g => g.id === gameId);
+      lastConfirmedRef.current[key] = {
+        notificationType: game?.notificationType || 'world-records',
+        categoryIds: game?.categoryIds || [],
+      };
+    }
+
+    // Optimistic UI update
     setChannels(prevChannels =>
       prevChannels.map(channel => {
         if (channel.id === channelId && channel.games) {
@@ -371,39 +449,10 @@ const Dashboard = () => {
       })
     );
 
-    try {
-      // Make API call to update the setting on the backend
-      await api.patch(
-        `/api/guilds/${selectedGuildId}/channels/${channelId}/games/${gameId}/notifications`,
-        {
-          notificationType: setting
-        }
-      );
-
-      console.log(`Successfully updated ${setting} for game ${gameId} in channel ${channelId}`);
-    } catch (error) {
-      console.error("Error updating notification settings:", error);
-
-      // Revert local state on error
-      setChannels(prevChannels =>
-        prevChannels.map(channel => {
-          if (channel.id === channelId && channel.games) {
-            return {
-              ...channel,
-              games: channel.games.map(game =>
-                game.id === gameId
-                  ? { ...game, notificationType: game.notificationType || 'world-records' } // Revert to previous value
-                  : game
-              )
-            };
-          }
-          return channel;
-        })
-      );
-
-      // You could show a toast notification here to inform the user of the error
-      alert("Failed to update notification settings. Please try again.");
-    }
+    // Merge into pending values and schedule debounced save
+    const existing = pendingValuesRef.current[key] || lastConfirmedRef.current[key];
+    pendingValuesRef.current[key] = { ...existing, notificationType: setting };
+    scheduleGameSettingsSave(channelId, gameId);
   };
 
   // Get current notification setting for a game
@@ -487,9 +536,21 @@ const Dashboard = () => {
     }
   };
 
-  // Update category filter for a game
-  const handleUpdateCategoryFilter = async (channelId: string, gameId: string, newCategoryIds: string[]) => {
-    // Update local state immediately
+  // Update category filter for a game (debounced)
+  const handleUpdateCategoryFilter = (channelId: string, gameId: string, newCategoryIds: string[]) => {
+    const key = `${channelId}-${gameId}`;
+
+    // Initialize confirmed state on first change
+    if (!lastConfirmedRef.current[key]) {
+      const channel = channels.find(c => c.id === channelId);
+      const game = channel?.games?.find(g => g.id === gameId);
+      lastConfirmedRef.current[key] = {
+        notificationType: game?.notificationType || 'world-records',
+        categoryIds: game?.categoryIds || [],
+      };
+    }
+
+    // Optimistic UI update
     setChannels(prevChannels =>
       prevChannels.map(channel => {
         if (channel.id === channelId && channel.games) {
@@ -506,19 +567,10 @@ const Dashboard = () => {
       })
     );
 
-    try {
-      const game = channels.find(c => c.id === channelId)?.games?.find(g => g.id === gameId);
-      await api.patch(
-        `/api/guilds/${selectedGuildId}/channels/${channelId}/games/${gameId}/notifications`,
-        {
-          notificationType: game?.notificationType || 'any',
-          categoryIds: newCategoryIds,
-        }
-      );
-    } catch (error) {
-      console.error("Error updating category filter:", error);
-      alert("Failed to update category filter. Please try again.");
-    }
+    // Merge into pending values and schedule debounced save
+    const existing = pendingValuesRef.current[key] || lastConfirmedRef.current[key];
+    pendingValuesRef.current[key] = { ...existing, categoryIds: newCategoryIds };
+    scheduleGameSettingsSave(channelId, gameId);
   };
 
   // Get category label for display
@@ -930,15 +982,17 @@ const Dashboard = () => {
                                         </Select>
 
                                         <button
-                                          className="flex items-center space-x-1 text-xs text-gray-400 hover:text-gray-200 transition-colors px-2 py-1 rounded hover:bg-white/5"
+                                          className="flex h-10 w-full lg:w-[220px] items-center justify-between rounded-md border border-gray-600 bg-discord-dark px-3 py-2 text-sm text-gray-200 hover:bg-discord-dark/80 transition-colors"
                                           onClick={() => handleToggleCategoryPicker(channel.id, game.id)}
                                         >
-                                          <Filter className="w-3 h-3" />
-                                          <span>Categories: {getCategoryLabel(channel.id, game.id)}</span>
+                                          <div className="flex items-center space-x-2">
+                                            <Filter className="w-4 h-4 text-gray-400" />
+                                            <span>Categories: {getCategoryLabel(channel.id, game.id)}</span>
+                                          </div>
                                           {expandedCategoryGame === `${channel.id}-${game.id}` ? (
-                                            <ChevronUp className="w-3 h-3" />
+                                            <ChevronUp className="h-4 w-4 opacity-50" />
                                           ) : (
-                                            <ChevronDown className="w-3 h-3" />
+                                            <ChevronDown className="h-4 w-4 opacity-50" />
                                           )}
                                         </button>
 
