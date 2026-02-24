@@ -29,7 +29,10 @@ import {
   Bot,
   Check,
   ShieldAlert,
-  Loader2
+  Loader2,
+  Filter,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import AuthStatus from "@/components/AuthStatus";
@@ -69,6 +72,7 @@ interface Game {
   released: number;
   releaseDate: string;
   notificationType?: string; // Add notification setting field
+  categoryIds?: string[];
   ruleset: {
     showMilliseconds: boolean;
     requireVerification: boolean;
@@ -115,6 +119,12 @@ interface DiscordChannel {
 interface GuildChannelsResponse {
   message: string;
   guildChannels: DiscordChannel[];
+}
+
+interface GameCategory {
+  id: string;
+  name: string;
+  type: string; // "per-game" or "per-level"
 }
 
 // Mock data for games that can be linked
@@ -179,6 +189,9 @@ const Dashboard = () => {
   const [isUnlinkingGame, setIsUnlinkingGame] = useState<string | null>(null);
   const [isFetchingGuilds, setIsFetchingGuilds] = useState(false);
   const [isFetchingChannels, setIsFetchingChannels] = useState(false);
+  const [categoryData, setCategoryData] = useState<Record<string, GameCategory[]>>({});
+  const [expandedCategoryGame, setExpandedCategoryGame] = useState<string | null>(null);
+  const [isFetchingCategories, setIsFetchingCategories] = useState<string | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -447,6 +460,74 @@ const Dashboard = () => {
       .catch(err => {
         console.error('Failed to copy text: ', err);
       });
+  };
+
+  // Fetch categories for a game (cached in state)
+  const fetchCategories = async (gameId: string) => {
+    if (categoryData[gameId]) return; // already cached
+    setIsFetchingCategories(gameId);
+    try {
+      const response = await api.get(`/api/games/${gameId}/categories`);
+      setCategoryData(prev => ({ ...prev, [gameId]: response.data.categories }));
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setIsFetchingCategories(null);
+    }
+  };
+
+  // Toggle category picker expand/collapse
+  const handleToggleCategoryPicker = (channelId: string, gameId: string) => {
+    const key = `${channelId}-${gameId}`;
+    if (expandedCategoryGame === key) {
+      setExpandedCategoryGame(null);
+    } else {
+      setExpandedCategoryGame(key);
+      fetchCategories(gameId);
+    }
+  };
+
+  // Update category filter for a game
+  const handleUpdateCategoryFilter = async (channelId: string, gameId: string, newCategoryIds: string[]) => {
+    // Update local state immediately
+    setChannels(prevChannels =>
+      prevChannels.map(channel => {
+        if (channel.id === channelId && channel.games) {
+          return {
+            ...channel,
+            games: channel.games.map(game =>
+              game.id === gameId
+                ? { ...game, categoryIds: newCategoryIds }
+                : game
+            )
+          };
+        }
+        return channel;
+      })
+    );
+
+    try {
+      const game = channels.find(c => c.id === channelId)?.games?.find(g => g.id === gameId);
+      await api.patch(
+        `/api/guilds/${selectedGuildId}/channels/${channelId}/games/${gameId}/notifications`,
+        {
+          notificationType: game?.notificationType || 'any',
+          categoryIds: newCategoryIds,
+        }
+      );
+    } catch (error) {
+      console.error("Error updating category filter:", error);
+      alert("Failed to update category filter. Please try again.");
+    }
+  };
+
+  // Get category label for display
+  const getCategoryLabel = (channelId: string, gameId: string) => {
+    const channel = channels.find(c => c.id === channelId);
+    const game = channel?.games?.find(g => g.id === gameId);
+    const ids = game?.categoryIds || [];
+    if (ids.length === 0) return "All";
+    return `${ids.length} selected`;
   };
 
   // Handle game search with debounce
@@ -848,6 +929,19 @@ const Dashboard = () => {
                                           </SelectContent>
                                         </Select>
 
+                                        <button
+                                          className="flex items-center space-x-1 text-xs text-gray-400 hover:text-gray-200 transition-colors px-2 py-1 rounded hover:bg-white/5"
+                                          onClick={() => handleToggleCategoryPicker(channel.id, game.id)}
+                                        >
+                                          <Filter className="w-3 h-3" />
+                                          <span>Categories: {getCategoryLabel(channel.id, game.id)}</span>
+                                          {expandedCategoryGame === `${channel.id}-${game.id}` ? (
+                                            <ChevronUp className="w-3 h-3" />
+                                          ) : (
+                                            <ChevronDown className="w-3 h-3" />
+                                          )}
+                                        </button>
+
                                         <Button
                                           size="sm"
                                           variant="ghost"
@@ -863,6 +957,109 @@ const Dashboard = () => {
                                         </Button>
                                       </div>
                                     </div>
+
+                                    {/* Category filter picker */}
+                                    {expandedCategoryGame === `${channel.id}-${game.id}` && (
+                                      <div className="mt-3 p-3 bg-discord-darker/50 rounded-md">
+                                        {isFetchingCategories === game.id ? (
+                                          <div className="flex items-center space-x-2 text-gray-400 text-sm">
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            <span>Loading categories...</span>
+                                          </div>
+                                        ) : categoryData[game.id] ? (
+                                          <div>
+                                            <div className="flex items-center justify-between mb-2">
+                                              <span className="text-xs text-gray-400 font-medium">Filter by category</span>
+                                              {(game.categoryIds || []).length > 0 && (
+                                                <button
+                                                  className="text-xs text-discord-blurple hover:underline"
+                                                  onClick={() => handleUpdateCategoryFilter(channel.id, game.id, [])}
+                                                >
+                                                  Clear filter
+                                                </button>
+                                              )}
+                                            </div>
+                                            {/* Full Game categories */}
+                                            {categoryData[game.id].filter(c => c.type === "per-game").length > 0 && (
+                                              <div className="mb-2">
+                                                <span className="text-xs text-gray-500 uppercase tracking-wider">Full Game</span>
+                                                <div className="mt-1 space-y-1">
+                                                  {categoryData[game.id].filter(c => c.type === "per-game").map(cat => {
+                                                    const currentIds = game.categoryIds || [];
+                                                    const isSelected = currentIds.length === 0 || currentIds.includes(cat.id);
+                                                    return (
+                                                      <label key={cat.id} className="flex items-center space-x-2 text-sm text-gray-300 hover:text-white cursor-pointer py-0.5">
+                                                        <input
+                                                          type="checkbox"
+                                                          checked={isSelected}
+                                                          onChange={() => {
+                                                            let newIds: string[];
+                                                            if (currentIds.length === 0) {
+                                                              // "All" mode: unchecking one means select all except this one
+                                                              newIds = categoryData[game.id].map(c => c.id).filter(id => id !== cat.id);
+                                                            } else if (isSelected) {
+                                                              newIds = currentIds.filter(id => id !== cat.id);
+                                                              // If removing makes it match all categories, clear to empty (= all)
+                                                            } else {
+                                                              newIds = [...currentIds, cat.id];
+                                                            }
+                                                            // If all categories are now selected, clear to empty array (= all)
+                                                            if (newIds.length >= categoryData[game.id].length) {
+                                                              newIds = [];
+                                                            }
+                                                            handleUpdateCategoryFilter(channel.id, game.id, newIds);
+                                                          }}
+                                                          className="rounded border-gray-600 bg-discord-dark text-discord-blurple focus:ring-discord-blurple"
+                                                        />
+                                                        <span>{cat.name}</span>
+                                                      </label>
+                                                    );
+                                                  })}
+                                                </div>
+                                              </div>
+                                            )}
+                                            {/* Individual Level categories */}
+                                            {categoryData[game.id].filter(c => c.type === "per-level").length > 0 && (
+                                              <div>
+                                                <span className="text-xs text-gray-500 uppercase tracking-wider">Individual Level</span>
+                                                <div className="mt-1 space-y-1">
+                                                  {categoryData[game.id].filter(c => c.type === "per-level").map(cat => {
+                                                    const currentIds = game.categoryIds || [];
+                                                    const isSelected = currentIds.length === 0 || currentIds.includes(cat.id);
+                                                    return (
+                                                      <label key={cat.id} className="flex items-center space-x-2 text-sm text-gray-300 hover:text-white cursor-pointer py-0.5">
+                                                        <input
+                                                          type="checkbox"
+                                                          checked={isSelected}
+                                                          onChange={() => {
+                                                            let newIds: string[];
+                                                            if (currentIds.length === 0) {
+                                                              newIds = categoryData[game.id].map(c => c.id).filter(id => id !== cat.id);
+                                                            } else if (isSelected) {
+                                                              newIds = currentIds.filter(id => id !== cat.id);
+                                                            } else {
+                                                              newIds = [...currentIds, cat.id];
+                                                            }
+                                                            if (newIds.length >= categoryData[game.id].length) {
+                                                              newIds = [];
+                                                            }
+                                                            handleUpdateCategoryFilter(channel.id, game.id, newIds);
+                                                          }}
+                                                          className="rounded border-gray-600 bg-discord-dark text-discord-blurple focus:ring-discord-blurple"
+                                                        />
+                                                        <span>{cat.name}</span>
+                                                      </label>
+                                                    );
+                                                  })}
+                                                </div>
+                                              </div>
+                                            )}
+                                          </div>
+                                        ) : (
+                                          <span className="text-sm text-gray-400">Failed to load categories</span>
+                                        )}
+                                      </div>
+                                    )}
                                   </div>
                                 ))}
                               </div>
