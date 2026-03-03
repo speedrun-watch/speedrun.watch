@@ -774,7 +774,7 @@ const Dashboard = () => {
                     <div className="flex items-center justify-center py-8">
                       <div className="text-center">
                         <Loader2 className="w-8 h-8 text-discord-blurple mx-auto mb-3 animate-spin" />
-                        <p className="text-gray-400">Loading guilds...</p>
+                        <p className="text-gray-400">Loading guilds from Discord...</p>
                       </div>
                     </div>
                   ) : (
@@ -861,7 +861,7 @@ const Dashboard = () => {
                     <div className="flex items-center justify-center py-8">
                       <div className="text-center">
                         <Loader2 className="w-8 h-8 text-discord-blurple mx-auto mb-3 animate-spin" />
-                        <p className="text-gray-400">Loading channels...</p>
+                        <p className="text-gray-400">Loading channels from Discord...</p>
                       </div>
                     </div>
                   ) : (
@@ -910,7 +910,7 @@ const Dashboard = () => {
                                 {gameSearchTerm && (
                                   <div className="max-h-40 overflow-y-auto bg-discord-darker rounded-md mt-2">
                                     {isSearching ? (
-                                      <div className="p-2 text-gray-400">Searching...</div>
+                                      <div className="p-2 text-gray-400">Searching on speedrun.com...</div>
                                     ) : searchResults.length > 0 ? (
                                       searchResults.map(game => (
                                         <div
@@ -1033,7 +1033,7 @@ const Dashboard = () => {
                                         {isFetchingCategories === game.id ? (
                                           <div className="flex items-center space-x-2 text-gray-400 text-sm">
                                             <Loader2 className="w-4 h-4 animate-spin" />
-                                            <span>Loading categories...</span>
+                                            <span>Loading categories from speedrun.com...</span>
                                           </div>
                                         ) : categoryData[game.id] ? (
                                           <div>
