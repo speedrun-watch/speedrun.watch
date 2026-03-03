@@ -38,7 +38,7 @@ resource "aws_cloudfront_distribution" "frontend" {
 
     function_association {
       event_type   = "viewer-request"
-      function_arn = "arn:aws:cloudfront::491085381469:function/BlockDirectAccess"
+      function_arn = "arn:aws:cloudfront::${data.aws_caller_identity.current.account_id}:function/${var.cloudfront_block_direct_access_function_name}"
     }
   }
 

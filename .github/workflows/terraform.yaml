@@ -47,6 +47,8 @@ jobs:
         id: plan
         run: terraform plan -no-color
         continue-on-error: true
+        env:
+          TF_VAR_acm_certificate_arn: ${{ secrets.ACM_CERTIFICATE_ARN }}
 
       - name: Comment Plan on PR
         if: github.event_name == 'pull_request'
@@ -86,3 +88,5 @@ jobs:
       - name: Terraform Apply
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: terraform apply -auto-approve
+        env:
+          TF_VAR_acm_certificate_arn: ${{ secrets.ACM_CERTIFICATE_ARN }}
