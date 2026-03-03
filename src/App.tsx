@@ -22,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/:guildId" element={<Dashboard />} />
           <Route path="/login" element={<Login />} />
           <Route path="/login/callback" element={<DiscordCallback />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />

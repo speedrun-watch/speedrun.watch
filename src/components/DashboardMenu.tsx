@@ -19,7 +19,7 @@ interface DashboardMenuProps {
     setActiveTab: (tab: string) => void;
     activeGuildCategory: string;
     setActiveGuildCategory: (category: string) => void;
-    setSelectedGuildId: (guildId: string | null) => void;
+    onNavigateToDashboard: () => void;
     guilds: {
         owner: any[];
         admin: any[];
@@ -32,7 +32,7 @@ const DashboardMenu = ({
     setActiveTab,
     activeGuildCategory,
     setActiveGuildCategory,
-    setSelectedGuildId,
+    onNavigateToDashboard,
     guilds,
 }: DashboardMenuProps) => {
     return (
@@ -65,7 +65,7 @@ const DashboardMenu = ({
                             onClick={() => {
                                 setActiveTab("guilds");
                                 setActiveGuildCategory("all");
-                                setSelectedGuildId(null);
+                                onNavigateToDashboard();
                             }}
                         >
                             <Server className="mr-2 h-5 w-5" />
@@ -83,7 +83,7 @@ const DashboardMenu = ({
                                 onClick={() => {
                                     setActiveTab("guilds");
                                     setActiveGuildCategory("owner");
-                                    setSelectedGuildId(null);
+                                    onNavigateToDashboard();
                                 }}
                             >
                                 <Shield className="mr-2 h-4 w-4" />
@@ -99,7 +99,7 @@ const DashboardMenu = ({
                                 onClick={() => {
                                     setActiveTab("guilds");
                                     setActiveGuildCategory("admin");
-                                    setSelectedGuildId(null);
+                                    onNavigateToDashboard();
                                 }}
                             >
                                 <Settings className="mr-2 h-4 w-4" />
@@ -115,7 +115,7 @@ const DashboardMenu = ({
                                 onClick={() => {
                                     setActiveTab("guilds");
                                     setActiveGuildCategory("moderator");
-                                    setSelectedGuildId(null);
+                                    onNavigateToDashboard();
                                 }}
                             >
                                 <Users className="mr-2 h-4 w-4" />

@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -172,20 +171,9 @@ const popularGames = [
 // This is a placeholder Dashboard, you'll expand this with actual functionality later
 const Dashboard = () => {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { guildId: selectedGuildId } = useParams<{ guildId: string }>();
   const [activeTab, setActiveTab] = useState("guilds");
   const [activeGuildCategory, setActiveGuildCategory] = useState("all");
-  const selectedGuildId = searchParams.get("guild");
-  const setSelectedGuildId = useCallback((id: string | null) => {
-    setSearchParams(prev => {
-      if (id) {
-        prev.set("guild", id);
-      } else {
-        prev.delete("guild");
-      }
-      return prev;
-    }, { replace: true });
-  }, [setSearchParams]);
   const [gameSearchTerm, setGameSearchTerm] = useState("");
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
   const [notificationCopied, setNotificationCopied] = useState(false);
@@ -378,7 +366,7 @@ const Dashboard = () => {
 
   // Back to guild selection
   const handleBackToGuilds = () => {
-    setSelectedGuildId(null);
+    navigate('/dashboard');
     setActiveChannelId(null);
   };
 
@@ -668,7 +656,7 @@ const Dashboard = () => {
               setActiveTab={setActiveTab}
               activeGuildCategory={activeGuildCategory}
               setActiveGuildCategory={setActiveGuildCategory}
-              setSelectedGuildId={setSelectedGuildId}
+              onNavigateToDashboard={() => navigate('/dashboard')}
               guilds={guilds}
             />
 
@@ -832,7 +820,7 @@ const Dashboard = () => {
                               <Button
                                 size="sm"
                                 className="bg-discord-blurple hover:bg-discord-blurple/90 text-white flex-shrink-0"
-                                onClick={() => setSelectedGuildId(guild.id)}
+                                onClick={() => navigate(`/dashboard/${guild.id}`)}
                                 disabled={isFetchingChannels && selectedGuildId === guild.id}
                               >
                                 {isFetchingChannels && selectedGuildId === guild.id ? (
