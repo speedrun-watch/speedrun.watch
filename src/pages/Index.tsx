@@ -47,7 +47,7 @@ const Index = () => {
         <Hero />
         {/* <Features /> */}
         <Setup />
-        {/* <CtaSection /> */}
+        <CtaSection />
       </div>
       <Footer />
     </div>

@@ -1,74 +1,59 @@
 
-import { Button } from "@/components/ui/button";
-import { MessageSquare, Gamepad } from "lucide-react";
+import { useState, useEffect } from "react";
+import api from "@/lib/api";
 
-// Popular games using the bot
-const popularGames = [
-  { name: "Half-Life 2", icon: "🔫" },
-  { name: "Minecraft", icon: "⛏️" },
-  { name: "Super Mario 64", icon: "🍄" },
-  { name: "Portal", icon: "🔵" },
-  { name: "GTA: San Andreas", icon: "🚗" },
-  { name: "Doom Eternal", icon: "👹" },
-  { name: "The Legend of Zelda: BotW", icon: "🏹" },
-  { name: "Celeste", icon: "🏔️" }
+const featuredCommunities = [
+  { name: "Worms Speedrunning", icon: "https://cdn.discordapp.com/icons/886742237982113843/f337cdeffb998e2727fbb6ef6349845a.png" },
+  { name: "F1 Game Speedrunning", icon: "https://cdn.discordapp.com/icons/796696691968573451/146e88b3a6ba7a13f9004f670e12bc70.png" },
+  { name: "Bike Racing Games", icon: "https://cdn.discordapp.com/icons/1469820419715371078/ff8602362b42ac1987609b0fce3064d8.png" },
+  { name: "DST Speedrun Community", icon: "https://cdn.discordapp.com/icons/1116801951288545310/edb411cea1353d1b20aa42edc160d02a.png" },
+  { name: "The Hobbit Speedruns", icon: "https://cdn.discordapp.com/icons/782248141688799233/535f57f2ff14ae35be2b7b57dfb1e6e7.png" },
 ];
 
 const CtaSection = () => {
+  const [stats, setStats] = useState<{ guildCount: number; gameCount: number } | null>(null);
+
+  useEffect(() => {
+    api.get("/api/stats")
+      .then(res => setStats(res.data))
+      .catch(err => console.error("Error fetching stats:", err));
+  }, []);
+
+  if (!stats) return null;
+
   return (
     <section className="py-16 relative overflow-hidden">
-      {/* Background */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-br from-discord-blurple/10 to-discord-fuchsia/10"></div>
       <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-discord-blurple/20 to-discord-fuchsia/20"></div>
       <div className="absolute top-1/4 right-0 w-72 h-72 bg-discord-blurple/10 rounded-full blur-3xl -z-10"></div>
       <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-discord-fuchsia/10 rounded-full blur-3xl -z-10"></div>
 
-      {/* <div className="container mx-auto px-4 md:px-6"> */}
-      {/* Popular Games Section */}
-      {/* <div className="max-w-3xl mx-auto text-center mb-12">
-          <h2 className="text-xl md:text-2xl font-medium text-white mb-5">
-            Popular Games Using speedrun.watch
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-xl md:text-2xl font-medium text-white mb-2">
+            Watching{" "}
+            <span className="text-discord-blurple font-bold">{stats.gameCount} games</span>
+            {" "}across{" "}
+            <span className="text-discord-blurple font-bold">{stats.guildCount} communities</span>
           </h2>
+          <p className="text-gray-400 mb-6">including</p>
           <div className="flex flex-wrap justify-center gap-3 max-w-2xl mx-auto">
-            {popularGames.map((game, index) => (
+            {featuredCommunities.map((community, index) => (
               <div
                 key={index}
                 className="flex items-center bg-discord-dark/60 px-3 py-1.5 rounded-full"
               >
-                <span className="mr-1.5">{game.icon}</span>
-                <span className="text-sm">{game.name}</span>
+                <img
+                  src={community.icon}
+                  alt={community.name}
+                  className="w-4 h-4 rounded-full mr-1.5"
+                />
+                <span className="text-sm text-gray-200">{community.name}</span>
               </div>
             ))}
           </div>
-        </div> */}
-
-      {/* <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-xl md:text-2xl font-medium text-white mb-5">
-            Get Started
-          </h2>
-          <p className="text-base text-gray-300 mb-6 max-w-xl mx-auto">
-            Join communities already using speedrun.watch to keep their members updated about the latest achievements.
-          </p>
-
-          <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button
-              size="lg"
-              className="bg-discord-blurple/70 hover:bg-discord-blurple text-white py-5 px-6 text-base"
-            >
-              <MessageSquare className="mr-2 h-5 w-5" />
-              Add to Discord
-            </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="bg-transparent border-white/10 text-white hover:bg-white/5 py-5 px-6 text-base"
-            >
-              <Gamepad className="mr-2 h-5 w-5" />
-              See Features
-            </Button>
-          </div>
-        </div> */}
-      {/* </div> */}
+        </div>
+      </div>
     </section>
   );
 };
