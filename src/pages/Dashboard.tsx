@@ -51,12 +51,14 @@ interface DiscordGuild {
   permissions: number;
   permissions_new: string;
   features: string[];
+  superadmin?: boolean;
 }
 
 interface Guilds {
   owner: DiscordGuild[];
   admin: DiscordGuild[];
   moderator: DiscordGuild[];
+  superadmin: DiscordGuild[];
 }
 
 interface Game {
@@ -180,7 +182,8 @@ const Dashboard = () => {
   const [guilds, setGuilds] = useState<Guilds>({
     owner: [],
     admin: [],
-    moderator: []
+    moderator: [],
+    superadmin: [],
   });
   const [channels, setChannels] = useState<DiscordChannel[]>([]);
   const [searchResults, setSearchResults] = useState<Game[]>([]);
@@ -291,9 +294,10 @@ const Dashboard = () => {
         // Process the guilds into the correct categories
         const ownedGuilds = response.data.ownedGuilds || [];
         const processedGuilds: Guilds = {
-          owner: ownedGuilds.filter(guild => guild.owner),
-          admin: ownedGuilds.filter(guild => !guild.owner && (guild.permissions & 0x8) === 0x8), // Check for ADMINISTRATOR permission
-          moderator: ownedGuilds.filter(guild => !guild.owner && (guild.permissions & 0x8) !== 0x8 && (guild.permissions & 0x10) === 0x10) // Check for MANAGE_CHANNELS permission
+          owner: ownedGuilds.filter(guild => !guild.superadmin && guild.owner),
+          admin: ownedGuilds.filter(guild => !guild.superadmin && !guild.owner && (guild.permissions & 0x8) === 0x8),
+          moderator: ownedGuilds.filter(guild => !guild.superadmin && !guild.owner && (guild.permissions & 0x8) !== 0x8 && (guild.permissions & 0x10) === 0x10),
+          superadmin: ownedGuilds.filter(guild => guild.superadmin),
         };
 
         setGuilds(processedGuilds);
@@ -332,7 +336,8 @@ const Dashboard = () => {
   const allGuilds = [
     ...guilds.owner,
     ...guilds.admin,
-    ...guilds.moderator
+    ...guilds.moderator,
+    ...guilds.superadmin,
   ];
 
   // Format guild icon URL
@@ -762,12 +767,14 @@ const Dashboard = () => {
                     {activeGuildCategory === "owner" && "Owner Discord Guilds"}
                     {activeGuildCategory === "admin" && "Admin Discord Guilds"}
                     {activeGuildCategory === "moderator" && "Moderator Discord Guilds"}
+                    {activeGuildCategory === "superadmin" && "Superadmin Discord Guilds"}
                   </h1>
                   <p className="text-gray-400 text-sm mb-6">
                     {activeGuildCategory === "all" && "Servers where the bot is installed"}
                     {activeGuildCategory === "owner" && "Servers where the bot is installed and you are the owner"}
                     {activeGuildCategory === "admin" && "Servers where the bot is installed and you have administrator permissions"}
                     {activeGuildCategory === "moderator" && "Servers where the bot is installed and you have manage channels permissions"}
+                    {activeGuildCategory === "superadmin" && "All registered servers (bot admin access)"}
                   </p>
 
                   {isFetchingGuilds ? (
@@ -782,7 +789,8 @@ const Dashboard = () => {
                       {(activeGuildCategory === "all" ? allGuilds :
                         activeGuildCategory === "owner" ? guilds.owner :
                           activeGuildCategory === "admin" ? guilds.admin :
-                            guilds.moderator
+                            activeGuildCategory === "superadmin" ? guilds.superadmin :
+                              guilds.moderator
                       ).map(guild => (
                         <div key={guild.id} className="bg-discord-dark rounded-lg p-4 hover:bg-discord-dark/80 transition-colors">
                           <div className="flex items-center space-x-3">
@@ -801,7 +809,12 @@ const Dashboard = () => {
                               <h3 className="text-white font-medium truncate">{guild.name}</h3>
                             </div>
                             <div className="flex items-center space-x-2">
-                              {guild.owner ? (
+                              {guild.superadmin ? (
+                                <div className="flex items-center bg-red-400/10 border border-red-400/20 rounded-full px-2 py-1">
+                                  <ShieldAlert className="w-4 h-4 text-red-400" />
+                                  <span className="hidden xl:ml-1 xl:block text-sm text-red-400">Superadmin</span>
+                                </div>
+                              ) : guild.owner ? (
                                 <div className="flex items-center bg-green-400/10 border border-green-400/20 rounded-full px-2 py-1">
                                   <Shield className="w-4 h-4 text-green-400" />
                                   <span className="hidden xl:ml-1 xl:block text-sm text-green-400">Owner</span>

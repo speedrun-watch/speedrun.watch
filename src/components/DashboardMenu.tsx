@@ -11,6 +11,7 @@ import {
     Server,
     Settings,
     Shield,
+    ShieldAlert,
     Users,
 } from "lucide-react";
 
@@ -24,6 +25,7 @@ interface DashboardMenuProps {
         owner: any[];
         admin: any[];
         moderator: any[];
+        superadmin: any[];
     };
 }
 
@@ -121,6 +123,24 @@ const DashboardMenu = ({
                                 <Users className="mr-2 h-4 w-4" />
                                 Moderator ({guilds.moderator.length})
                             </Button>
+                            {guilds.superadmin.length > 0 && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className={`w-full justify-start ${activeTab === "guilds" && activeGuildCategory === "superadmin"
+                                        ? "bg-discord-blurple/20 text-white"
+                                        : "text-gray-400 hover:text-white hover:bg-discord-dark/50"
+                                        }`}
+                                    onClick={() => {
+                                        setActiveTab("guilds");
+                                        setActiveGuildCategory("superadmin");
+                                        onNavigateToDashboard();
+                                    }}
+                                >
+                                    <ShieldAlert className="mr-2 h-4 w-4" />
+                                    Superadmin ({guilds.superadmin.length})
+                                </Button>
+                            )}
                         </div>
                     </div>
 
