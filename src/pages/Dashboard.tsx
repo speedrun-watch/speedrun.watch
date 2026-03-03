@@ -323,6 +323,7 @@ const Dashboard = () => {
     const fetchGuildChannels = async () => {
       if (!selectedGuildId) return;
 
+      setChannels([]);
       setIsFetchingChannels(true);
       try {
         const response = await api.get<GuildChannelsResponse>(
