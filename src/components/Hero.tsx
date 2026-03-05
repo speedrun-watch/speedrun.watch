@@ -1,4 +1,5 @@
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Bell,
@@ -8,16 +9,122 @@ import {
   ThumbsUp,
   Heart
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { getDiscordBotInviteUrl } from "@/lib/discord";
 
+const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
+
+interface LatestRun {
+  type: string;
+  players: string;
+  time: string;
+  timePrimaryT: number;
+  game: string;
+  gameAbbreviation: string;
+  category: string;
+  categoryType: string;
+  level?: string;
+  place: number;
+  subcategories?: { name: string; value: string }[];
+  thumbnailUrl: string;
+  videoUrl?: string;
+  videoPlatform?: string;
+  weblink: string;
+  verifyDate: string;
+  gameIconUrl?: string;
+  trophyIconUrl?: string;
+  moderatorName?: string;
+  title: string;
+  embedTitle: string;
+  updatedAt: number;
+}
+
+function formatTimestamp(iso: string): string {
+  const date = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const timeStr = date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+  if (diffDays === 0) return `Today at ${timeStr}`;
+  if (diffDays === 1) return `Yesterday at ${timeStr}`;
+  return date.toLocaleDateString([], { month: "short", day: "numeric", year: "numeric" });
+}
+
+// Static fallback data matching the original Half-Life 2 embed
+const FALLBACK: LatestRun = {
+  type: "full-game",
+  players: "Buster12",
+  time: "37m 20s 55ms",
+  timePrimaryT: 2240.055,
+  game: "Half-Life 2",
+  gameAbbreviation: "hl2",
+  category: "Any%",
+  categoryType: "per-game",
+  place: 1,
+  subcategories: [{ name: "Version", value: "No Voidclip" }],
+  thumbnailUrl: "https://img.youtube.com/vi/CBgo4WVG_3I/0.jpg",
+  videoUrl: "https://www.youtube.com/watch?v=CBgo4WVG_3I",
+  videoPlatform: "YouTube",
+  weblink: "https://www.speedrun.com/hl2/runs/ylpx8grm",
+  verifyDate: new Date().toISOString(),
+  trophyIconUrl: "https://www.speedrun.com/images/1st.png",
+  moderatorName: undefined,
+  title: "Any% No Voidclip - 37m 20s 55ms",
+  embedTitle: "Buster12 set a new WR in Any%!",
+  updatedAt: Date.now(),
+};
+
 const Hero = () => {
-  const scrollToFeatures = () => {
-    const featuresSection = document.getElementById("features");
-    if (featuresSection) {
-      featuresSection.scrollIntoView({ behavior: "smooth" });
+  const [runs, setRuns] = useState<LatestRun[]>([]);
+  const [selectedType, setSelectedType] = useState<"full-game" | "individual-level">("full-game");
+
+  useEffect(() => {
+    fetch(`${API_ENDPOINT}/api/latest-runs`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.runs && data.runs.length > 0) {
+          setRuns(data.runs);
+          // Default to whichever type is available
+          const hasFullGame = data.runs.some((r: LatestRun) => r.type === "full-game");
+          if (!hasFullGame) setSelectedType("individual-level");
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const currentRun = runs.find(r => r.type === selectedType) || FALLBACK;
+  const hasFullGame = runs.some(r => r.type === "full-game");
+  const hasIL = runs.some(r => r.type === "individual-level");
+  const hasToggle = hasFullGame && hasIL;
+
+  // Build fields matching the bot's embed order: Type, Category, Place, [Level], [Subcategories...], [Watch]
+  const fields: { name: string; value: string; isLink?: boolean; url?: string }[] = [
+    {
+      name: "Type",
+      value: currentRun.categoryType === "per-level" ? "Individual Level" : "Full Game",
+    },
+    { name: "Category", value: currentRun.category },
+    { name: "Place", value: "1st" },
+  ];
+
+  if (currentRun.level) {
+    fields.push({ name: "Level", value: currentRun.level });
+  }
+
+  if (currentRun.subcategories) {
+    for (const sub of currentRun.subcategories) {
+      fields.push({ name: sub.name, value: sub.value });
     }
-  };
+  }
+
+  if (currentRun.videoUrl && currentRun.videoPlatform) {
+    fields.push({
+      name: "\u200B",
+      value: `Watch on ${currentRun.videoPlatform}`,
+      isLink: true,
+      url: currentRun.videoUrl,
+    });
+  }
 
   return (
     <section className="relative pt-24 md:pt-32 pb-20 overflow-hidden">
@@ -62,13 +169,33 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Bot Preview - Half-Life 2 WR Notification */}
+        {/* Type toggle */}
+        {hasToggle && (
+          <div className="flex justify-center mb-4">
+            <div className="bg-discord-dark/60 backdrop-blur-sm rounded-full p-1 flex">
+              <button
+                className={`px-4 py-1.5 rounded-full text-sm transition-colors ${selectedType === "full-game" ? "bg-discord-blurple/80 text-white" : "text-gray-400 hover:text-white"}`}
+                onClick={() => setSelectedType("full-game")}
+              >
+                Latest Full Game WR
+              </button>
+              <button
+                className={`px-4 py-1.5 rounded-full text-sm transition-colors ${selectedType === "individual-level" ? "bg-discord-blurple/80 text-white" : "text-gray-400 hover:text-white"}`}
+                onClick={() => setSelectedType("individual-level")}
+              >
+                Latest IL WR
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Bot Preview - Dynamic WR Notification */}
         <div className="mt-12 max-w-3xl mx-auto glass rounded-lg overflow-hidden animate-scale-in border border-white/5 shadow-md">
           <div className="bg-discord-dark/80 p-2 flex items-center">
             <div className="w-3 h-3 rounded-full bg-red-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-green-400"></div>
-            <div className="ml-4 text-gray-400 text-xs">Discord - SourceRuns Team</div>
+            <div className="ml-4 text-gray-400 text-xs">Discord</div>
           </div>
           <div className="p-4 bg-discord-darker/90 text-white">
             <div className="flex items-start mb-6">
@@ -88,43 +215,42 @@ const Hero = () => {
                     </svg>
                     APP
                   </span>
-                  <span className="text-gray-400 text-xs ml-2">Today at 18:22</span>
+                  <span className="text-gray-400 text-xs ml-2">{formatTimestamp(currentRun.verifyDate)}</span>
                 </div>
                 <div className="mb-2">
                   <span className="flex items-center">
                     <Trophy className="w-4 h-4 text-yellow-500 mr-2" />
-                    <span className="font-medium">Buster12 has achieved a new world record!</span>
+                    <span className="font-medium">{currentRun.embedTitle}</span>
                   </span>
                 </div>
-                <a href="https://www.speedrun.com/hl2/runs/ylpx8grm" target="_blank" rel="noopener noreferrer" className="mb-2 font-bold text-blue-400 hover:underline flex items-center">
-                  Any% No Voidclip - 37m 20s 055ms
+                <a href={currentRun.weblink} target="_blank" rel="noopener noreferrer" className="mb-2 font-bold text-blue-400 hover:underline flex items-center">
+                  {currentRun.title}
                 </a>
                 <div className="font-medium text-white mb-2">
-                  <a href="https://www.speedrun.com/hl2" target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    Half-Life 2
+                  <a href={`https://www.speedrun.com/${currentRun.gameAbbreviation}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    {currentRun.game}
                   </a>
                 </div>
                 <div className="grid grid-cols-3 gap-2 mb-4 text-sm">
-                  <div>
-                    <div className="text-gray-400">Type</div>
-                    <div>Full Game</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400">Category</div>
-                    <div>Any%</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400">Rank</div>
-                    <div>1st</div>
-                  </div>
+                  {fields.map((field, i) => (
+                    <div key={i}>
+                      <div className="text-gray-400">{field.name}</div>
+                      {field.isLink && field.url ? (
+                        <a href={field.url} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                          {field.value}
+                        </a>
+                      ) : (
+                        <div>{field.value}</div>
+                      )}
+                    </div>
+                  ))}
                 </div>
                 <div className="mb-3 relative rounded overflow-hidden">
-                  {/* Real speedrun thumbnail instead of YouTube placeholder */}
                   <div className="relative">
                     <div className="aspect-video bg-black">
                       <img
-                        src="https://img.youtube.com/vi/CBgo4WVG_3I/0.jpg"
-                        alt="Speedrun.com gaming thumbnail"
+                        src={currentRun.thumbnailUrl}
+                        alt={`${currentRun.game} speedrun thumbnail`}
                         className="w-full h-full object-cover opacity-90"
                       />
                     </div>
