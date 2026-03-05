@@ -286,11 +286,6 @@ const Hero = () => {
                   </span>
                   <span className="text-gray-400 text-xs ml-2">{formatTimestamp(currentRun.verifyDate)}</span>
                 </div>
-                <div className="font-semibold text-white mb-1">
-                  <a href={`https://www.speedrun.com/${currentRun.gameAbbreviation}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                    {currentRun.game}
-                  </a>
-                </div>
                 <div className="mb-2">
                   <span className="flex items-center">
                     <Trophy className="w-4 h-4 text-yellow-500 mr-2" />
@@ -300,6 +295,11 @@ const Hero = () => {
                 <a href={currentRun.weblink} target="_blank" rel="noopener noreferrer" className="mb-2 font-bold text-blue-400 hover:underline flex items-center">
                   {currentRun.title}
                 </a>
+                <div className="font-medium text-white mb-2">
+                  <a href={`https://www.speedrun.com/${currentRun.gameAbbreviation}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                    {currentRun.game}
+                  </a>
+                </div>
                 <div className="grid grid-cols-3 gap-2 mb-4 text-sm">
                   {fields.map((field, i) => (
                     <div key={i}>
