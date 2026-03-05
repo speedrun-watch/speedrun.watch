@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { LogIn, LogOut, User, LayoutDashboard } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -12,24 +12,27 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
 import { isTokenValid, logout } from "@/lib/auth";
+import { getDiscordOAuthUrl } from "@/lib/discord";
 
-const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
-const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
-const DISCORD_SCOPES = import.meta.env.VITE_DISCORD_SCOPES;
+interface DiscordUser {
+  id: string;
+  username: string;
+  discriminator: string;
+  avatar: string | null;
+}
+
+interface AuthState {
+  user: DiscordUser | null;
+}
 
 const AuthStatus = () => {
-  const [authStatus, setAuthStatus] = useState({ user: null });
+  const [authStatus, setAuthStatus] = useState<AuthState>({ user: null });
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   const SignInButton = () => {
-    const REDIRECT_URI = encodeURIComponent(FRONTEND_URL + "/login/callback");
-    const SCOPES = encodeURIComponent(DISCORD_SCOPES);
-
-    const signInUrl = `https://discord.com/oauth2/authorize?response_type=code&client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}`;
-
     const handleSignIn = () => {
-      window.location.href = signInUrl;
+      window.location.href = getDiscordOAuthUrl();
     };
 
     return (
@@ -51,7 +54,7 @@ const AuthStatus = () => {
   };
 
   useEffect(() => {
-    const fetchAuthStatus = async () => {
+    const fetchAuthStatus = () => {
       if (!isTokenValid()) {
         logout();
         setAuthStatus({ user: null });
@@ -60,7 +63,7 @@ const AuthStatus = () => {
       }
 
       try {
-        const user = JSON.parse(localStorage.getItem("user"));
+        const user = JSON.parse(localStorage.getItem("user") || "null");
         setAuthStatus({ user });
       } catch (error) {
         console.error("Error fetching auth status:", error);

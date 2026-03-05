@@ -49,13 +49,9 @@ const Features = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {features.map((feature, index) => (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className="bg-white/5 backdrop-blur-sm p-5 rounded-lg border border-white/5 transition-transform duration-300 hover:scale-102 hover:shadow-md"
-              style={{
-                animationDelay: `${index * 100}ms`,
-                animationFillMode: "both"
-              }}
             >
               <div className="bg-discord-dark/30 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
                 {feature.icon}

@@ -1,0 +1,86 @@
+export interface DiscordGuild {
+  id: string;
+  name: string;
+  icon: string | null;
+  banner: string | null;
+  owner: boolean;
+  permissions: number;
+  permissions_new: string;
+  features: string[];
+  superadmin?: boolean;
+}
+
+export interface Guilds {
+  owner: DiscordGuild[];
+  admin: DiscordGuild[];
+  moderator: DiscordGuild[];
+  superadmin: DiscordGuild[];
+}
+
+export interface Game {
+  id: string;
+  gameName: string;
+  names: {
+    international: string;
+  }
+  srcGameId: string;
+  abbreviation: string;
+  weblink: string;
+  discord: string;
+  released: number;
+  releaseDate: string;
+  notificationType?: string;
+  categoryIds?: string[];
+  ruleset: {
+    showMilliseconds: boolean;
+    requireVerification: boolean;
+    requireVideo: boolean;
+    runTimes: string[];
+    emulatorsAllowed: boolean;
+    defaultTime: string;
+  };
+  assets: {
+    coverSmall: { uri: string };
+    coverMedium: { uri: string };
+    coverLarge: { uri: string };
+    coverTiny: { uri: string };
+    icon: { uri: string };
+    logo: { uri: string | null };
+    background: { uri: string | null };
+    foreground: { uri: string | null };
+    trophy1st: { uri: string | null };
+    trophy2nd: { uri: string | null };
+    trophy3rd: { uri: string | null };
+    trophy4th: { uri: string | null };
+  };
+}
+
+export interface DiscordChannel {
+  id: string;
+  type: number;
+  flags: number;
+  guild_id: string;
+  name: string;
+  parent_id: string | null;
+  position: number;
+  permission_overwrites: unknown[];
+  games?: Game[];
+  last_message_id?: string | null;
+  rate_limit_per_user?: number;
+  topic?: string | null;
+  nsfw?: boolean;
+  bitrate?: number;
+  user_limit?: number;
+  rtc_region?: string | null;
+}
+
+export interface GuildChannelsResponse {
+  message: string;
+  guildChannels: DiscordChannel[];
+}
+
+export interface GameCategory {
+  id: string;
+  name: string;
+  type: string;
+}

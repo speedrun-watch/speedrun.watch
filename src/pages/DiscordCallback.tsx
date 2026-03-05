@@ -1,9 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, CheckCircle, AlertCircle } from "lucide-react";
+import { Bell } from "lucide-react";
 import api from "@/lib/api";
 
-const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
 const CALLBACK_PATH = import.meta.env.VITE_CALLBACK_PATH;
 
 const DiscordCallback = () => {
@@ -56,8 +55,8 @@ const DiscordCallback = () => {
                 <div className="space-y-4">
                     <div className="flex items-center justify-center space-x-2">
                         <div className="w-2 h-2 bg-discord-blurple rounded-full animate-bounce"></div>
-                        <div className="w-2 h-2 bg-discord-blurple rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                        <div className="w-2 h-2 bg-discord-blurple rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                        <div className="w-2 h-2 bg-discord-blurple rounded-full animate-bounce delay-100"></div>
+                        <div className="w-2 h-2 bg-discord-blurple rounded-full animate-bounce delay-200"></div>
                     </div>
                 </div>
 

@@ -7,36 +7,22 @@ import { useEffect, useState } from "react";
 const Footer = () => {
   const currentYear = new Date().getFullYear();
   const [pulsing, setPulsing] = useState(false);
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    typeof window !== "undefined"
+      ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      : false
+  );
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      // some browsers pass a MediaQueryListEvent, others pass the MediaQueryList itself
-      // both have `matches`.
-      // @ts-ignore
+
+    const handleChange = (e: MediaQueryListEvent) => {
       setPrefersReducedMotion(e.matches);
     };
 
-    // set initial value
-    setPrefersReducedMotion(mq.matches);
-
-    if (typeof mq.addEventListener === "function") {
-      mq.addEventListener("change", handleChange as EventListener);
-      return () => mq.removeEventListener("change", handleChange as EventListener);
-    }
-
-    // fallback for older browsers
-    // @ts-ignore
-    if (typeof mq.addListener === "function") {
-      // @ts-ignore
-      mq.addListener(handleChange);
-      return () => {
-        // @ts-ignore
-        mq.removeListener(handleChange);
-      };
-    }
+    mq.addEventListener("change", handleChange);
+    return () => mq.removeEventListener("change", handleChange);
   }, []);
 
   const handleHeartClick = () => {

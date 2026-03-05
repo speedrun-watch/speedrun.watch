@@ -2,7 +2,6 @@
 import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
 import Setup from "@/components/Setup";
 import CtaSection from "@/components/CtaSection";
 import Footer from "@/components/Footer";
@@ -44,7 +43,6 @@ const Index = () => {
       <Navbar />
       <div className="flex-1">
         <Hero />
-        {/* <Features /> */}
         <Setup />
         <CtaSection />
       </div>

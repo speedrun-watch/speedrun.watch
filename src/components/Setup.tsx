@@ -1,19 +1,17 @@
 
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
   PlusCircle,
-  Settings,
-  Gamepad,
   BellRing,
   MessageSquare,
   CheckCircle,
   User,
-  Users
 } from "lucide-react";
+import { getDiscordBotInviteUrl, getDiscordOAuthUrl } from "@/lib/discord";
 
 const Setup = () => {
   const [authStatus, setAuthStatus] = useState({ user: null });
@@ -42,7 +40,7 @@ const Setup = () => {
       icon: <PlusCircle className="w-6 h-6 text-discord-blurple/80" />,
       buttonText: "Add to Discord",
       buttonIcon: <MessageSquare className="w-4 h-4" />,
-      action: () => window.open(`https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&permissions=2214751313&integration_type=0&scope=bot`, '_blank')
+      action: () => window.open(getDiscordBotInviteUrl(), '_blank')
     },
     {
       number: "2",
@@ -58,13 +56,7 @@ const Setup = () => {
       action: authStatus.user
         ? undefined
         : () => {
-          const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
-          const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
-          const DISCORD_SCOPES = import.meta.env.VITE_DISCORD_SCOPES;
-          const REDIRECT_URI = encodeURIComponent(FRONTEND_URL + "/login/callback");
-          const SCOPES = encodeURIComponent(DISCORD_SCOPES);
-          const signInUrl = `https://discord.com/oauth2/authorize?response_type=code&client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}`;
-          window.location.href = signInUrl;
+          window.location.href = getDiscordOAuthUrl();
         }
     },
     {
@@ -157,26 +149,6 @@ const Setup = () => {
           </ol>
         </div>
 
-        {/* <div className="mt-16 p-6 rounded-lg max-w-3xl mx-auto bg-discord-dark/30 backdrop-blur-sm shadow-md border border-white/5">
-          <h3 className="text-xl font-medium text-white mb-4 flex items-center">
-            <CheckCircle className="w-5 h-5 text-discord-green/80 mr-2" />
-            Already using our bot?
-          </h3>
-          <p className="text-gray-300 mb-6">
-            Login to manage your settings, view statistics, and customize your notification preferences.
-          </p>
-          <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-            <Button className="bg-discord-blurple/80 hover:bg-discord-blurple/70 text-white">
-              Login with Discord
-            </Button>
-            <Button
-              variant="outline"
-              className="bg-transparent border-white/10 text-white hover:bg-white/5"
-            >
-              View Dashboard
-            </Button>
-          </div>
-        </div> */}
       </div>
     </section>
   );

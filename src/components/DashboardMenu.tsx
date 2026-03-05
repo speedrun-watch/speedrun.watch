@@ -14,6 +14,7 @@ import {
     ShieldAlert,
     Users,
 } from "lucide-react";
+import { getDiscordBotInviteUrl } from "@/lib/discord";
 
 interface DashboardMenuProps {
     activeTab: string;
@@ -22,10 +23,10 @@ interface DashboardMenuProps {
     setActiveGuildCategory: (category: string) => void;
     onNavigateToDashboard: () => void;
     guilds: {
-        owner: any[];
-        admin: any[];
-        moderator: any[];
-        superadmin: any[];
+        owner: unknown[];
+        admin: unknown[];
+        moderator: unknown[];
+        superadmin: unknown[];
     };
 }
 
@@ -46,7 +47,7 @@ const DashboardMenu = ({
                             <Button
                                 variant="ghost"
                                 className="w-full justify-start text-gray-400 hover:text-white hover:bg-discord-dark/50"
-                                onClick={() => window.open(`https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&permissions=2214751313&integration_type=0&scope=bot`, "_blank")}
+                                onClick={() => window.open(getDiscordBotInviteUrl(), "_blank")}
                             >
                                 <Plus className="mr-2 h-5 w-5" />
                                 Add Bot to Discord

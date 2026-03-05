@@ -2,8 +2,8 @@
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ArrowLeft, AlertCircle } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { getDiscordOAuthUrl } from "@/lib/discord";
 
 const Login = () => {
   useEffect(() => {
@@ -56,13 +56,7 @@ const Login = () => {
               className="w-full bg-discord-blurple hover:bg-discord-blurple/90 text-white py-6"
               size="lg"
               onClick={() => {
-                const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
-                const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
-                const DISCORD_SCOPES = import.meta.env.VITE_DISCORD_SCOPES;
-                const REDIRECT_URI = encodeURIComponent(FRONTEND_URL + "/login/callback");
-                const SCOPES = encodeURIComponent(DISCORD_SCOPES);
-                const signInUrl = `https://discord.com/oauth2/authorize?response_type=code&client_id=${DISCORD_CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}`;
-                window.location.href = signInUrl;
+                window.location.href = getDiscordOAuthUrl();
               }}
             >
               <MessageSquare className="mr-2 h-5 w-5" />
@@ -70,10 +64,6 @@ const Login = () => {
             </Button>
 
             <div className="text-center">
-              {/* <p className="text-sm text-gray-400 mb-4">
-                By logging in, you agree to our Terms of Service and Privacy Policy
-              </p> */}
-
               <Link to="/" className="text-discord-blurple hover:underline inline-flex items-center">
                 <ArrowLeft className="mr-1 h-4 w-4" />
                 Back to Home
