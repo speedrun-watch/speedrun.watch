@@ -6,12 +6,6 @@ import api from "@/lib/api";
 const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
 const CALLBACK_PATH = import.meta.env.VITE_CALLBACK_PATH;
 
-// Debug logging
-console.log("Environment Variables:");
-console.log("VITE_API_ENDPOINT:", API_ENDPOINT);
-console.log("VITE_CALLBACK_PATH:", CALLBACK_PATH);
-console.log("Raw import.meta.env:", import.meta.env);
-
 const DiscordCallback = () => {
     const navigate = useNavigate();
 
@@ -20,9 +14,6 @@ const DiscordCallback = () => {
         const code = params.get("code");
 
         if (code) {
-            // Send the code to the API
-            console.log("Code:", code);
-
             api
                 .post(`/${CALLBACK_PATH}`, { code })
                 .then((response) => {

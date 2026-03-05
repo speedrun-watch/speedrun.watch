@@ -57,7 +57,7 @@ const Hero = () => {
             <Button
               className="bg-discord-blurple/90 hover:bg-discord-blurple/80 text-white w-full sm:w-auto px-6 py-5"
               size="lg"
-              onClick={() => window.open('https://discord.com/oauth2/authorize?client_id=1311698143733354537&permissions=2214751313&integration_type=0&scope=bot', '_blank')}
+              onClick={() => window.open(`https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&permissions=2214751313&integration_type=0&scope=bot`, '_blank')}
             >
               <MessageSquare className="mr-2 h-5 w-5" />
               Add to Discord

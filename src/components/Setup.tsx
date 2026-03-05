@@ -42,7 +42,7 @@ const Setup = () => {
       icon: <PlusCircle className="w-6 h-6 text-discord-blurple/80" />,
       buttonText: "Add to Discord",
       buttonIcon: <MessageSquare className="w-4 h-4" />,
-      action: () => window.open('https://discord.com/oauth2/authorize?client_id=1311698143733354537&permissions=2214751313&integration_type=0&scope=bot', '_blank')
+      action: () => window.open(`https://discord.com/oauth2/authorize?client_id=${import.meta.env.VITE_DISCORD_CLIENT_ID}&permissions=2214751313&integration_type=0&scope=bot`, '_blank')
     },
     {
       number: "2",
