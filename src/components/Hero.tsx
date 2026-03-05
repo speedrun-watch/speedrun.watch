@@ -1,13 +1,11 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Bell,
   MessageSquare,
   ChevronDown,
   Trophy,
-  ThumbsUp,
-  Heart
 } from "lucide-react";
 import { getDiscordBotInviteUrl } from "@/lib/discord";
 
@@ -74,9 +72,40 @@ const FALLBACK: LatestRun = {
   updatedAt: Date.now(),
 };
 
+const EMOJI_POOL = ["🔥", "⚡", "🏆", "🎮", "💨", "🚀", "👏", "🤯", "💪", "⏱️", "🥇", "🎯", "✨", "💯", "😤", "🫡"];
+
+function hashStr(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  }
+  return Math.abs(h);
+}
+
+function getRunReactions(run: LatestRun): { emoji: string; count: number }[] {
+  const seed = hashStr(run.weblink || run.game + run.category);
+  const count = 3 + (seed % 2); // 3 or 4 reactions
+  const picked: { emoji: string; count: number }[] = [];
+  const used = new Set<number>();
+  for (let i = 0; i < count; i++) {
+    let idx = (seed * (i + 7) + i * 31) % EMOJI_POOL.length;
+    while (used.has(idx)) idx = (idx + 1) % EMOJI_POOL.length;
+    used.add(idx);
+    // Deterministic count: first reaction gets more
+    const base = i === 0 ? 3 + ((seed >> (i + 2)) % 6) : 1 + ((seed >> (i + 4)) % 4);
+    picked.push({ emoji: EMOJI_POOL[idx], count: base });
+  }
+  return picked;
+}
+
+function getReactionStorageKey(run: LatestRun, emoji: string): string {
+  return `reaction:${run.weblink || run.game}:${emoji}`;
+}
+
 const Hero = () => {
   const [runs, setRuns] = useState<LatestRun[]>([]);
   const [selectedType, setSelectedType] = useState<"full-game" | "individual-level">("full-game");
+  const [clickedReactions, setClickedReactions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetch(`${API_ENDPOINT}/api/latest-runs`)
@@ -92,7 +121,26 @@ const Hero = () => {
       .catch(() => {});
   }, []);
 
+  const handleReaction = useCallback((run: LatestRun, emoji: string) => {
+    const key = getReactionStorageKey(run, emoji);
+    if (clickedReactions.has(key)) return;
+    localStorage.setItem(key, "1");
+    setClickedReactions(prev => new Set(prev).add(key));
+  }, [clickedReactions]);
+
   const currentRun = runs.find(r => r.type === selectedType) || FALLBACK;
+  const reactions = getRunReactions(currentRun);
+
+  // Load persisted reactions for current run
+  useEffect(() => {
+    const persisted = new Set<string>();
+    for (const r of reactions) {
+      const key = getReactionStorageKey(currentRun, r.emoji);
+      if (localStorage.getItem(key)) persisted.add(key);
+    }
+    setClickedReactions(persisted);
+  }, [currentRun.weblink]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const hasFullGame = runs.some(r => r.type === "full-game");
   const hasIL = runs.some(r => r.type === "individual-level");
   const hasToggle = hasFullGame && hasIL;
@@ -169,26 +217,6 @@ const Hero = () => {
           </div>
         </div>
 
-        {/* Type toggle */}
-        {hasToggle && (
-          <div className="flex justify-center mb-4">
-            <div className="bg-discord-dark/60 backdrop-blur-sm rounded-full p-1 flex">
-              <button
-                className={`px-4 py-1.5 rounded-full text-sm transition-colors ${selectedType === "full-game" ? "bg-discord-blurple/80 text-white" : "text-gray-400 hover:text-white"}`}
-                onClick={() => setSelectedType("full-game")}
-              >
-                Latest Full Game WR
-              </button>
-              <button
-                className={`px-4 py-1.5 rounded-full text-sm transition-colors ${selectedType === "individual-level" ? "bg-discord-blurple/80 text-white" : "text-gray-400 hover:text-white"}`}
-                onClick={() => setSelectedType("individual-level")}
-              >
-                Latest IL WR
-              </button>
-            </div>
-          </div>
-        )}
-
         {/* Bot Preview - Dynamic WR Notification */}
         <div className="mt-12 max-w-3xl mx-auto glass rounded-lg overflow-hidden animate-scale-in border border-white/5 shadow-md">
           <div className="bg-discord-dark/80 p-2 flex items-center">
@@ -196,6 +224,22 @@ const Hero = () => {
             <div className="w-3 h-3 rounded-full bg-yellow-400 mr-2"></div>
             <div className="w-3 h-3 rounded-full bg-green-400"></div>
             <div className="ml-4 text-gray-400 text-xs">Discord</div>
+            {hasToggle && (
+              <div className="ml-auto flex bg-discord-darker/60 rounded-full p-0.5">
+                <button
+                  className={`px-2.5 py-0.5 rounded-full text-[11px] transition-colors ${selectedType === "full-game" ? "bg-discord-blurple/80 text-white" : "text-gray-500 hover:text-gray-300"}`}
+                  onClick={() => setSelectedType("full-game")}
+                >
+                  Full Game WR
+                </button>
+                <button
+                  className={`px-2.5 py-0.5 rounded-full text-[11px] transition-colors ${selectedType === "individual-level" ? "bg-discord-blurple/80 text-white" : "text-gray-500 hover:text-gray-300"}`}
+                  onClick={() => setSelectedType("individual-level")}
+                >
+                  IL WR
+                </button>
+              </div>
+            )}
           </div>
           <div className="p-4 bg-discord-darker/90 text-white">
             <div className="flex items-start mb-6">
@@ -258,50 +302,26 @@ const Hero = () => {
                 </div>
 
                 {/* Reactions */}
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
-                    <Heart className="w-3.5 h-3.5 text-red-400 mr-1.5" />
-                    <span className="text-xs">4</span>
-                  </div>
-                  <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
-                    <ThumbsUp className="w-3.5 h-3.5 text-blue-400 mr-1.5" />
-                    <span className="text-xs">2</span>
-                  </div>
-                  <div className="flex items-center bg-discord-dark/60 px-2 py-1 rounded-full">
-                    <Trophy className="w-3.5 h-3.5 text-yellow-400 mr-1.5" />
-                    <span className="text-xs">1</span>
-                  </div>
-                </div>
-
-                {/* Comments */}
-                <div className="bg-discord-dark/30 rounded-md p-2 mb-2">
-                  <div className="flex">
-                    <div className="w-6 h-6 rounded-full bg-blue-500/80 flex items-center justify-center mr-2 flex-shrink-0">
-                      <span className="text-xs text-white">G</span>
-                    </div>
-                    <div>
-                      <div className="flex items-center">
-                        <span className="text-blue-400 text-sm font-medium">gocnak</span>
-                        <span className="text-gray-400 text-xs ml-2">Just now</span>
-                      </div>
-                      <p className="text-sm text-gray-300">Incredible improvement on the last segment! That's an amazing achievement!</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-discord-dark/30 rounded-md p-2">
-                  <div className="flex">
-                    <div className="w-6 h-6 rounded-full bg-purple-500/80 flex items-center justify-center mr-2 flex-shrink-0">
-                      <span className="text-xs text-white">W</span>
-                    </div>
-                    <div>
-                      <div className="flex items-center">
-                        <span className="text-purple-400 text-sm font-medium">waezone</span>
-                        <span className="text-gray-400 text-xs ml-2">Just now</span>
-                      </div>
-                      <p className="text-sm text-gray-300">That skip at 15:42 was clean!</p>
-                    </div>
-                  </div>
+                <div className="flex items-center flex-wrap gap-1.5">
+                  {reactions.map((r) => {
+                    const key = getReactionStorageKey(currentRun, r.emoji);
+                    const clicked = clickedReactions.has(key);
+                    const displayCount = r.count + (clicked ? 1 : 0);
+                    return (
+                      <button
+                        key={r.emoji}
+                        onClick={() => handleReaction(currentRun, r.emoji)}
+                        className={`flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs transition-colors ${
+                          clicked
+                            ? "bg-discord-blurple/20 border border-discord-blurple/50 text-white"
+                            : "bg-discord-dark/50 border border-white/5 text-gray-300 hover:border-white/20"
+                        }`}
+                      >
+                        <span className="text-sm leading-none">{r.emoji}</span>
+                        <span>{displayCount}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
