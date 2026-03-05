@@ -150,10 +150,10 @@ const ChannelList = ({
                 {(!channel.games || channel.games.length === 0) ? (
                   <p className="text-gray-400 text-sm italic">No games linked to this channel</p>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {channel.games.map(game => (
-                      <div key={game.id} className="p-3 bg-discord-dark/30 rounded-md">
-                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                      <div key={game.id} className="px-3 py-1.5 bg-discord-dark/30 rounded-md">
+                        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2">
                           <div className="flex items-center space-x-3">
                             {game.assets && game.assets.icon && game.assets.icon.uri ? (
                               <img
