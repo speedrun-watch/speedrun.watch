@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /login
+Disallow: /login/callback
+
+Sitemap: https://speedrun.watch/sitemap.xml

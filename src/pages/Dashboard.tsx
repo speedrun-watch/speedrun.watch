@@ -207,6 +207,10 @@ const Dashboard = () => {
   const selectedGuildIdRef = useRef(selectedGuildId);
   selectedGuildIdRef.current = selectedGuildId;
 
+  useEffect(() => {
+    document.title = "Dashboard - speedrun.watch";
+  }, []);
+
   // Cleanup pending timers on unmount
   useEffect(() => {
     return () => {

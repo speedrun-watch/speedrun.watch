@@ -1,10 +1,15 @@
 
+import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, ArrowLeft, AlertCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 
 const Login = () => {
+  useEffect(() => {
+    document.title = "Login - speedrun.watch";
+  }, []);
+
   const [searchParams] = useSearchParams();
   const error = searchParams.get('error');
 

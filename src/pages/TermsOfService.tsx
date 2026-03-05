@@ -1,9 +1,14 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Bell, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 
 const TermsOfService = () => {
+    useEffect(() => {
+        document.title = "Terms of Service - speedrun.watch";
+    }, []);
+
     return (
         <div className="min-h-screen bg-discord-darker text-white flex flex-col">
             {/* Header */}

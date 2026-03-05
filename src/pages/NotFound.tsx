@@ -8,6 +8,7 @@ const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
+    document.title = "Page Not Found - speedrun.watch";
     console.error(
       "404 Error: User attempted to access non-existent route:",
       location.pathname
