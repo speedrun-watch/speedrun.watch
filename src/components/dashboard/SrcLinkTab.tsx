@@ -81,7 +81,7 @@ const SrcLinkTab = () => {
             </div>
             <div>
               <p className="text-white font-medium">Linked to {link.srcUsername}</p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-300">
                 Your Discord will be mentioned in run notifications
               </p>
             </div>
@@ -91,7 +91,7 @@ const SrcLinkTab = () => {
             href={`https://www.speedrun.com/users/${link.srcUsername}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm text-discord-blurple hover:underline inline-flex items-center gap-1 mb-4"
+            className="text-sm text-blue-400 hover:text-blue-300 hover:underline inline-flex items-center gap-1 mb-4"
           >
             View profile on speedrun.com <ExternalLink className="w-3 h-3" />
           </a>
@@ -99,7 +99,7 @@ const SrcLinkTab = () => {
           <div className="mt-4 pt-4 border-t border-white/10">
             <Button
               variant="outline"
-              className="border-red-500/30 text-red-400 hover:bg-red-500/10 hover:text-red-300"
+              className="border-red-400/40 text-red-300 hover:bg-red-500/10 hover:text-red-200"
               onClick={handleUnlink}
               disabled={unlinking}
             >
