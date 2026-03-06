@@ -74,9 +74,11 @@ const Setup = () => {
       title: "Are You a Runner?",
       description: "Link your speedrun.com account to get @mentioned in Discord notifications when your runs are posted.",
       icon: <Link2 className="w-6 h-6 text-discord-fuchsia/80" />,
-      buttonText: authStatus.user ? "Link Account" : undefined,
-      buttonIcon: authStatus.user ? <ArrowRight className="w-4 h-4" /> : undefined,
-      action: authStatus.user ? () => window.open('/dashboard/src-link', '_self') : undefined
+      buttonText: authStatus.user ? "Link Account" : "Login with Discord",
+      buttonIcon: <ArrowRight className="w-4 h-4" />,
+      action: authStatus.user
+        ? () => window.open('/dashboard/src-link', '_self')
+        : () => { window.location.href = getDiscordOAuthUrl(); }
     },
   ];
 
@@ -109,27 +111,27 @@ const Setup = () => {
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <ol className="relative border-l-2 border-discord-blurple/30 ml-4 md:ml-8 space-y-5">
+          <ol className="relative border-l-2 border-discord-blurple/30 ml-4 md:ml-6 space-y-3">
             {steps.map((step, index) => (
-              <li key={index} className="ml-8 md:ml-12">
-                <div className="absolute -left-4 flex items-center justify-center w-8 h-8 rounded-full bg-discord-blurple/80 text-white font-medium">
+              <li key={index} className="ml-6 md:ml-10">
+                <div className="absolute -left-3.5 flex items-center justify-center w-7 h-7 rounded-full bg-discord-blurple/80 text-white text-sm font-medium">
                   {step.number}
                 </div>
 
                 <Card className="border-0 overflow-hidden bg-discord-dark/30 backdrop-blur-sm shadow-md">
-                  <div className="p-6">
-                    <div className="flex items-center mb-4">
-                      <div className="bg-discord-darker/60 w-12 h-12 rounded-lg flex items-center justify-center mr-4 border border-discord-blurple/10">
+                  <div className="p-4">
+                    <div className="flex items-center mb-2">
+                      <div className="bg-discord-darker/60 w-10 h-10 rounded-lg flex items-center justify-center mr-3 border border-discord-blurple/10">
                         {step.icon}
                       </div>
-                      <h3 className="text-xl font-medium text-white">{step.title}</h3>
+                      <h3 className="text-lg font-medium text-white">{step.title}</h3>
                     </div>
 
-                    <p className="text-gray-300 mb-6">{step.description}</p>
+                    <p className="text-gray-300 text-sm mb-4">{step.description}</p>
 
                     {step.buttonText && (
-                      step.number === "3" && authStatus.user ? (
-                        <Link to="/dashboard">
+                      (step.number === "3" || step.number === "4") && authStatus.user ? (
+                        <Link to={step.number === "4" ? "/dashboard/src-link" : "/dashboard"}>
                           <Button
                             variant="outline"
                             className="w-full sm:w-auto bg-transparent border-white/10 text-white hover:bg-white/5"
