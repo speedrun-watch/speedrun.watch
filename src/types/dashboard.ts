@@ -31,6 +31,8 @@ export interface Game {
   releaseDate: string;
   notificationType?: string;
   categoryIds?: string[];
+  notificationCount?: number;
+  lastNotifiedAt?: string;
   ruleset: {
     showMilliseconds: boolean;
     requireVerification: boolean;

@@ -15,6 +15,7 @@ import {
   Medal,
   Zap,
   Loader2,
+  Mail,
   Filter,
   ChevronDown,
   ChevronUp,
@@ -164,18 +165,27 @@ const ChannelList = ({
                             ) : (
                               <Gamepad className="w-4 h-4 text-discord-green flex-shrink-0" />
                             )}
-                            {game.weblink ? (
-                              <a
-                                href={game.weblink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-gray-200 no-underline hover:underline"
-                              >
-                                {game.gameName}
-                              </a>
-                            ) : (
-                              <span className="text-gray-200">{game.gameName}</span>
-                            )}
+                            <div>
+                              {game.weblink ? (
+                                <a
+                                  href={game.weblink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-gray-200 no-underline hover:underline"
+                                >
+                                  {game.gameName}
+                                </a>
+                              ) : (
+                                <span className="text-gray-200">{game.gameName}</span>
+                              )}
+                              {game.notificationCount != null && game.notificationCount > 0 && (
+                                <p className="text-[11px] text-gray-500 flex items-center gap-1">
+                                  <Mail className="w-3 h-3" />
+                                  {game.notificationCount}
+                                  {game.lastNotifiedAt && ` · last ${new Date(game.lastNotifiedAt).toLocaleString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`}
+                                </p>
+                              )}
+                            </div>
                           </div>
 
                           <div className="flex items-center space-x-2">
