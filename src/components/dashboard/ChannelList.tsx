@@ -42,7 +42,7 @@ interface ChannelListProps {
   onSetActiveChannelId: (channelId: string | null) => void;
   onSearchTermChange: (term: string) => void;
   onLinkGame: (channelId: string, gameId: string) => void;
-  onUnlinkGame: (channelId: string, gameName: string) => void;
+  onUnlinkGame: (channelId: string, gameId: string) => void;
   onUpdateNotification: (channelId: string, gameId: string, setting: string) => void;
   onToggleCategoryPicker: (channelId: string, gameId: string) => void;
   onUpdateCategoryFilter: (channelId: string, gameId: string, categoryIds: string[]) => void;
@@ -225,10 +225,10 @@ const ChannelList = ({
                               size="sm"
                               variant="ghost"
                               className="text-gray-400 hover:text-red-500 h-8 w-8 p-0 flex-shrink-0"
-                              onClick={() => onUnlinkGame(channel.id, game.gameName)}
-                              disabled={isUnlinkingGame === `${channel.id}-${game.gameName}`}
+                              onClick={() => onUnlinkGame(channel.id, game.id)}
+                              disabled={isUnlinkingGame === `${channel.id}-${game.id}`}
                             >
-                              {isUnlinkingGame === `${channel.id}-${game.gameName}` ? (
+                              {isUnlinkingGame === `${channel.id}-${game.id}` ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
                               ) : (
                                 <X className="w-4 h-4" />

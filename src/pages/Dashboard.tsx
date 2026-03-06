@@ -147,19 +147,19 @@ const Dashboard = () => {
     }
   };
 
-  const handleUnlinkGame = async (channelId: string, gameName: string) => {
-    const unlinkKey = `${channelId}-${gameName}`;
+  const handleUnlinkGame = async (channelId: string, gameId: string) => {
+    const unlinkKey = `${channelId}-${gameId}`;
     setIsUnlinkingGame(unlinkKey);
     try {
       await api.delete(
-        `/api/guilds/${selectedGuildId}/channels/${channelId}/games/${gameName}`
+        `/api/guilds/${selectedGuildId}/channels/${channelId}/games/${gameId}`
       );
       setChannels(prevChannels =>
         prevChannels.map(channel => {
           if (channel.id === channelId) {
             return {
               ...channel,
-              games: channel.games?.filter(game => game.gameName !== gameName) || []
+              games: channel.games?.filter(game => game.id !== gameId) || []
             };
           }
           return channel;
