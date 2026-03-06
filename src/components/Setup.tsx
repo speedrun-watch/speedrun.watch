@@ -72,13 +72,13 @@ const Setup = () => {
     {
       number: "4",
       title: "Are You a Runner?",
-      description: "Link your speedrun.com account to get @mentioned in Discord notifications when your runs are posted.",
+      description: authStatus.user
+        ? "Link your speedrun.com account to get @mentioned in Discord notifications when your runs are posted."
+        : "Sign in above, then link your speedrun.com account to get @mentioned when your runs are posted.",
       icon: <Link2 className="w-6 h-6 text-discord-fuchsia/80" />,
-      buttonText: authStatus.user ? "Link Account" : "Login with Discord",
-      buttonIcon: <ArrowRight className="w-4 h-4" />,
-      action: authStatus.user
-        ? () => window.open('/dashboard/src-link', '_self')
-        : () => { window.location.href = getDiscordOAuthUrl(); }
+      buttonText: authStatus.user ? "Link Account" : undefined,
+      buttonIcon: authStatus.user ? <ArrowRight className="w-4 h-4" /> : undefined,
+      action: authStatus.user ? () => window.open('/dashboard/src-link', '_self') : undefined
     },
   ];
 
