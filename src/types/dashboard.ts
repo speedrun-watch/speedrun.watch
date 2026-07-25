@@ -39,6 +39,8 @@ export interface Game {
   // { variableId: [valueId, ...] }.
   globalValueFilters?: Record<string, string[]>;
   platformIds?: string[];
+  // speedrun.com user ids of runners to notify for (empty/absent = all runners).
+  runnerIds?: string[];
   notificationCount?: number;
   lastNotifiedAt?: string;
   ruleset: {
@@ -113,4 +115,13 @@ export interface SubcategoryVariable {
 export interface GamePlatform {
   id: string;
   name: string;
+}
+
+// A speedrun.com user returned by the runner search, used to pick which
+// runners to route into a channel. The immutable `id` is stored; `name` and
+// `weblink` are for display.
+export interface SrcRunner {
+  id: string;
+  name: string;
+  weblink?: string;
 }

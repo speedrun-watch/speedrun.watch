@@ -13,11 +13,13 @@ interface GameSettingsValues {
   // Global (all-categories) subcategory selections: { variableId: [valueId] }.
   globalValueFilters: Record<string, string[]>;
   platformIds: string[];
+  // speedrun.com user ids of the runners to notify for (empty = all runners).
+  runnerIds: string[];
 }
 
-// The two flat String-Set filters (categories, platforms) share one array
+// The flat String-Set filters (categories, platforms, runners) share one array
 // updater; the two subcategory maps share a separate map updater.
-type FilterField = "categoryIds" | "platformIds";
+type FilterField = "categoryIds" | "platformIds" | "runnerIds";
 type MapField = "categoryValueFilters" | "globalValueFilters";
 
 export function useGameSettings(
@@ -75,6 +77,7 @@ export function useGameSettings(
                             categoryValueFilters: confirmed.categoryValueFilters,
                             globalValueFilters: confirmed.globalValueFilters,
                             platformIds: confirmed.platformIds,
+                            runnerIds: confirmed.runnerIds,
                           }
                         : g
                     )
@@ -111,6 +114,7 @@ export function useGameSettings(
         categoryValueFilters: game?.categoryValueFilters || {},
         globalValueFilters: game?.globalValueFilters || {},
         platformIds: game?.platformIds || [],
+        runnerIds: game?.runnerIds || [],
       };
     }
   };
@@ -178,6 +182,9 @@ export function useGameSettings(
   const handleUpdatePlatformFilter = (channelId: string, gameId: string, newIds: string[]) =>
     updateFilterField(channelId, gameId, "platformIds", newIds);
 
+  const handleUpdateRunnerFilter = (channelId: string, gameId: string, newIds: string[]) =>
+    updateFilterField(channelId, gameId, "runnerIds", newIds);
+
   // Shared updater for the two subcategory maps. Each replaces its whole map
   // (categoryValueFilters is nested { categoryId: { variableId: [valueId] } };
   // globalValueFilters is flat { variableId: [valueId] }).
@@ -233,6 +240,7 @@ export function useGameSettings(
     handleUpdateCategoryValueFilters,
     handleUpdateGlobalValueFilters,
     handleUpdatePlatformFilter,
+    handleUpdateRunnerFilter,
     cleanup,
   };
 }

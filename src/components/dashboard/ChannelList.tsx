@@ -1,4 +1,4 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, useRef, type ReactNode, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -35,7 +35,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import GameSearch from "./GameSearch";
-import type { DiscordChannel, Game, GameCategory, SubcategoryVariable, GamePlatform, Guilds } from "@/types/dashboard";
+import api from "@/lib/api";
+import { runMatchesFilter, mapSrcRunToSample, type SrcRunSample } from "@/lib/runFilter";
+import type { DiscordChannel, Game, GameCategory, SubcategoryVariable, GamePlatform, SrcRunner, Guilds } from "@/types/dashboard";
 
 interface ChannelListProps {
   channels: DiscordChannel[];
@@ -65,6 +67,7 @@ interface ChannelListProps {
   onUpdateCategoryValueFilters: (channelId: string, gameId: string, categoryValueFilters: Record<string, Record<string, string[]>>) => void;
   onUpdateGlobalValueFilters: (channelId: string, gameId: string, globalValueFilters: Record<string, string[]>) => void;
   onUpdatePlatformFilter: (channelId: string, gameId: string, platformIds: string[]) => void;
+  onUpdateRunnerFilter: (channelId: string, gameId: string, runnerIds: string[]) => void;
   getCurrentNotificationSetting: (channelId: string, gameId: string) => string;
   getFilterLabel: (channelId: string, gameId: string) => string;
   flagsEnabled: boolean;
@@ -100,6 +103,7 @@ const ChannelList = ({
   onUpdateCategoryValueFilters,
   onUpdateGlobalValueFilters,
   onUpdatePlatformFilter,
+  onUpdateRunnerFilter,
   getCurrentNotificationSetting,
   getFilterLabel,
   flagsEnabled,
@@ -329,6 +333,7 @@ const ChannelList = ({
                             onUpdateCategoryValueFilters={onUpdateCategoryValueFilters}
                             onUpdateGlobalValueFilters={onUpdateGlobalValueFilters}
                             onUpdatePlatformFilter={onUpdatePlatformFilter}
+                            onUpdateRunnerFilter={onUpdateRunnerFilter}
                           />
                         )}
                       </div>
@@ -354,13 +359,8 @@ function toggleId(currentIds: string[], id: string): string[] {
 // --- Live "how many runs match this filter?" sample -------------------------
 // A recent verified-run sample fetched straight from speedrun.com (public API,
 // CORS-open) lets us tell the user when their selections match nothing — e.g.
-// "GoW Ragnarök on PSP", an impossible combination the AND-ed axes allow.
-
-interface SrcRunSample {
-  category: string | null;
-  values: Record<string, string>;
-  platform: string | null;
-}
+// "GoW Ragnarök on PSP", an impossible combination the AND-ed axes allow. The
+// pure matching logic lives in @/lib/runFilter (unit-tested there).
 
 const runSampleCache = new Map<string, SrcRunSample[]>();
 const RUN_SAMPLE_SIZE = 200;
@@ -373,55 +373,9 @@ async function fetchRunSample(gameId: string): Promise<SrcRunSample[]> {
   );
   if (!res.ok) throw new Error(`runs fetch failed: ${res.status}`);
   const json = await res.json();
-  const runs: SrcRunSample[] = (json.data || []).map((r: {
-    category?: string | null;
-    values?: Record<string, string>;
-    system?: { platform?: string | null };
-  }) => ({
-    category: r.category ?? null,
-    values: r.values || {},
-    platform: r.system?.platform ?? null,
-  }));
+  const runs: SrcRunSample[] = (json.data || []).map(mapSrcRunToSample);
   runSampleCache.set(gameId, runs);
   return runs;
-}
-
-// AND across constrained variables; a run must carry an allowed value for each.
-// Mirrors the bot's matchesVariableConstraints so the count is honest.
-function runMatchesVariables(
-  runValues: Record<string, string>,
-  constraints: Record<string, string[]>,
-): boolean {
-  for (const [variableId, allowed] of Object.entries(constraints || {})) {
-    if (!allowed || allowed.length === 0) continue;
-    const value = runValues?.[variableId];
-    if (!value || !allowed.includes(value)) return false;
-  }
-  return true;
-}
-
-interface RunFilter {
-  categoryIds: string[];
-  categoryValueFilters: Record<string, Record<string, string[]>>;
-  globalValueFilters: Record<string, string[]>;
-  platformIds: string[];
-}
-
-// Mirror of the bot's fan-out gates (category → per-branch → global → platform),
-// so the preview count matches what would actually be posted.
-function runMatchesFilter(run: SrcRunSample, f: RunFilter): boolean {
-  if (f.categoryIds.length > 0 && (!run.category || !f.categoryIds.includes(run.category))) {
-    return false;
-  }
-  if (run.category) {
-    const branch = f.categoryValueFilters[run.category];
-    if (branch && !runMatchesVariables(run.values, branch)) return false;
-  }
-  if (!runMatchesVariables(run.values, f.globalValueFilters)) return false;
-  if (f.platformIds.length > 0 && (!run.platform || !f.platformIds.includes(run.platform))) {
-    return false;
-  }
-  return true;
 }
 
 interface FilterPickerProps {
@@ -435,6 +389,7 @@ interface FilterPickerProps {
   onUpdateCategoryValueFilters: (channelId: string, gameId: string, categoryValueFilters: Record<string, Record<string, string[]>>) => void;
   onUpdateGlobalValueFilters: (channelId: string, gameId: string, globalValueFilters: Record<string, string[]>) => void;
   onUpdatePlatformFilter: (channelId: string, gameId: string, platformIds: string[]) => void;
+  onUpdateRunnerFilter: (channelId: string, gameId: string, runnerIds: string[]) => void;
 }
 
 const FilterPicker = ({
@@ -448,11 +403,13 @@ const FilterPicker = ({
   onUpdateCategoryValueFilters,
   onUpdateGlobalValueFilters,
   onUpdatePlatformFilter,
+  onUpdateRunnerFilter,
 }: FilterPickerProps) => {
   const currentCategoryIds = game.categoryIds || [];
   const currentCategoryValueFilters = game.categoryValueFilters || {};
   const currentGlobalValueFilters = game.globalValueFilters || {};
   const currentPlatformIds = game.platformIds || [];
+  const currentRunnerIds = game.runnerIds || [];
 
   const categories = categoryData || [];
   const variables = variableData || [];
@@ -549,16 +506,18 @@ const FilterPicker = ({
   const handlePlatformToggle = (platformId: string) =>
     onUpdatePlatformFilter(channelId, game.id, toggleId(currentPlatformIds, platformId));
 
-  const hasAnyFilter =
+  const nonRunnerFilterActive =
     currentCategoryIds.length > 0 ||
     Object.keys(currentCategoryValueFilters).length > 0 ||
     Object.keys(currentGlobalValueFilters).length > 0 ||
     currentPlatformIds.length > 0;
+  const hasAnyFilter = nonRunnerFilterActive || currentRunnerIds.length > 0;
   const clearAllFilters = () => {
     if (currentCategoryIds.length > 0) onUpdateCategoryFilter(channelId, game.id, []);
     if (Object.keys(currentCategoryValueFilters).length > 0) onUpdateCategoryValueFilters(channelId, game.id, {});
     if (Object.keys(currentGlobalValueFilters).length > 0) onUpdateGlobalValueFilters(channelId, game.id, {});
     if (currentPlatformIds.length > 0) onUpdatePlatformFilter(channelId, game.id, []);
+    if (currentRunnerIds.length > 0) onUpdateRunnerFilter(channelId, game.id, []);
   };
 
   const matchCount = runSample
@@ -568,6 +527,7 @@ const FilterPicker = ({
           categoryValueFilters: currentCategoryValueFilters,
           globalValueFilters: currentGlobalValueFilters,
           platformIds: currentPlatformIds,
+          runnerIds: currentRunnerIds,
         }),
       ).length
     : null;
@@ -631,8 +591,10 @@ const FilterPicker = ({
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>Loading filters from speedrun.com...</span>
         </div>
-      ) : hasContent ? (
+      ) : (
         <div className="space-y-4">
+          {hasContent ? (
+            <>
           <div className="flex items-center justify-between">
             <span className="text-xs text-gray-400 font-medium">Filter notifications</span>
             {hasAnyFilter ? (
@@ -650,13 +612,23 @@ const FilterPicker = ({
           {/* Live preview: how many recent verified runs this filter matches. */}
           {hasAnyFilter && matchCount !== null && runSample !== null && (
             matchCount === 0 ? (
-              <div className="flex items-start gap-1.5 text-xs text-amber-400 bg-amber-400/10 rounded px-2 py-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>
-                  None of the last {runSample.length} verified runs match this filter — double-check the
-                  combination (e.g. a category paired with a platform it never ran on).
-                </span>
-              </div>
+              !nonRunnerFilterActive ? (
+                // Runner-only filter: zero recent matches is expected (the point
+                // is to catch the runner's FUTURE runs), so this is informational,
+                // not a warning.
+                <div className="text-xs text-gray-500">
+                  {currentRunnerIds.length > 1 ? "These runners have" : "This runner has"} no runs in the
+                  last {runSample.length} verified — their next verified run will still notify.
+                </div>
+              ) : (
+                <div className="flex items-start gap-1.5 text-xs text-amber-400 bg-amber-400/10 rounded px-2 py-1.5">
+                  <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                  <span>
+                    None of the last {runSample.length} verified runs match this filter — double-check the
+                    combination (e.g. a category paired with a platform it never ran on).
+                  </span>
+                </div>
+              )
             ) : (
               <div className="text-xs text-gray-500">
                 {matchCount} of the last {runSample.length} verified runs match this filter.
@@ -724,10 +696,230 @@ const FilterPicker = ({
               />
             </FilterSection>
           )}
+
+            </>
+          ) : (
+            <p className="text-sm text-gray-400">
+              Couldn't load categories or platforms from speedrun.com — you can still filter by runner below.
+            </p>
+          )}
+
+          {/* Runners — an independent axis (doesn't need the game's category /
+              platform metadata), so it stays available even if that fetch failed. */}
+          <FilterSection
+            title="Runners"
+            hint="Leave empty to notify for all runners. Add runners to post only their verified runs (multiple runners = any of them)."
+          >
+            <RunnerFilterSection
+              runnerIds={currentRunnerIds}
+              onChange={(ids) => onUpdateRunnerFilter(channelId, game.id, ids)}
+            />
+          </FilterSection>
         </div>
-      ) : (
-        <span className="text-sm text-gray-400">Failed to load filters</span>
       )}
+    </div>
+  );
+};
+
+// Search-and-add control for runner routing. Self-contained: it searches
+// speedrun.com users via the API, caches resolved names, and resolves names
+// for already-stored ids (usernames aren't stored — only the immutable id).
+export const RunnerFilterSection = ({
+  runnerIds,
+  onChange,
+}: {
+  runnerIds: string[];
+  onChange: (ids: string[]) => void;
+}) => {
+  const [term, setTerm] = useState("");
+  const [results, setResults] = useState<SrcRunner[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(-1);
+  const [names, setNames] = useState<Record<string, string>>({});
+  const namesRef = useRef(names);
+  namesRef.current = names;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  // Resolve display names for ids we don't yet know (e.g. persisted on reload).
+  const runnerKey = runnerIds.join("|");
+  useEffect(() => {
+    let alive = true;
+    const missing = runnerIds.filter(id => !namesRef.current[id]);
+    if (missing.length === 0) return;
+    Promise.all(
+      missing.map(id =>
+        api
+          .get(`/api/runners/${id}`)
+          .then(res => [id, res.data.runner?.name || id] as [string, string])
+          .catch(() => [id, id] as [string, string]),
+      ),
+    ).then(pairs => {
+      if (alive) setNames(prev => ({ ...prev, ...Object.fromEntries(pairs) }));
+    });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [runnerKey]);
+
+  // Debounced search against the SRC user lookup. `alive` guards against a
+  // slow earlier request resolving after a newer one (stale results).
+  useEffect(() => {
+    const q = term.trim();
+    if (!q) { setResults([]); setIsSearching(false); setSearchError(false); setHasSearched(false); return; }
+    let alive = true;
+    setIsSearching(true);
+    setOpen(true);
+    const t = setTimeout(() => {
+      api
+        .get(`/api/search/runners/${encodeURIComponent(q)}`)
+        .then(res => { if (alive) { setResults(res.data.runners || []); setSearchError(false); } })
+        .catch(() => { if (alive) { setResults([]); setSearchError(true); } })
+        .finally(() => { if (alive) { setIsSearching(false); setHasSearched(true); } });
+    }, 400);
+    return () => { alive = false; clearTimeout(t); };
+  }, [term]);
+
+  // Dismiss the results dropdown on outside click.
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [open]);
+
+  // Keyboard nav: reset the highlight when the result set changes, and keep the
+  // active option scrolled into view as the user arrows through.
+  useEffect(() => { setActiveIndex(-1); }, [results]);
+  useEffect(() => {
+    if (activeIndex < 0) return;
+    listRef.current?.querySelector(`#runner-opt-${activeIndex}`)?.scrollIntoView?.({ block: "nearest" });
+  }, [activeIndex]);
+
+  const addRunner = (runner: SrcRunner) => {
+    if (isSearching) return; // don't commit a stale result while a newer search is pending
+    if (!runnerIds.includes(runner.id)) onChange([...runnerIds, runner.id]);
+    setNames(prev => ({ ...prev, [runner.id]: runner.name }));
+    setTerm("");
+    setResults([]);
+    setOpen(false);
+  };
+  const removeRunner = (id: string) => onChange(runnerIds.filter(x => x !== id));
+
+  const onInputKeyDown = (e: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") {
+      setOpen(false);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setOpen(true);
+      setActiveIndex(i => (results.length === 0 ? -1 : Math.min(i + 1, results.length - 1)));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActiveIndex(i => Math.max(i - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const pick =
+        activeIndex >= 0 && activeIndex < results.length
+          ? results[activeIndex]
+          : results.find(r => !runnerIds.includes(r.id));
+      if (pick && !runnerIds.includes(pick.id)) addRunner(pick);
+    }
+  };
+
+  return (
+    <div className="space-y-2" ref={containerRef}>
+      {runnerIds.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {runnerIds.map(id => {
+            const label = names[id] ?? "…";
+            return (
+              <span
+                key={id}
+                className="inline-flex items-center gap-1 rounded bg-discord-blurple/20 text-gray-200 text-xs pl-2 pr-1 py-1"
+              >
+                <span
+                  className={`max-w-[12rem] truncate ${names[id] ? "" : "text-gray-400 italic"}`}
+                  title={names[id] ?? undefined}
+                >
+                  {label}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeRunner(id)}
+                  className="p-1 -mr-0.5 text-gray-400 hover:text-red-400"
+                  aria-label={`Remove ${label}`}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            );
+          })}
+        </div>
+      )}
+
+      <div className="relative">
+        <input
+          type="text"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          onKeyDown={onInputKeyDown}
+          onFocus={() => { if (term.trim()) setOpen(true); }}
+          role="combobox"
+          aria-expanded={open && term.trim().length > 0}
+          aria-controls="runner-listbox"
+          aria-autocomplete="list"
+          aria-activedescendant={activeIndex >= 0 ? `runner-opt-${activeIndex}` : undefined}
+          aria-label="Search a speedrun.com username to add as a runner filter"
+          placeholder="Search a speedrun.com username…"
+          className="w-full rounded-md border border-gray-700 bg-discord-darker px-2.5 py-1.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-discord-blurple"
+        />
+        {open && term.trim() && (
+          <div
+            ref={listRef}
+            id="runner-listbox"
+            role="listbox"
+            className="absolute z-10 mt-1 w-full rounded-md border border-gray-700 bg-discord-darker shadow-lg max-h-48 overflow-y-auto"
+          >
+            {isSearching && results.length === 0 ? (
+              <div className="flex items-center gap-2 px-2.5 py-2 text-xs text-gray-400">
+                <Loader2 className="w-3.5 h-3.5 animate-spin" /> Searching…
+              </div>
+            ) : searchError ? (
+              <div className="px-2.5 py-2 text-xs text-red-400">Couldn't reach speedrun.com — try again.</div>
+            ) : results.length === 0 && hasSearched ? (
+              <div className="px-2.5 py-2 text-xs text-gray-400">No runners found</div>
+            ) : (
+              results.map((runner, idx) => {
+                const alreadyAdded = runnerIds.includes(runner.id);
+                return (
+                  <button
+                    key={runner.id}
+                    id={`runner-opt-${idx}`}
+                    role="option"
+                    aria-selected={idx === activeIndex}
+                    type="button"
+                    disabled={alreadyAdded}
+                    onClick={() => addRunner(runner)}
+                    onMouseEnter={() => setActiveIndex(idx)}
+                    className={`flex w-full items-center justify-between px-2.5 py-1.5 text-left text-sm text-gray-200 disabled:opacity-50 ${idx === activeIndex ? "bg-discord-dark/70" : "hover:bg-discord-dark/70"}`}
+                  >
+                    <span className="truncate">{runner.name}</span>
+                    {alreadyAdded ? (
+                      <span className="text-[11px] text-gray-400">added</span>
+                    ) : (
+                      <Plus className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+                    )}
+                  </button>
+                );
+              })
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
