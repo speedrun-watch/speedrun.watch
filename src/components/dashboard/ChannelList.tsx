@@ -68,6 +68,7 @@ interface ChannelListProps {
   onUpdateGlobalValueFilters: (channelId: string, gameId: string, globalValueFilters: Record<string, string[]>) => void;
   onUpdatePlatformFilter: (channelId: string, gameId: string, platformIds: string[]) => void;
   onUpdateRunnerFilter: (channelId: string, gameId: string, runnerIds: string[]) => void;
+  onUpdateCustomMessage: (channelId: string, gameId: string, message: string) => void;
   getCurrentNotificationSetting: (channelId: string, gameId: string) => string;
   getFilterLabel: (channelId: string, gameId: string) => string;
   flagsEnabled: boolean;
@@ -104,6 +105,7 @@ const ChannelList = ({
   onUpdateGlobalValueFilters,
   onUpdatePlatformFilter,
   onUpdateRunnerFilter,
+  onUpdateCustomMessage,
   getCurrentNotificationSetting,
   getFilterLabel,
   flagsEnabled,
@@ -334,6 +336,7 @@ const ChannelList = ({
                             onUpdateGlobalValueFilters={onUpdateGlobalValueFilters}
                             onUpdatePlatformFilter={onUpdatePlatformFilter}
                             onUpdateRunnerFilter={onUpdateRunnerFilter}
+                            onUpdateCustomMessage={onUpdateCustomMessage}
                           />
                         )}
                       </div>
@@ -390,6 +393,7 @@ interface FilterPickerProps {
   onUpdateGlobalValueFilters: (channelId: string, gameId: string, globalValueFilters: Record<string, string[]>) => void;
   onUpdatePlatformFilter: (channelId: string, gameId: string, platformIds: string[]) => void;
   onUpdateRunnerFilter: (channelId: string, gameId: string, runnerIds: string[]) => void;
+  onUpdateCustomMessage: (channelId: string, gameId: string, message: string) => void;
 }
 
 const FilterPicker = ({
@@ -404,6 +408,7 @@ const FilterPicker = ({
   onUpdateGlobalValueFilters,
   onUpdatePlatformFilter,
   onUpdateRunnerFilter,
+  onUpdateCustomMessage,
 }: FilterPickerProps) => {
   const currentCategoryIds = game.categoryIds || [];
   const currentCategoryValueFilters = game.categoryValueFilters || {};
@@ -714,6 +719,25 @@ const FilterPicker = ({
               runnerIds={currentRunnerIds}
               onChange={(ids) => onUpdateRunnerFilter(channelId, game.id, ids)}
             />
+          </FilterSection>
+
+          {/* Custom message rendered above the run embed. Independent of game
+              metadata, so always available. */}
+          <FilterSection title="Message">
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500 leading-snug">
+                Shown above the run card. Placeholders: {"{runner} {game} {category} {place} {time} {weblink}"}.
+              </p>
+              <textarea
+                value={game.customMessage || ""}
+                onChange={(e) => onUpdateCustomMessage(channelId, game.id, e.target.value.slice(0, 500))}
+                maxLength={500}
+                rows={2}
+                placeholder="e.g. New PB by {runner}! 🎉"
+                className="w-full rounded-md border border-gray-700 bg-discord-darker px-2.5 py-1.5 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-discord-blurple resize-y"
+              />
+              <div className="text-right text-[11px] text-gray-500">{(game.customMessage || "").length}/500</div>
+            </div>
           </FilterSection>
         </div>
       )}

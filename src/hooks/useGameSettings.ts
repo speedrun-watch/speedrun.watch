@@ -15,6 +15,8 @@ interface GameSettingsValues {
   platformIds: string[];
   // speedrun.com user ids of the runners to notify for (empty = all runners).
   runnerIds: string[];
+  // Optional message rendered above the run embed (empty = none).
+  customMessage: string;
 }
 
 // The flat String-Set filters (categories, platforms, runners) share one array
@@ -78,6 +80,7 @@ export function useGameSettings(
                             globalValueFilters: confirmed.globalValueFilters,
                             platformIds: confirmed.platformIds,
                             runnerIds: confirmed.runnerIds,
+                            customMessage: confirmed.customMessage,
                           }
                         : g
                     )
@@ -115,6 +118,7 @@ export function useGameSettings(
         globalValueFilters: game?.globalValueFilters || {},
         platformIds: game?.platformIds || [],
         runnerIds: game?.runnerIds || [],
+        customMessage: game?.customMessage || "",
       };
     }
   };
@@ -141,6 +145,29 @@ export function useGameSettings(
 
     const existing = pendingValuesRef.current[key] || lastConfirmedRef.current[key];
     pendingValuesRef.current[key] = { ...existing, notificationType: setting };
+    scheduleGameSettingsSave(channelId, gameId);
+  };
+
+  const handleUpdateCustomMessage = (channelId: string, gameId: string, message: string) => {
+    const key = `${channelId}-${gameId}`;
+    initConfirmedState(channelId, gameId);
+
+    setChannels(prevChannels =>
+      prevChannels.map(channel => {
+        if (channel.id === channelId && channel.games) {
+          return {
+            ...channel,
+            games: channel.games.map(game =>
+              game.id === gameId ? { ...game, customMessage: message } : game
+            )
+          };
+        }
+        return channel;
+      })
+    );
+
+    const existing = pendingValuesRef.current[key] || lastConfirmedRef.current[key];
+    pendingValuesRef.current[key] = { ...existing, customMessage: message };
     scheduleGameSettingsSave(channelId, gameId);
   };
 
@@ -241,6 +268,7 @@ export function useGameSettings(
     handleUpdateGlobalValueFilters,
     handleUpdatePlatformFilter,
     handleUpdateRunnerFilter,
+    handleUpdateCustomMessage,
     cleanup,
   };
 }

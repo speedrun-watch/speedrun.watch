@@ -41,6 +41,8 @@ export interface Game {
   platformIds?: string[];
   // speedrun.com user ids of runners to notify for (empty/absent = all runners).
   runnerIds?: string[];
+  // Optional message rendered above the run embed.
+  customMessage?: string;
   notificationCount?: number;
   lastNotifiedAt?: string;
   ruleset: {

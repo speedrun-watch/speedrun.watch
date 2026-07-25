@@ -66,6 +66,7 @@ const Dashboard = () => {
     handleUpdateGlobalValueFilters,
     handleUpdatePlatformFilter,
     handleUpdateRunnerFilter,
+    handleUpdateCustomMessage,
     cleanup: cleanupGameSettings,
   } = useGameSettings(selectedGuildIdRef, setChannels, channels);
 
@@ -417,6 +418,7 @@ const Dashboard = () => {
                   onUpdateGlobalValueFilters={handleUpdateGlobalValueFilters}
                   onUpdatePlatformFilter={handleUpdatePlatformFilter}
                   onUpdateRunnerFilter={handleUpdateRunnerFilter}
+                  onUpdateCustomMessage={handleUpdateCustomMessage}
                   getCurrentNotificationSetting={getCurrentNotificationSetting}
                   getFilterLabel={getFilterLabel}
                   flagsEnabled={flagsEnabled}
