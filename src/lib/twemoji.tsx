@@ -27,6 +27,6 @@ export function Twemoji({ text }: { text: string }): ReactNode {
     );
     lastIndex = idx + match[0].length;
   }
-  if (lastIndex < text.length) parts.push(<Fragment key={key++}>{text.slice(lastIndex)}</Fragment>);
+  if (lastIndex < text.length) parts.push(<Fragment key={key}>{text.slice(lastIndex)}</Fragment>);
   return <>{parts}</>;
 }
