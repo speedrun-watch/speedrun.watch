@@ -34,6 +34,7 @@ export interface RunFilter {
   categoryIds: string[];
   categoryValueFilters: Record<string, Record<string, string[]>>;
   globalValueFilters: Record<string, string[]>;
+  levelValueFilters: Record<string, Record<string, string[]>>;
   platformIds: string[];
   runnerIds: string[];
 }
@@ -52,8 +53,29 @@ export function runMatchesVariables(
   return true;
 }
 
-// Mirror of the bot's fan-out gates (category → per-branch → global → platform
-// → runner), so the preview count matches what would actually be posted.
+// Level-variable groups: OR within a group (a run carries only its own
+// level's copy of a duplicated single-level variable, so ANY of the group's
+// (variableId, valueId) pairs matching passes), AND across groups. A run
+// carrying none of a constrained group's variables (e.g. a full-game run) is
+// excluded. Mirrors the bot's matchesLevelValueFilter.
+export function runMatchesLevelGroups(
+  runValues: Record<string, string>,
+  groups: Record<string, Record<string, string[]>>,
+): boolean {
+  for (const group of Object.values(groups || {})) {
+    const entries = Object.entries(group || {}).filter(([, allowed]) => allowed && allowed.length > 0);
+    if (entries.length === 0) continue;
+    const hit = entries.some(([variableId, allowed]) => {
+      const value = runValues?.[variableId];
+      return !!value && allowed.includes(value);
+    });
+    if (!hit) return false;
+  }
+  return true;
+}
+
+// Mirror of the bot's fan-out gates (category → per-branch → global → level →
+// platform → runner), so the preview count matches what would actually be posted.
 export function runMatchesFilter(run: SrcRunSample, f: RunFilter): boolean {
   if (f.categoryIds.length > 0 && (!run.category || !f.categoryIds.includes(run.category))) {
     return false;
@@ -63,6 +85,7 @@ export function runMatchesFilter(run: SrcRunSample, f: RunFilter): boolean {
     if (branch && !runMatchesVariables(run.values, branch)) return false;
   }
   if (!runMatchesVariables(run.values, f.globalValueFilters)) return false;
+  if (!runMatchesLevelGroups(run.values, f.levelValueFilters)) return false;
   if (f.platformIds.length > 0 && (!run.platform || !f.platformIds.includes(run.platform))) {
     return false;
   }

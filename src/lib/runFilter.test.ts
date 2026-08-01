@@ -17,10 +17,18 @@ const RUNNER = "81ml21p8";
 // A genuine 2-player co-op run's ids, and a genuine guest (no id):
 const COOP = ["v810225x", "j5273pgj"];
 
+// Two per-level copies of the same "Raid" variable (Splatoon Raiders 369yyvl1
+// duplicates it for every individual level, each copy with its own value ids):
+const RAID_L1 = "2lgx253n";
+const RAID_L1_SPICY = "spicy-l1";
+const RAID_L2 = "wl34g998";
+const RAID_L2_SPICY = "spicy-l2";
+
 const emptyFilter = (): RunFilter => ({
   categoryIds: [],
   categoryValueFilters: {},
   globalValueFilters: {},
+  levelValueFilters: {},
   platformIds: [],
   runnerIds: [],
 });
@@ -102,6 +110,39 @@ describe("runMatchesFilter (mirrors the bot's gates, incl. runner)", () => {
     expect(runMatchesFilter(sampleRun(), { ...emptyFilter(), globalValueFilters: { [VAR_A]: ["wrong"] } })).toBe(false);
   });
 
+  it("level group gate: OR within a group — any level's copy carrying an allowed value passes", () => {
+    // The stored group holds the equivalent (variableId, valueId) pair for
+    // EVERY level's copy; a run only carries its own level's variable.
+    const spicyAnyLevel = {
+      ...emptyFilter(),
+      levelValueFilters: { Raid: { [RAID_L1]: [RAID_L1_SPICY], [RAID_L2]: [RAID_L2_SPICY] } },
+    };
+    const runOnL2 = { ...sampleRun(), values: { [RAID_L2]: RAID_L2_SPICY } };
+    expect(runMatchesFilter(runOnL2, spicyAnyLevel)).toBe(true);
+    // same level, different value → no pair hits
+    const runOnL2Normal = { ...sampleRun(), values: { [RAID_L2]: "normal-l2" } };
+    expect(runMatchesFilter(runOnL2Normal, spicyAnyLevel)).toBe(false);
+    // a full-game run carries none of the group's variables → excluded
+    expect(runMatchesFilter(sampleRun(), spicyAnyLevel)).toBe(false);
+  });
+
+  it("level group gate: AND across groups; empty groups impose nothing", () => {
+    const runOnL1 = { ...sampleRun(), values: { [RAID_L1]: RAID_L1_SPICY } };
+    // two groups, run satisfies only one → excluded
+    expect(runMatchesFilter(runOnL1, {
+      ...emptyFilter(),
+      levelValueFilters: {
+        Raid: { [RAID_L1]: [RAID_L1_SPICY] },
+        Mode: { "mode-var": ["mode-val"] },
+      },
+    })).toBe(false);
+    // a group whose value lists are all empty is unconstrained
+    expect(runMatchesFilter(runOnL1, {
+      ...emptyFilter(),
+      levelValueFilters: { Raid: { [RAID_L1]: [] } },
+    })).toBe(true);
+  });
+
   it("platform gate", () => {
     expect(runMatchesFilter(sampleRun(), { ...emptyFilter(), platformIds: [PLATFORM] })).toBe(true);
     expect(runMatchesFilter(sampleRun(), { ...emptyFilter(), platformIds: ["ps2"] })).toBe(false);
@@ -125,6 +166,7 @@ describe("runMatchesFilter (mirrors the bot's gates, incl. runner)", () => {
       categoryIds: [CAT],
       categoryValueFilters: { [CAT]: { [VAR_A]: [VAL_A] } },
       globalValueFilters: {},
+      levelValueFilters: {},
       platformIds: [PLATFORM],
       runnerIds: [RUNNER],
     };

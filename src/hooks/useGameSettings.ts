@@ -12,6 +12,9 @@ interface GameSettingsValues {
   categoryValueFilters: Record<string, Record<string, string[]>>;
   // Global (all-categories) subcategory selections: { variableId: [valueId] }.
   globalValueFilters: Record<string, string[]>;
+  // Level-variable group selections: { groupName: { variableId: [valueId] } }.
+  // OR within a group, AND across groups (see types/dashboard.ts).
+  levelValueFilters: Record<string, Record<string, string[]>>;
   platformIds: string[];
   // speedrun.com user ids of the runners to notify for (empty = all runners).
   runnerIds: string[];
@@ -22,7 +25,7 @@ interface GameSettingsValues {
 // The flat String-Set filters (categories, platforms, runners) share one array
 // updater; the two subcategory maps share a separate map updater.
 type FilterField = "categoryIds" | "platformIds" | "runnerIds";
-type MapField = "categoryValueFilters" | "globalValueFilters";
+type MapField = "categoryValueFilters" | "globalValueFilters" | "levelValueFilters";
 
 export function useGameSettings(
   selectedGuildIdRef: React.MutableRefObject<string | undefined>,
@@ -78,6 +81,7 @@ export function useGameSettings(
                             categoryIds: confirmed.categoryIds,
                             categoryValueFilters: confirmed.categoryValueFilters,
                             globalValueFilters: confirmed.globalValueFilters,
+                            levelValueFilters: confirmed.levelValueFilters,
                             platformIds: confirmed.platformIds,
                             runnerIds: confirmed.runnerIds,
                             customMessage: confirmed.customMessage,
@@ -116,6 +120,7 @@ export function useGameSettings(
         categoryIds: game?.categoryIds || [],
         categoryValueFilters: game?.categoryValueFilters || {},
         globalValueFilters: game?.globalValueFilters || {},
+        levelValueFilters: game?.levelValueFilters || {},
         platformIds: game?.platformIds || [],
         runnerIds: game?.runnerIds || [],
         customMessage: game?.customMessage || "",
@@ -257,6 +262,12 @@ export function useGameSettings(
     newMap: Record<string, string[]>,
   ) => updateMapField(channelId, gameId, "globalValueFilters", newMap);
 
+  const handleUpdateLevelValueFilters = (
+    channelId: string,
+    gameId: string,
+    newMap: Record<string, Record<string, string[]>>,
+  ) => updateMapField(channelId, gameId, "levelValueFilters", newMap);
+
   const cleanup = useCallback(() => {
     Object.values(saveTimersRef.current).forEach(clearTimeout);
   }, []);
@@ -266,6 +277,7 @@ export function useGameSettings(
     handleUpdateCategoryFilter,
     handleUpdateCategoryValueFilters,
     handleUpdateGlobalValueFilters,
+    handleUpdateLevelValueFilters,
     handleUpdatePlatformFilter,
     handleUpdateRunnerFilter,
     handleUpdateCustomMessage,

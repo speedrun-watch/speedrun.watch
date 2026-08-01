@@ -66,6 +66,7 @@ interface ChannelListProps {
   onUpdateCategoryFilter: (channelId: string, gameId: string, categoryIds: string[]) => void;
   onUpdateCategoryValueFilters: (channelId: string, gameId: string, categoryValueFilters: Record<string, Record<string, string[]>>) => void;
   onUpdateGlobalValueFilters: (channelId: string, gameId: string, globalValueFilters: Record<string, string[]>) => void;
+  onUpdateLevelValueFilters: (channelId: string, gameId: string, levelValueFilters: Record<string, Record<string, string[]>>) => void;
   onUpdatePlatformFilter: (channelId: string, gameId: string, platformIds: string[]) => void;
   onUpdateRunnerFilter: (channelId: string, gameId: string, runnerIds: string[]) => void;
   onUpdateCustomMessage: (channelId: string, gameId: string, message: string) => void;
@@ -103,6 +104,7 @@ const ChannelList = ({
   onUpdateCategoryFilter,
   onUpdateCategoryValueFilters,
   onUpdateGlobalValueFilters,
+  onUpdateLevelValueFilters,
   onUpdatePlatformFilter,
   onUpdateRunnerFilter,
   onUpdateCustomMessage,
@@ -334,6 +336,7 @@ const ChannelList = ({
                             onUpdateCategoryFilter={onUpdateCategoryFilter}
                             onUpdateCategoryValueFilters={onUpdateCategoryValueFilters}
                             onUpdateGlobalValueFilters={onUpdateGlobalValueFilters}
+                            onUpdateLevelValueFilters={onUpdateLevelValueFilters}
                             onUpdatePlatformFilter={onUpdatePlatformFilter}
                             onUpdateRunnerFilter={onUpdateRunnerFilter}
                             onUpdateCustomMessage={onUpdateCustomMessage}
@@ -391,9 +394,40 @@ interface FilterPickerProps {
   onUpdateCategoryFilter: (channelId: string, gameId: string, categoryIds: string[]) => void;
   onUpdateCategoryValueFilters: (channelId: string, gameId: string, categoryValueFilters: Record<string, Record<string, string[]>>) => void;
   onUpdateGlobalValueFilters: (channelId: string, gameId: string, globalValueFilters: Record<string, string[]>) => void;
+  onUpdateLevelValueFilters: (channelId: string, gameId: string, levelValueFilters: Record<string, Record<string, string[]>>) => void;
   onUpdatePlatformFilter: (channelId: string, gameId: string, platformIds: string[]) => void;
   onUpdateRunnerFilter: (channelId: string, gameId: string, runnerIds: string[]) => void;
   onUpdateCustomMessage: (channelId: string, gameId: string, message: string) => void;
+}
+
+// A collapsed view of speedrun.com's duplicated single-level variables: all
+// copies sharing a name become one group, and each distinct value label maps
+// to every (variableId, valueId) pair that carries it across the levels.
+interface LevelVariableGroup {
+  name: string;
+  options: { label: string; pairs: { variableId: string; valueId: string }[] }[];
+}
+
+// Group single-level variables by name. Value labels are unioned across the
+// copies (in first-seen order) so heterogeneous levels still form one list.
+function groupLevelVariables(levelVariables: SubcategoryVariable[]): LevelVariableGroup[] {
+  const groups = new Map<string, Map<string, { variableId: string; valueId: string }[]>>();
+  for (const v of levelVariables) {
+    let byLabel = groups.get(v.name);
+    if (!byLabel) {
+      byLabel = new Map();
+      groups.set(v.name, byLabel);
+    }
+    for (const val of v.values) {
+      const pairs = byLabel.get(val.label) || [];
+      pairs.push({ variableId: v.id, valueId: val.id });
+      byLabel.set(val.label, pairs);
+    }
+  }
+  return [...groups.entries()].map(([name, byLabel]) => ({
+    name,
+    options: [...byLabel.entries()].map(([label, pairs]) => ({ label, pairs })),
+  }));
 }
 
 const FilterPicker = ({
@@ -406,6 +440,7 @@ const FilterPicker = ({
   onUpdateCategoryFilter,
   onUpdateCategoryValueFilters,
   onUpdateGlobalValueFilters,
+  onUpdateLevelValueFilters,
   onUpdatePlatformFilter,
   onUpdateRunnerFilter,
   onUpdateCustomMessage,
@@ -413,6 +448,7 @@ const FilterPicker = ({
   const currentCategoryIds = game.categoryIds || [];
   const currentCategoryValueFilters = game.categoryValueFilters || {};
   const currentGlobalValueFilters = game.globalValueFilters || {};
+  const currentLevelValueFilters = game.levelValueFilters || {};
   const currentPlatformIds = game.platformIds || [];
   const currentRunnerIds = game.runnerIds || [];
 
@@ -423,7 +459,10 @@ const FilterPicker = ({
   const perGameCategories = categories.filter(c => c.type === "per-game");
   const perLevelCategories = categories.filter(c => c.type === "per-level");
   // Subcategory variables scoped to one category vs. applying to all (null).
-  const globalVariables = variables.filter(v => v.categoryId === null);
+  // single-level variables are excluded here — speedrun.com duplicates them
+  // per level, so they render as collapsed groups instead.
+  const globalVariables = variables.filter(v => v.categoryId === null && v.scope !== "single-level");
+  const levelVariableGroups = groupLevelVariables(variables.filter(v => v.scope === "single-level"));
   const variablesByCategory = new Map<string, SubcategoryVariable[]>();
   for (const v of variables) {
     if (v.categoryId) {
@@ -511,16 +550,41 @@ const FilterPicker = ({
   const handlePlatformToggle = (platformId: string) =>
     onUpdatePlatformFilter(channelId, game.id, toggleId(currentPlatformIds, platformId));
 
+  // Toggle one value label of a level-variable group. A label is "ticked" when
+  // any of its (variableId, valueId) pairs is stored; toggling writes/removes
+  // ALL of its pairs so the constraint covers every level's copy.
+  const isLevelOptionTicked = (groupName: string, option: LevelVariableGroup["options"][number]) => {
+    const group = currentLevelValueFilters[groupName] || {};
+    return option.pairs.some(p => (group[p.variableId] || []).includes(p.valueId));
+  };
+
+  const handleLevelValueToggle = (groupName: string, option: LevelVariableGroup["options"][number]) => {
+    const ticked = isLevelOptionTicked(groupName, option);
+    const group: Record<string, string[]> = { ...(currentLevelValueFilters[groupName] || {}) };
+    for (const { variableId, valueId } of option.pairs) {
+      const ids = group[variableId] || [];
+      const next = ticked ? ids.filter(id => id !== valueId) : [...new Set([...ids, valueId])];
+      if (next.length === 0) delete group[variableId];
+      else group[variableId] = next;
+    }
+    const next = { ...currentLevelValueFilters };
+    if (Object.keys(group).length === 0) delete next[groupName];
+    else next[groupName] = group;
+    onUpdateLevelValueFilters(channelId, game.id, next);
+  };
+
   const nonRunnerFilterActive =
     currentCategoryIds.length > 0 ||
     Object.keys(currentCategoryValueFilters).length > 0 ||
     Object.keys(currentGlobalValueFilters).length > 0 ||
+    Object.keys(currentLevelValueFilters).length > 0 ||
     currentPlatformIds.length > 0;
   const hasAnyFilter = nonRunnerFilterActive || currentRunnerIds.length > 0;
   const clearAllFilters = () => {
     if (currentCategoryIds.length > 0) onUpdateCategoryFilter(channelId, game.id, []);
     if (Object.keys(currentCategoryValueFilters).length > 0) onUpdateCategoryValueFilters(channelId, game.id, {});
     if (Object.keys(currentGlobalValueFilters).length > 0) onUpdateGlobalValueFilters(channelId, game.id, {});
+    if (Object.keys(currentLevelValueFilters).length > 0) onUpdateLevelValueFilters(channelId, game.id, {});
     if (currentPlatformIds.length > 0) onUpdatePlatformFilter(channelId, game.id, []);
     if (currentRunnerIds.length > 0) onUpdateRunnerFilter(channelId, game.id, []);
   };
@@ -531,6 +595,7 @@ const FilterPicker = ({
           categoryIds: currentCategoryIds,
           categoryValueFilters: currentCategoryValueFilters,
           globalValueFilters: currentGlobalValueFilters,
+          levelValueFilters: currentLevelValueFilters,
           platformIds: currentPlatformIds,
           runnerIds: currentRunnerIds,
         }),
@@ -686,6 +751,29 @@ const FilterPicker = ({
                   options={v.values.map(val => ({ id: val.id, label: val.label }))}
                   currentIds={currentGlobalValueFilters[v.id] || []}
                   onToggle={(valueId) => handleGlobalValueToggle(v.id, valueId)}
+                />
+              ))}
+            </FilterSection>
+          )}
+
+          {/* Level-scoped subcategories: speedrun.com duplicates these per
+              level (one "Raid" variable per IL), so same-named copies render
+              as ONE group and a tick means "this value on any level". */}
+          {levelVariableGroups.length > 0 && (
+            <FilterSection
+              title="Individual level subcategories"
+              hint="A tick matches that value on any individual level. While one is ticked, only matching level runs notify."
+            >
+              {levelVariableGroups.map(g => (
+                <OptionGroup
+                  key={g.name}
+                  label={g.name}
+                  options={g.options.map(o => ({ id: o.label, label: o.label }))}
+                  currentIds={g.options.filter(o => isLevelOptionTicked(g.name, o)).map(o => o.label)}
+                  onToggle={(label) => {
+                    const option = g.options.find(o => o.label === label);
+                    if (option) handleLevelValueToggle(g.name, option);
+                  }}
                 />
               ))}
             </FilterSection>

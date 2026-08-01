@@ -64,6 +64,7 @@ const Dashboard = () => {
     handleUpdateCategoryFilter,
     handleUpdateCategoryValueFilters,
     handleUpdateGlobalValueFilters,
+    handleUpdateLevelValueFilters,
     handleUpdatePlatformFilter,
     handleUpdateRunnerFilter,
     handleUpdateCustomMessage,
@@ -416,6 +417,7 @@ const Dashboard = () => {
                   onUpdateCategoryFilter={handleUpdateCategoryFilter}
                   onUpdateCategoryValueFilters={handleUpdateCategoryValueFilters}
                   onUpdateGlobalValueFilters={handleUpdateGlobalValueFilters}
+                  onUpdateLevelValueFilters={handleUpdateLevelValueFilters}
                   onUpdatePlatformFilter={handleUpdatePlatformFilter}
                   onUpdateRunnerFilter={handleUpdateRunnerFilter}
                   onUpdateCustomMessage={handleUpdateCustomMessage}

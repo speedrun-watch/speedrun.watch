@@ -38,6 +38,11 @@ export interface Game {
   // Global subcategory filter for variables that apply to every category:
   // { variableId: [valueId, ...] }.
   globalValueFilters?: Record<string, string[]>;
+  // Level-variable group filter: { groupName: { variableId: [valueId, ...] } }.
+  // speedrun.com duplicates single-level variables per level; same-named
+  // copies are collapsed into one group. OR within a group (any level's
+  // variable carrying an allowed value), AND across groups.
+  levelValueFilters?: Record<string, Record<string, string[]>>;
   platformIds?: string[];
   // speedrun.com user ids of runners to notify for (empty/absent = all runners).
   runnerIds?: string[];
@@ -111,6 +116,11 @@ export interface SubcategoryVariable {
   id: string;
   name: string;
   categoryId: string | null;
+  // speedrun.com scope type: "global" | "full-game" | "all-levels" |
+  // "single-level". Absent on cached pre-scope API responses (treated as
+  // non-level). single-level variables are duplicated per level and get
+  // collapsed into named groups in the filter UI.
+  scope?: string;
   values: SubcategoryValue[];
 }
 
