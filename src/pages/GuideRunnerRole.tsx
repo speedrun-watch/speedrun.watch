@@ -8,6 +8,7 @@ import {
   AtSign,
   Zap,
   CheckCircle2,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
@@ -60,7 +61,20 @@ const RUNNER_STEPS = [
 ];
 
 const ADMIN_STEPS = [
-  "Open your server in the dashboard and turn on Runner role.",
+  <>
+    Make sure the bot has the Manage Roles permission.{" "}
+    <a
+      href={getDiscordBotInviteUrl()}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-400 hover:text-blue-300 hover:underline inline-flex items-center gap-1"
+    >
+      Add or re-invite speedrun.watch
+      <ExternalLink className="w-3 h-3" aria-hidden="true" />
+    </a>{" "}
+    to your server. Older installs need this before the bot can hand out a role.
+  </>,
+  "In the dashboard, turn on Runner role.",
   "Click Create a Runner role, or pick one you already have.",
   "Done. Runners get the role when they link and when they post.",
 ];
@@ -185,8 +199,8 @@ const GuideRunnerRole = () => {
                 src="/guides/link-account.png"
                 alt="The Link speedrun.com Account screen in the speedrun.watch dashboard, where a runner pastes their speedrun.com API key to connect their account. The key is used once and never stored."
                 loading="lazy"
-                width={1992}
-                height={752}
+                width={1316}
+                height={452}
                 className="rounded-lg border border-gray-700 w-full shadow-lg"
               />
               <figcaption className="text-xs text-gray-500 mt-2 text-center">
@@ -206,11 +220,6 @@ const GuideRunnerRole = () => {
                 </li>
               ))}
             </ol>
-            <p className="text-sm text-gray-500 leading-relaxed mb-4">
-              The bot needs the <span className="text-gray-300">Manage Roles</span> permission to
-              give out a role. If you added the bot a while ago, the dashboard will ask you to
-              re-invite it. That is one click.
-            </p>
             <figure className="mb-12">
               <img
                 src="/guides/roles-order.png"
