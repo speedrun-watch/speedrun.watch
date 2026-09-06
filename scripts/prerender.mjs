@@ -15,7 +15,7 @@ import puppeteer from "puppeteer";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 
-const ROUTES = ["/", "/terms-of-service", "/privacy-policy"];
+const ROUTES = ["/", "/terms-of-service", "/privacy-policy", "/guides", "/guides/runner-role"];
 const PORT = 4173;
 const OUT_DIR = path.resolve("dist");
 
