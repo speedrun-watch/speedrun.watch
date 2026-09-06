@@ -38,6 +38,12 @@ const Navbar = () => {
 
           {/* Navigation Menu */}
           <div className="flex items-center space-x-4 md:space-x-6">
+            <Link
+              to="/guides"
+              className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+            >
+              Guides
+            </Link>
             <AuthStatus />
           </div>
         </div>

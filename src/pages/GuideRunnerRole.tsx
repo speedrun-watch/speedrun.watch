@@ -46,7 +46,19 @@ const RUNNER_STEPS = [
   {
     Icon: Link2,
     title: "Link your account",
-    body: "Open the dashboard and connect your speedrun.com account. This takes a few seconds.",
+    body: (
+      <>
+        <a
+          href="/dashboard/src-link"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:text-blue-300 hover:underline"
+        >
+          Open the dashboard
+        </a>{" "}
+        and connect your speedrun.com account. This takes a few seconds.
+      </>
+    ),
   },
   {
     Icon: ShieldCheck,
@@ -74,7 +86,18 @@ const ADMIN_STEPS = [
     </a>{" "}
     to your server. Older installs need this before the bot can hand out a role.
   </>,
-  "In the dashboard, turn on Runner role.",
+  <>
+    In the{" "}
+    <a
+      href="/dashboard"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="text-blue-400 hover:text-blue-300 hover:underline"
+    >
+      dashboard
+    </a>
+    , turn on Runner role.
+  </>,
   "Click Create a Runner role, or pick one you already have.",
   "Done. Runners get the role when they link and when they post.",
 ];
@@ -98,10 +121,88 @@ const FAQ = [
   },
 ];
 
+// Structured data: an article + breadcrumb + the FAQ, so search engines can
+// understand the page and it's eligible for richer results. Rendered inline
+// (JSON-LD is valid anywhere) and captured by the prerender step.
+const STRUCTURED_DATA = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      headline: "The Runner role: verify your speedrunners automatically",
+      description: DESCRIPTION,
+      url: URL,
+      author: { "@type": "Organization", name: "speedrun.watch" },
+      publisher: { "@type": "Organization", name: "speedrun.watch" },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: "https://speedrun.watch/" },
+        { "@type": "ListItem", position: 2, name: "Guides", item: "https://speedrun.watch/guides" },
+        { "@type": "ListItem", position: 3, name: "The Runner role", item: URL },
+      ],
+    },
+    {
+      "@type": "FAQPage",
+      mainEntity: FAQ.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    },
+  ],
+};
+
+// A screenshot framed in browser chrome (title bar + traffic-light dots) so it
+// clearly reads as a preview, not part of the page. Serves WebP with a PNG
+// fallback via <picture>.
+const Screenshot = ({
+  src,
+  alt,
+  width,
+  height,
+  caption,
+}: {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  caption: string;
+}) => (
+  <figure className="mb-12">
+    <div className="rounded-xl overflow-hidden border border-gray-700 shadow-2xl bg-discord-darker">
+      <div className="flex items-center gap-1.5 px-3 py-2.5 bg-discord-dark border-b border-gray-700">
+        <span className="w-3 h-3 rounded-full bg-red-400/60" />
+        <span className="w-3 h-3 rounded-full bg-yellow-400/60" />
+        <span className="w-3 h-3 rounded-full bg-green-400/60" />
+      </div>
+      <picture>
+        <source srcSet={src.replace(/\.png$/, ".webp")} type="image/webp" />
+        <img
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          loading="lazy"
+          className="w-full block"
+        />
+      </picture>
+    </div>
+    <figcaption className="text-xs text-gray-500 mt-2 text-center">{caption}</figcaption>
+  </figure>
+);
+
 const GuideRunnerRole = () => {
   return (
     <div className="min-h-screen bg-discord-darker text-white flex flex-col">
       <title>{TITLE}</title>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(STRUCTURED_DATA).replace(/</g, "\\u003c"),
+        }}
+      />
       <meta name="description" content={DESCRIPTION} />
       <link rel="canonical" href={URL} />
       <meta property="og:type" content="article" />
@@ -111,6 +212,10 @@ const GuideRunnerRole = () => {
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={TITLE} />
       <meta name="twitter:description" content={DESCRIPTION} />
+      <meta property="og:image" content="https://speedrun.watch/guides/og-runner-role.png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta name="twitter:image" content="https://speedrun.watch/guides/og-runner-role.png" />
 
       <header className="bg-discord-dark py-4 border-b border-gray-800">
         <div className="container mx-auto flex justify-between items-center">
@@ -194,19 +299,13 @@ const GuideRunnerRole = () => {
               ))}
             </ol>
 
-            <figure className="mb-12">
-              <img
-                src="/guides/link-account.png"
-                alt="The Link speedrun.com Account screen in the speedrun.watch dashboard, where a runner pastes their speedrun.com API key to connect their account. The key is used once and never stored."
-                loading="lazy"
-                width={1316}
-                height={452}
-                className="rounded-lg border border-gray-700 w-full shadow-lg"
-              />
-              <figcaption className="text-xs text-gray-500 mt-2 text-center">
-                Link your account from the dashboard. Your API key is used once and never stored.
-              </figcaption>
-            </figure>
+            <Screenshot
+              src="/guides/link-account.png"
+              alt="The Link speedrun.com Account screen in the speedrun.watch dashboard, where a runner pastes their speedrun.com API key to connect their account. The key is used once and never stored."
+              width={1316}
+              height={452}
+              caption="Link your account from the dashboard. Your API key is used once and never stored."
+            />
 
             {/* For admins */}
             <h2 className="text-2xl font-semibold mb-5">For admins: set it up</h2>
@@ -220,20 +319,20 @@ const GuideRunnerRole = () => {
                 </li>
               ))}
             </ol>
-            <figure className="mb-12">
-              <img
-                src="/guides/roles-order.png"
-                alt="Discord Server Settings roles list showing the speedrun.watch bot role positioned above the Runner role, which is required for the bot to assign it."
-                loading="lazy"
-                width={2148}
-                height={930}
-                className="rounded-lg border border-gray-700 w-full shadow-lg"
-              />
-              <figcaption className="text-xs text-gray-500 mt-2 text-center">
-                The speedrun.watch role must sit above the Runner role. The Create a Runner role
-                button handles this for you.
-              </figcaption>
-            </figure>
+            <Screenshot
+              src="/guides/runner-role-card.png"
+              alt="The Runner role settings card in the speedrun.watch dashboard: a toggle to turn it on, a dropdown to pick an existing role, and a Create a Runner role button."
+              width={1836}
+              height={252}
+              caption="Turn on the Runner role in your dashboard, then create one in a click or pick an existing role."
+            />
+            <Screenshot
+              src="/guides/roles-order.png"
+              alt="Discord Server Settings roles list showing the speedrun.watch bot role positioned above the Runner role, which is required for the bot to assign it."
+              width={2148}
+              height={930}
+              caption="The speedrun.watch role must sit above the Runner role. The Create a Runner role button handles this for you."
+            />
 
             {/* FAQ */}
             <h2 className="text-2xl font-semibold mb-5">FAQ</h2>

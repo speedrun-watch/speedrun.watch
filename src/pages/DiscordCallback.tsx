@@ -35,6 +35,7 @@ const DiscordCallback = () => {
 
     return (
         <div className="min-h-screen bg-discord-darker text-white flex items-center justify-center">
+            <meta name="robots" content="noindex, nofollow" />
             <div className="text-center max-w-md mx-auto px-6">
                 {/* Animated Logo */}
                 <div className="mb-8">

@@ -48,6 +48,10 @@ const Index = () => {
       <meta name="twitter:url" content={URL} />
       <meta name="twitter:title" content={TITLE} />
       <meta name="twitter:description" content={DESCRIPTION} />
+      <meta property="og:image" content="https://speedrun.watch/og-image.png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="686" />
+      <meta name="twitter:image" content="https://speedrun.watch/og-image.png" />
 
       <Navbar />
       <div className="flex-1">

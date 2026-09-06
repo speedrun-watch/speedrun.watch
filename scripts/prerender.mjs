@@ -14,8 +14,9 @@ import { preview } from "vite";
 import puppeteer from "puppeteer";
 import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
+import { PUBLIC_ROUTES } from "./public-routes.mjs";
 
-const ROUTES = ["/", "/terms-of-service", "/privacy-policy", "/guides", "/guides/runner-role"];
+const ROUTES = PUBLIC_ROUTES.map((r) => r.path);
 const PORT = 4173;
 const OUT_DIR = path.resolve("dist");
 

@@ -340,6 +340,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-discord-darker text-white flex flex-col overflow-x-hidden max-w-full">
+      <meta name="robots" content="noindex, nofollow" />
       {/* Header */}
       <header className="bg-discord-dark py-4 border-b border-gray-800 w-full">
         <div className="container mx-auto flex justify-between items-center">

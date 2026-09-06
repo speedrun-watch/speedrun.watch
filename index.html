@@ -12,14 +12,10 @@
   <meta name="author" content="speedrun.watch" />
   <meta name="robots" content="index, follow" />
 
-  <!-- Static og:image / twitter:image — same hero artwork on every page for now -->
-  <meta property="og:image" content="https://speedrun.watch/og-image.png" />
-  <meta property="og:image:type" content="image/png" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="686" />
+  <!-- og:image / twitter:image are set per-page (React head hoisting) so each
+       page can have its own share card; site-wide OG values stay here. -->
   <meta property="og:site_name" content="speedrun.watch" />
   <meta property="og:locale" content="en_US" />
-  <meta name="twitter:image" content="https://speedrun.watch/og-image.png" />
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-X2MKJ2CJMM"></script>
