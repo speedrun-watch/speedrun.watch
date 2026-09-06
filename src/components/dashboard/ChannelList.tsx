@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 import GameSearch from "./GameSearch";
 import RunnerRoleCard from "./RunnerRoleCard";
+import RunnerFeedSection from "./RunnerFeedSection";
 import api from "@/lib/api";
 import { runMatchesFilter, mapSrcRunToSample, type SrcRunSample } from "@/lib/runFilter";
 import type { DiscordChannel, Game, GameCategory, SubcategoryVariable, GamePlatform, SrcRunner, Guilds } from "@/types/dashboard";
@@ -228,6 +229,10 @@ const ChannelList = ({
                     onLinkGame={onLinkGame}
                     onClose={() => onSetActiveChannelId(null)}
                   />
+                )}
+
+                {activeChannelId === channel.id && (
+                  <RunnerFeedSection guildId={selectedGuildId} channelId={channel.id} />
                 )}
 
                 {(!channel.games || channel.games.length === 0) ? (

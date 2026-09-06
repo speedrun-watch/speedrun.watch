@@ -1,0 +1,18 @@
+# speedrun.watch
+
+> A free Discord bot that notifies your server about new verified speedruns from speedrun.com.
+
+speedrun.watch posts a Discord embed for each new verified run of the games a channel tracks. Server admins choose what to notify (all runs, top 3, or world records only) and can filter by category, subcategory, platform, and runner. Runners can link their speedrun.com account to get @mentioned in their run posts and to receive an automatic "Runner" role in servers that track their games. A channel can also follow a runner's runs from any game (a personal feed), and anyone can look up runs in Discord with the `/run-search` slash command. It is free and configured through a web dashboard.
+
+## Guides
+- [The Runner role](https://speedrun.watch/guides/runner-role): Automatically give a "Runner" role to members who link their speedrun.com account and run the games your server tracks. Verified on speedrun.com, no manual work.
+- [Personal runner feed](https://speedrun.watch/guides/personal-feed): Send a runner's new verified runs to one channel, from any game they play.
+- [All guides](https://speedrun.watch/guides)
+
+## Pages
+- [Homepage](https://speedrun.watch/): What speedrun.watch is and how to add it to a Discord server.
+- [Dashboard](https://speedrun.watch/dashboard): Configure game tracking, filters, and feeds (requires signing in with Discord).
+
+## Legal
+- [Terms of Service](https://speedrun.watch/terms-of-service)
+- [Privacy Policy](https://speedrun.watch/privacy-policy)

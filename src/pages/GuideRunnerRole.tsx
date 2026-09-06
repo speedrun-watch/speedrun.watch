@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
+import GuideJsonLd from "@/components/GuideJsonLd";
 import { getDiscordBotInviteUrl } from "@/lib/discord";
 
 const TITLE = "Runner Role: auto-verify speedrunners in Discord | speedrun.watch";
@@ -121,39 +123,6 @@ const FAQ = [
   },
 ];
 
-// Structured data: an article + breadcrumb + the FAQ, so search engines can
-// understand the page and it's eligible for richer results. Rendered inline
-// (JSON-LD is valid anywhere) and captured by the prerender step.
-const STRUCTURED_DATA = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "TechArticle",
-      headline: "The Runner role: verify your speedrunners automatically",
-      description: DESCRIPTION,
-      url: URL,
-      author: { "@type": "Organization", name: "speedrun.watch" },
-      publisher: { "@type": "Organization", name: "speedrun.watch" },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        { "@type": "ListItem", position: 1, name: "Home", item: "https://speedrun.watch/" },
-        { "@type": "ListItem", position: 2, name: "Guides", item: "https://speedrun.watch/guides" },
-        { "@type": "ListItem", position: 3, name: "The Runner role", item: URL },
-      ],
-    },
-    {
-      "@type": "FAQPage",
-      mainEntity: FAQ.map(({ q, a }) => ({
-        "@type": "Question",
-        name: q,
-        acceptedAnswer: { "@type": "Answer", text: a },
-      })),
-    },
-  ],
-};
-
 // A screenshot framed in browser chrome (title bar + traffic-light dots) so it
 // clearly reads as a preview, not part of the page. Serves WebP with a PNG
 // fallback via <picture>.
@@ -196,26 +165,21 @@ const Screenshot = ({
 const GuideRunnerRole = () => {
   return (
     <div className="min-h-screen bg-discord-darker text-white flex flex-col">
-      <title>{TITLE}</title>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(STRUCTURED_DATA).replace(/</g, "\\u003c"),
-        }}
+      <Seo
+        title={TITLE}
+        description={DESCRIPTION}
+        url={URL}
+        type="article"
+        image="https://speedrun.watch/guides/og-runner-role.png"
+        imageHeight={630}
       />
-      <meta name="description" content={DESCRIPTION} />
-      <link rel="canonical" href={URL} />
-      <meta property="og:type" content="article" />
-      <meta property="og:url" content={URL} />
-      <meta property="og:title" content={TITLE} />
-      <meta property="og:description" content={DESCRIPTION} />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={TITLE} />
-      <meta name="twitter:description" content={DESCRIPTION} />
-      <meta property="og:image" content="https://speedrun.watch/guides/og-runner-role.png" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta name="twitter:image" content="https://speedrun.watch/guides/og-runner-role.png" />
+      <GuideJsonLd
+        headline="The Runner role: verify your speedrunners automatically"
+        description={DESCRIPTION}
+        url={URL}
+        breadcrumbName="The Runner role"
+        faq={FAQ}
+      />
 
       <header className="bg-discord-dark py-4 border-b border-gray-800">
         <div className="container mx-auto flex justify-between items-center">

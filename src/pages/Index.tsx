@@ -5,6 +5,7 @@ import Hero from "@/components/Hero";
 import Setup from "@/components/Setup";
 import CtaSection from "@/components/CtaSection";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const TITLE = "speedrun.watch - Speedrun Discord Bot";
 const DESCRIPTION =
@@ -37,21 +38,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-discord-darker text-white overflow-x-hidden flex flex-col">
-      <title>{TITLE}</title>
-      <meta name="description" content={DESCRIPTION} />
-      <link rel="canonical" href={URL} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={URL} />
-      <meta property="og:title" content={TITLE} />
-      <meta property="og:description" content={DESCRIPTION} />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:url" content={URL} />
-      <meta name="twitter:title" content={TITLE} />
-      <meta name="twitter:description" content={DESCRIPTION} />
-      <meta property="og:image" content="https://speedrun.watch/og-image.png" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="686" />
-      <meta name="twitter:image" content="https://speedrun.watch/og-image.png" />
+      <Seo title={TITLE} description={DESCRIPTION} url={URL} />
 
       <Navbar />
       <div className="flex-1">

@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import { Bell, ArrowLeft, ArrowRight, ShieldCheck } from "lucide-react";
+import { Bell, ArrowLeft, ArrowRight, ShieldCheck, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const TITLE = "Guides - speedrun.watch";
 const DESCRIPTION =
@@ -18,25 +19,19 @@ const GUIDES = [
       "Give a Runner role to members who link their speedrun.com account and run the games your server tracks. Verified on speedrun.com, no manual work.",
     Icon: ShieldCheck,
   },
+  {
+    slug: "personal-feed",
+    title: "Personal runner feed",
+    blurb:
+      "Send a runner's new runs to one channel, from any game they play. Great for your own runs or the runners your community follows.",
+    Icon: Radio,
+  },
 ];
 
 const Guides = () => {
   return (
     <div className="min-h-screen bg-discord-darker text-white flex flex-col">
-      <title>{TITLE}</title>
-      <meta name="description" content={DESCRIPTION} />
-      <link rel="canonical" href={URL} />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content={URL} />
-      <meta property="og:title" content={TITLE} />
-      <meta property="og:description" content={DESCRIPTION} />
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={TITLE} />
-      <meta name="twitter:description" content={DESCRIPTION} />
-      <meta property="og:image" content="https://speedrun.watch/og-image.png" />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="686" />
-      <meta name="twitter:image" content="https://speedrun.watch/og-image.png" />
+      <Seo title={TITLE} description={DESCRIPTION} url={URL} />
 
       <header className="bg-discord-dark py-4 border-b border-gray-800">
         <div className="container mx-auto flex justify-between items-center">
