@@ -71,7 +71,7 @@ const SrcLinkTab = () => {
       </p>
       <Link
         to="/guides/runner-role"
-        className="text-sm text-discord-blurple hover:underline inline-flex items-center gap-1 mb-6"
+        className="text-sm text-blue-400 hover:text-blue-300 hover:underline inline-flex items-center gap-1 mb-6"
       >
         Learn how it works <ArrowRight className="w-3 h-3" />
       </Link>
@@ -130,7 +130,7 @@ const SrcLinkTab = () => {
                   href="https://www.speedrun.com/settings/api"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-discord-blurple hover:underline"
+                  className="text-blue-400 hover:text-blue-300 hover:underline"
                 >
                   speedrun.com/settings/api
                 </a>

@@ -138,7 +138,7 @@ const GuideRunnerRole = () => {
             <ol className="space-y-3 mb-6">
               {STEPS.map(({ Icon, title, body }, i) => (
                 <li key={title} className="bg-discord-dark rounded-lg p-5 flex gap-4">
-                  <span className="w-9 h-9 rounded-full bg-discord-blurple/15 text-discord-blurple font-bold flex items-center justify-center shrink-0 tabular-nums">
+                  <span className="w-9 h-9 rounded-full bg-discord-blurple text-white font-bold flex items-center justify-center shrink-0 tabular-nums">
                     {i + 1}
                   </span>
                   <div>
@@ -166,7 +166,7 @@ const GuideRunnerRole = () => {
             <ol className="space-y-3 mb-6">
               {RUNNER_STEPS.map(({ Icon, title, body }, i) => (
                 <li key={title} className="bg-discord-dark rounded-lg p-5 flex gap-4">
-                  <span className="w-9 h-9 rounded-full bg-discord-blurple/15 text-discord-blurple font-bold flex items-center justify-center shrink-0 tabular-nums">
+                  <span className="w-9 h-9 rounded-full bg-discord-blurple text-white font-bold flex items-center justify-center shrink-0 tabular-nums">
                     {i + 1}
                   </span>
                   <div>
@@ -199,7 +199,7 @@ const GuideRunnerRole = () => {
             <ol className="space-y-2 mb-4">
               {ADMIN_STEPS.map((text, i) => (
                 <li key={i} className="flex gap-3 items-start">
-                  <span className="w-6 h-6 rounded-full bg-discord-blurple/15 text-discord-blurple text-sm font-bold flex items-center justify-center shrink-0 tabular-nums">
+                  <span className="w-6 h-6 rounded-full bg-discord-blurple text-white text-sm font-bold flex items-center justify-center shrink-0 tabular-nums">
                     {i + 1}
                   </span>
                   <span className="text-gray-300 leading-relaxed pt-0.5">{text}</span>
@@ -250,7 +250,7 @@ const GuideRunnerRole = () => {
                   </Button>
                 </a>
                 <Link to="/dashboard">
-                  <Button variant="outline" className="border-gray-600 text-gray-200 hover:bg-discord-darker w-full sm:w-auto">
+                  <Button variant="outline" className="bg-transparent text-gray-100 border-gray-600 hover:bg-discord-darker hover:text-white w-full sm:w-auto">
                     Open dashboard
                   </Button>
                 </Link>

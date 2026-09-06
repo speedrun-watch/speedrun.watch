@@ -74,7 +74,7 @@ const Guides = () => {
                     <h2 className="text-lg font-semibold text-white">{title}</h2>
                   </div>
                   <p className="text-sm text-gray-400 leading-relaxed flex-1">{blurb}</p>
-                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-discord-blurple">
+                  <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-blue-400">
                     Read guide
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
                   </span>

@@ -157,7 +157,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
           whenever their runs are posted here.{" "}
           <Link
             to="/guides/runner-role"
-            className="text-discord-blurple hover:underline whitespace-nowrap"
+            className="text-blue-400 hover:text-blue-300 hover:underline whitespace-nowrap"
           >
             Learn how it works
           </Link>
@@ -191,7 +191,11 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
                   </SelectTrigger>
                   <SelectContent className="bg-discord-dark border-gray-600">
                     {roles.map((role) => (
-                      <SelectItem key={role.id} value={role.id}>
+                      <SelectItem
+                        key={role.id}
+                        value={role.id}
+                        className="text-gray-200 focus:bg-discord-darker focus:text-white"
+                      >
                         <span className="flex items-center gap-2">
                           <span
                             className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
@@ -211,7 +215,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
                   size="sm"
                   onClick={handleCreateRole}
                   disabled={busy}
-                  className="border-gray-600 text-gray-200 hover:bg-discord-dark"
+                  className="bg-transparent text-gray-100 border-gray-600 hover:bg-discord-darker hover:text-white"
                 >
                   {isCreating ? (
                     <Loader2 className="w-4 h-4 mr-1 animate-spin" />
@@ -227,7 +231,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
                   type="button"
                   onClick={() => save(existingRunnerRole.id)}
                   disabled={busy}
-                  className="mt-2 inline-flex items-center gap-1.5 text-xs text-discord-blurple hover:underline disabled:opacity-50"
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs text-blue-400 hover:text-blue-300 hover:underline disabled:opacity-50"
                 >
                   <Sparkles className="w-3 h-3" />
                   Use your existing “{existingRunnerRole.name}” role
@@ -259,7 +263,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
                       href={getDiscordBotInviteUrl()}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-discord-blurple hover:underline"
+                      className="inline-flex items-center gap-1 text-blue-400 hover:text-blue-300 hover:underline"
                     >
                       Re-invite <ExternalLink className="w-3 h-3" />
                     </a>
