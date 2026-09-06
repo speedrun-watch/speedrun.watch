@@ -35,6 +35,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import GameSearch from "./GameSearch";
+import RunnerRoleCard from "./RunnerRoleCard";
 import api from "@/lib/api";
 import { runMatchesFilter, mapSrcRunToSample, type SrcRunSample } from "@/lib/runFilter";
 import type { DiscordChannel, Game, GameCategory, SubcategoryVariable, GamePlatform, SrcRunner, Guilds } from "@/types/dashboard";
@@ -159,6 +160,8 @@ const ChannelList = ({
           </span>
         </div>
       </div>
+
+      <RunnerRoleCard selectedGuildId={selectedGuildId} />
 
       {isFetchingChannels ? (
         <div className="flex items-center justify-center py-8">
