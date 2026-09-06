@@ -14,6 +14,7 @@ import Guides from "./pages/Guides";
 import GuideRunnerRole from "./pages/GuideRunnerRole";
 import GuidePersonalFeed from "./pages/GuidePersonalFeed";
 import GuideCommands from "./pages/GuideCommands";
+import ScrollToTop from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
