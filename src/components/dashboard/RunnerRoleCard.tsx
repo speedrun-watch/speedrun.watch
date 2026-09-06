@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AlertTriangle, Loader2, ExternalLink } from "lucide-react";
+import { AlertTriangle, Loader2, ExternalLink, Plus, Sparkles } from "lucide-react";
 import api from "@/lib/api";
 import { getDiscordBotInviteUrl } from "@/lib/discord";
 
@@ -23,12 +24,17 @@ interface RunnerRoleCardProps {
   selectedGuildId: string;
 }
 
+const roleDot = (color: number) => ({
+  backgroundColor: color ? `#${color.toString(16).padStart(6, "0")}` : "#99aab5",
+});
+
 // Self-contained guild-settings card for the Runner-role auto-assign feature.
 // Fetches the guild's current setting + assignable roles, then lets an admin
-// pick the role that linked speedrunners are granted when their run is posted
-// in this server. Warns about the two ways assignment can fail: a role that
-// sits above the bot in the hierarchy (pre-check), and a missing Manage Roles
-// permission (surfaced from the failure signal the bot records at runtime).
+// choose the role linked speedrunners are granted. Three ways to set it: create
+// a fresh role in one click (bot makes it, positioned correctly), use an
+// existing "Runner" role if one is detected, or pick any role from the dropdown.
+// Warns about the two ways assignment can fail: a role above the bot in the
+// hierarchy, and a missing Manage Roles permission (from the recorded failure).
 const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
   const [roles, setRoles] = useState<GuildRole[]>([]);
   const [botRolePosition, setBotRolePosition] = useState<number | null>(null);
@@ -38,6 +44,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [rolesError, setRolesError] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
     if (!selectedGuildId) return;
@@ -87,8 +94,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
       await api.patch(`/api/guilds/${selectedGuildId}/settings`, {
         runnerRoleId: nextRoleId,
       });
-      // A successful save clears any stale failure signal server-side.
-      setRunnerRoleErrorAt(null);
+      setRunnerRoleErrorAt(null); // a successful save clears the stale failure signal
     } catch (error) {
       console.error("Error saving runner role:", error);
       setRunnerRoleId(prevRoleId); // revert
@@ -97,17 +103,35 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
     }
   };
 
+  const handleCreateRole = async () => {
+    setIsCreating(true);
+    try {
+      const resp = await api.post<{ role: GuildRole }>(
+        `/api/guilds/${selectedGuildId}/runner-role/create`,
+      );
+      const role = resp.data.role;
+      setRoles((prev) => [role, ...prev.filter((r) => r.id !== role.id)]);
+      setRunnerRoleId(role.id); // the endpoint already selected it server-side
+      setRunnerRoleErrorAt(null);
+    } catch (error) {
+      console.error("Error creating Runner role:", error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
   const handleToggle = (next: boolean) => {
     setEnabled(next);
     if (!next) save(null); // opt-out clears the role immediately
-    // opting in reveals the picker; nothing is saved until a role is chosen
   };
 
   const selectedRole = roles.find((r) => r.id === runnerRoleId);
+  const existingRunnerRole = roles.find((r) => r.name.trim().toLowerCase() === "runner");
   const hierarchyWarning =
     selectedRole != null &&
     botRolePosition != null &&
     selectedRole.position >= botRolePosition;
+  const busy = isSaving || isCreating;
 
   return (
     <div className="bg-discord-dark/50 rounded-lg p-4 mb-6">
@@ -117,7 +141,7 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
             id="runner-role-enabled"
             checked={enabled}
             onCheckedChange={handleToggle}
-            disabled={isLoading || isSaving}
+            disabled={isLoading || busy}
           />
           <Label
             htmlFor="runner-role-enabled"
@@ -128,8 +152,9 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
         </div>
         <div className="text-xs text-gray-400 flex-1 leading-relaxed">
           Automatically give a role to members who have linked their
-          speedrun.com account, when one of their runs is posted in this server.
-          Great for a visible “verified runner” badge.
+          speedrun.com account and run one of the games this server tracks. Great
+          for a visible “verified runner” badge — it’s granted the moment they
+          link, and whenever their runs are posted here.
         </div>
       </div>
 
@@ -149,32 +174,59 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
             </div>
           ) : (
             <>
-              <Select
-                value={runnerRoleId ?? undefined}
-                onValueChange={(value) => save(value)}
-                disabled={isSaving}
-              >
-                <SelectTrigger className="w-full lg:w-[280px] bg-discord-dark border-gray-600 text-gray-200">
-                  <SelectValue placeholder="Choose a role…" />
-                </SelectTrigger>
-                <SelectContent className="bg-discord-dark border-gray-600">
-                  {roles.map((role) => (
-                    <SelectItem key={role.id} value={role.id}>
-                      <span className="flex items-center gap-2">
-                        <span
-                          className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{
-                            backgroundColor: role.color
-                              ? `#${role.color.toString(16).padStart(6, "0")}`
-                              : "#99aab5",
-                          }}
-                        />
-                        {role.name}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <Select
+                  value={runnerRoleId ?? undefined}
+                  onValueChange={(value) => save(value)}
+                  disabled={busy}
+                >
+                  <SelectTrigger className="w-full sm:w-[260px] bg-discord-dark border-gray-600 text-gray-200">
+                    <SelectValue placeholder="Pick an existing role…" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-discord-dark border-gray-600">
+                    {roles.map((role) => (
+                      <SelectItem key={role.id} value={role.id}>
+                        <span className="flex items-center gap-2">
+                          <span
+                            className="inline-block w-2.5 h-2.5 rounded-full shrink-0"
+                            style={roleDot(role.color)}
+                          />
+                          {role.name}
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <span className="text-xs text-gray-500">or</span>
+
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCreateRole}
+                  disabled={busy}
+                  className="border-gray-600 text-gray-200 hover:bg-discord-dark"
+                >
+                  {isCreating ? (
+                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4 mr-1" />
+                  )}
+                  Create a Runner role
+                </Button>
+              </div>
+
+              {existingRunnerRole && runnerRoleId !== existingRunnerRole.id && (
+                <button
+                  type="button"
+                  onClick={() => save(existingRunnerRole.id)}
+                  disabled={busy}
+                  className="mt-2 inline-flex items-center gap-1.5 text-xs text-discord-blurple hover:underline disabled:opacity-50"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  Use your existing “{existingRunnerRole.name}” role
+                </button>
+              )}
 
               {hierarchyWarning && (
                 <div className="mt-3 flex items-start gap-2 text-xs text-yellow-500">
@@ -182,8 +234,8 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
                   <span>
                     This role sits above speedrun.watch in the role list, so
                     Discord won’t let the bot assign it. In{" "}
-                    <span className="text-gray-200">Server Settings → Roles</span>
-                    , drag the <span className="text-gray-200">speedrun.watch</span>{" "}
+                    <span className="text-gray-200">Server Settings → Roles</span>,
+                    drag the <span className="text-gray-200">speedrun.watch</span>{" "}
                     role above <span className="text-gray-200">{selectedRole?.name}</span>.
                   </span>
                 </div>
