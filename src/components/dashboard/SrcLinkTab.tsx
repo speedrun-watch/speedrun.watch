@@ -114,31 +114,7 @@ const SrcLinkTab = () => {
           </div>
         </div>
       ) : (
-        <div className="glass p-6 rounded-lg">
-          <p className="text-gray-300 mb-4">
-            Link your speedrun.com account so your Discord username is mentioned
-            in run notification embeds when you submit or approve a run.
-          </p>
-
-          <div className="bg-discord-dark/50 p-4 rounded-md mb-4">
-            <div className="flex items-start gap-2 mb-3">
-              <ShieldCheck className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-gray-300">
-                Your API key is used once to verify your identity and is <strong className="text-white">never stored</strong>.
-                For extra safety, you can regenerate your API key on{" "}
-                <a
-                  href="https://www.speedrun.com/settings/api"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 hover:underline"
-                >
-                  speedrun.com/settings/api
-                </a>
-                {" "}after linking.
-              </p>
-            </div>
-          </div>
-
+        <div className="space-y-4 max-w-2xl">
           <div className="flex gap-2">
             <Input
               type="password"
@@ -158,9 +134,24 @@ const SrcLinkTab = () => {
             </Button>
           </div>
 
-          {error && (
-            <p className="text-red-400 text-sm mt-2">{error}</p>
-          )}
+          {error && <p className="text-red-400 text-sm">{error}</p>}
+
+          <p className="flex items-start gap-2 text-sm text-gray-400">
+            <ShieldCheck className="w-4 h-4 text-green-400 mt-0.5 flex-shrink-0" />
+            <span>
+              Your API key is used once to verify your identity and is{" "}
+              <strong className="text-gray-200">never stored</strong>. You can regenerate it on{" "}
+              <a
+                href="https://www.speedrun.com/settings/api"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 hover:underline"
+              >
+                speedrun.com/settings/api
+              </a>{" "}
+              after linking.
+            </span>
+          </p>
         </div>
       )}
     </div>
