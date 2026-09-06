@@ -91,6 +91,12 @@ const Footer = () => {
             </div>
             <div className="flex gap-4 text-sm">
               <Link
+                to="/guides"
+                className="text-gray-400 hover:text-discord-blurple/80 transition-colors"
+              >
+                Guides
+              </Link>
+              <Link
                 to="/terms-of-service"
                 className="text-gray-400 hover:text-discord-blurple/80 transition-colors"
               >
