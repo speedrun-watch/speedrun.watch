@@ -1,39 +1,14 @@
 import { Link } from "react-router-dom";
-import { Bell, ArrowLeft, ArrowRight, ShieldCheck, Radio, Terminal } from "lucide-react";
+import { Bell, ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import Seo from "@/components/Seo";
+import { GUIDES } from "@/lib/guides";
 
 const TITLE = "Guides - speedrun.watch";
 const DESCRIPTION =
   "Guides for speedrun.watch, the free Discord bot for speedrun.com notifications. Learn how features like the automatic Runner role work.";
 const URL = "https://speedrun.watch/guides";
-
-// A guide entry drives both the card here and (manually) the prerender route
-// list in scripts/prerender.mjs.
-const GUIDES = [
-  {
-    slug: "runner-role",
-    title: "The Runner role",
-    blurb:
-      "Give a Runner role to members who link their speedrun.com account and run the games your server tracks. Verified on speedrun.com, no manual work.",
-    Icon: ShieldCheck,
-  },
-  {
-    slug: "personal-feed",
-    title: "Personal runner feed",
-    blurb:
-      "Send a runner's new runs to one channel, from any game they play. Great for your own runs or the runners your community follows.",
-    Icon: Radio,
-  },
-  {
-    slug: "commands",
-    title: "Slash commands",
-    blurb:
-      "Look up runs with /run-search, check what a channel tracks with /mapping, and get help with /help. They work right away, no setup.",
-    Icon: Terminal,
-  },
-];
 
 const Guides = () => {
   return (

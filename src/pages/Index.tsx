@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Setup from "@/components/Setup";
 import CtaSection from "@/components/CtaSection";
+import GuidesSection from "@/components/GuidesSection";
 import Footer from "@/components/Footer";
 import Seo from "@/components/Seo";
 
@@ -44,6 +45,7 @@ const Index = () => {
       <div className="flex-1">
         <Hero />
         <Setup />
+        <GuidesSection />
         <CtaSection />
       </div>
       <Footer />
