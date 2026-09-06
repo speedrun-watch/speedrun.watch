@@ -163,7 +163,7 @@ const GuideRunnerRole = () => {
 
             {/* For runners */}
             <h2 className="text-2xl font-semibold mb-5">For runners: link your account</h2>
-            <ol className="space-y-3 mb-12">
+            <ol className="space-y-3 mb-6">
               {RUNNER_STEPS.map(({ Icon, title, body }, i) => (
                 <li key={title} className="bg-discord-dark rounded-lg p-5 flex gap-4">
                   <span className="w-9 h-9 rounded-full bg-discord-blurple/15 text-discord-blurple font-bold flex items-center justify-center shrink-0 tabular-nums">
@@ -180,6 +180,20 @@ const GuideRunnerRole = () => {
               ))}
             </ol>
 
+            <figure className="mb-12">
+              <img
+                src="/guides/link-account.png"
+                alt="The Link speedrun.com Account screen in the speedrun.watch dashboard, where a runner pastes their speedrun.com API key to connect their account. The key is used once and never stored."
+                loading="lazy"
+                width={1992}
+                height={752}
+                className="rounded-lg border border-gray-700 w-full shadow-lg"
+              />
+              <figcaption className="text-xs text-gray-500 mt-2 text-center">
+                Link your account from the dashboard. Your API key is used once and never stored.
+              </figcaption>
+            </figure>
+
             {/* For admins */}
             <h2 className="text-2xl font-semibold mb-5">For admins: set it up</h2>
             <ol className="space-y-2 mb-4">
@@ -192,11 +206,25 @@ const GuideRunnerRole = () => {
                 </li>
               ))}
             </ol>
-            <p className="text-sm text-gray-500 leading-relaxed mb-12">
+            <p className="text-sm text-gray-500 leading-relaxed mb-4">
               The bot needs the <span className="text-gray-300">Manage Roles</span> permission to
               give out a role. If you added the bot a while ago, the dashboard will ask you to
               re-invite it. That is one click.
             </p>
+            <figure className="mb-12">
+              <img
+                src="/guides/roles-order.png"
+                alt="Discord Server Settings roles list showing the speedrun.watch bot role positioned above the Runner role, which is required for the bot to assign it."
+                loading="lazy"
+                width={2148}
+                height={930}
+                className="rounded-lg border border-gray-700 w-full shadow-lg"
+              />
+              <figcaption className="text-xs text-gray-500 mt-2 text-center">
+                The speedrun.watch role must sit above the Runner role. The Create a Runner role
+                button handles this for you.
+              </figcaption>
+            </figure>
 
             {/* FAQ */}
             <h2 className="text-2xl font-semibold mb-5">FAQ</h2>
