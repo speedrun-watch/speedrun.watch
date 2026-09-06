@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import {
   MessageSquare,
   Bell,
-  Settings
+  Settings,
+  BookOpen
 } from "lucide-react";
 import AuthStatus from "./AuthStatus";
 
@@ -40,9 +41,10 @@ const Navbar = () => {
           <div className="flex items-center space-x-4 md:space-x-6">
             <Link
               to="/guides"
-              className="text-sm font-medium text-gray-300 hover:text-white transition-colors"
+              className="text-sm font-medium text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
             >
-              Guides
+              <BookOpen className="w-4 h-4" />
+              <span>Guides</span>
             </Link>
             <AuthStatus />
           </div>

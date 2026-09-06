@@ -9,6 +9,7 @@ export const PUBLIC_ROUTES = [
   { path: "/guides", priority: 0.7 },
   { path: "/guides/runner-role", priority: 0.7 },
   { path: "/guides/personal-feed", priority: 0.7 },
+  { path: "/guides/commands", priority: 0.7 },
   { path: "/terms-of-service", priority: 0.3 },
   { path: "/privacy-policy", priority: 0.3 },
 ];

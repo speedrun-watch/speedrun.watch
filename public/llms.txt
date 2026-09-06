@@ -7,6 +7,7 @@ speedrun.watch posts a Discord embed for each new verified run of the games a ch
 ## Guides
 - [The Runner role](https://speedrun.watch/guides/runner-role): Automatically give a "Runner" role to members who link their speedrun.com account and run the games your server tracks. Verified on speedrun.com, no manual work.
 - [Personal runner feed](https://speedrun.watch/guides/personal-feed): Send a runner's new verified runs to one channel, from any game they play.
+- [Slash commands](https://speedrun.watch/guides/commands): Use /run-search to look up runs in Discord, /mapping to see what a channel tracks, and /help. No setup needed.
 - [All guides](https://speedrun.watch/guides)
 
 ## Pages

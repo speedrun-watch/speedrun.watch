@@ -13,6 +13,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Guides from "./pages/Guides";
 import GuideRunnerRole from "./pages/GuideRunnerRole";
 import GuidePersonalFeed from "./pages/GuidePersonalFeed";
+import GuideCommands from "./pages/GuideCommands";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/guides" element={<Guides />} />
           <Route path="/guides/runner-role" element={<GuideRunnerRole />} />
           <Route path="/guides/personal-feed" element={<GuidePersonalFeed />} />
+          <Route path="/guides/commands" element={<GuideCommands />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

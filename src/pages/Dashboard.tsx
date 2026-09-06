@@ -6,6 +6,7 @@ import {
   Gamepad,
   Server,
   Copy,
+  BookOpen,
 } from "lucide-react";
 import Footer from "@/components/Footer";
 import AuthStatus from "@/components/AuthStatus";
@@ -354,6 +355,13 @@ const Dashboard = () => {
           </div>
 
           <div className="flex items-center space-x-4">
+            <Link
+              to="/guides"
+              className="text-gray-300 hover:text-white transition-colors flex items-center space-x-1"
+            >
+              <BookOpen className="w-5 h-5" />
+              <span className="hidden md:block">Guides</span>
+            </Link>
             <AuthStatus />
           </div>
         </div>

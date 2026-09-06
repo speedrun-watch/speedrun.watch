@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Bell, ArrowLeft, ArrowRight, ShieldCheck, Radio } from "lucide-react";
+import { Bell, ArrowLeft, ArrowRight, ShieldCheck, Radio, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Footer from "@/components/Footer";
 import Seo from "@/components/Seo";
@@ -25,6 +25,13 @@ const GUIDES = [
     blurb:
       "Send a runner's new runs to one channel, from any game they play. Great for your own runs or the runners your community follows.",
     Icon: Radio,
+  },
+  {
+    slug: "commands",
+    title: "Slash commands",
+    blurb:
+      "Look up runs with /run-search, check what a channel tracks with /mapping, and get help with /help. They work right away, no setup.",
+    Icon: Terminal,
   },
 ];
 

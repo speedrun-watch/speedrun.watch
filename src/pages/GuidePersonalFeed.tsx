@@ -127,6 +127,22 @@ const GuidePersonalFeed = () => {
             </ol>
 
             <h2 className="text-2xl font-semibold mb-5">For admins: set it up</h2>
+            <p className="text-gray-400 leading-relaxed mb-5">
+              Head to the{" "}
+              <Link to="/dashboard" className="text-blue-400 hover:text-blue-300 underline underline-offset-2">
+                dashboard
+              </Link>{" "}
+              and pick the server and channel you want. New here? First{" "}
+              <a
+                href={getDiscordBotInviteUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 underline underline-offset-2"
+              >
+                add the bot to your server
+              </a>
+              .
+            </p>
             <ol className="space-y-2 mb-4">
               {ADMIN_STEPS.map((text, i) => (
                 <li key={i} className="flex gap-3 items-start">
@@ -151,6 +167,17 @@ const GuidePersonalFeed = () => {
                 </div>
               ))}
             </div>
+
+            <p className="text-sm text-gray-400 leading-relaxed mb-12">
+              Related:{" "}
+              <Link to="/guides/runner-role" className="text-blue-400 hover:text-blue-300 underline underline-offset-2">
+                the Runner role
+              </Link>{" "}
+              &middot;{" "}
+              <Link to="/guides" className="text-blue-400 hover:text-blue-300 underline underline-offset-2">
+                all guides
+              </Link>
+            </p>
 
             <div className="bg-discord-dark rounded-lg p-6 sm:p-8 text-center">
               <h2 className="text-xl font-semibold mb-2">Add speedrun.watch to your server</h2>
