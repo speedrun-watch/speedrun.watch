@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -151,10 +152,15 @@ const RunnerRoleCard = ({ selectedGuildId }: RunnerRoleCardProps) => {
           </Label>
         </div>
         <div className="text-xs text-gray-400 flex-1 leading-relaxed">
-          Automatically give a role to members who have linked their
-          speedrun.com account and run one of the games this server tracks. Great
-          for a visible “verified runner” badge — it’s granted the moment they
-          link, and whenever their runs are posted here.
+          Give a role to members who link their speedrun.com account and run a
+          game this server tracks. It is granted the moment they link, and
+          whenever their runs are posted here.{" "}
+          <Link
+            to="/guides/runner-role"
+            className="text-discord-blurple hover:underline whitespace-nowrap"
+          >
+            Learn how it works
+          </Link>
         </div>
       </div>
 

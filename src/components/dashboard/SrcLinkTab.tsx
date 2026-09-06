@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link2, Unlink, Loader2, ExternalLink, ShieldCheck } from "lucide-react";
+import { Link2, Unlink, Loader2, ExternalLink, ShieldCheck, ArrowRight } from "lucide-react";
 import api from "@/lib/api";
 
 interface SrcLink {
@@ -64,9 +65,16 @@ const SrcLinkTab = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-2">Link speedrun.com Account</h1>
-      <p className="text-gray-400 text-sm mb-6">
-        Get @mentioned in Discord notifications when your runs are posted
+      <p className="text-gray-400 text-sm mb-2">
+        Get @mentioned in run notifications, and automatically get the Runner
+        role in servers that track your games.
       </p>
+      <Link
+        to="/guides/runner-role"
+        className="text-sm text-discord-blurple hover:underline inline-flex items-center gap-1 mb-6"
+      >
+        Learn how it works <ArrowRight className="w-3 h-3" />
+      </Link>
 
       {loading ? (
         <div className="flex items-center justify-center py-8">
